@@ -1,0 +1,148 @@
+name: Feature continuous integration / deployment on clevercloud
+
+on:
+  workflow_dispatch:
+  push:
+    branches-ignore: [main]
+env:
+  app-name: 'portail-usager'
+  branch: ${GITHUB_REF##*/}
+jobs:
+  dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'yarn'
+      - name: Retrieve cached dependencies
+        id: retrieve-dependencies
+        uses: actions/cache@v2
+        with:
+          key: node_modules-${{ hashFiles('yarn.lock') }}
+          path: node_modules
+      - name: Install dependencies
+        if: steps.retrieve-dependencies.outputs.cache-hit == false
+        run: yarn --install-frozen-lockfile
+      - name: Cache dependencies if not present
+        if: steps.retrieve-dependencies.outputs.cache-hit == false
+        uses: actions/cache@v2
+        with:
+          key: node_modules.-${{ hashFiles('yarn.lock') }}
+          path: node_modules
+
+  build:
+    needs: dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Retrieve dependencies
+        uses: actions/cache@v2
+        with:
+          key: node_modules-${{ hashFiles('yarn.lock') }}
+          path: node_modules
+      - name: Build release files with stats
+        run: |
+          node_modules/.bin/ng build --stats-json
+          mv dist/${{ env.app-name }}/stats.json dist/stats.json
+      - name: Prepare bundle for deployment
+        run: |
+          cd dist/${{ env.app-name }}
+          git config --global init.defaultBranch master
+          git config --global user.email dummy@email.fr
+          git config --global user.name ClevercloudDeployer
+          git init .
+          git add .
+          git commit -m "Static bundle"
+      - name: Upload release bundle as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: bundle
+          path: dist/${{ env.app-name }}/*
+      - name: Bundle report
+        run: node node_modules/webpack-bundle-analyzer/lib/bin/analyzer.js dist/stats.json -m static
+      - name: Upload bundle analyser report as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: bundle-report
+          path: report.html
+
+  test:
+    needs: dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Retrieve dependencies
+        uses: actions/cache@v2
+        with:
+          key: node_modules-${{ hashFiles('yarn.lock') }}
+          path: node_modules
+      - name: Execute tests
+        run: node_modules/.bin/ng test --coverage
+      - name: Upload coverage report as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-report
+          path: coverage/lcov-report/*
+
+  lint:
+    needs: dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Retrieve dependencies
+        uses: actions/cache@v2
+        with:
+          key: node_modules-${{ hashFiles('yarn.lock') }}
+          path: node_modules
+      - name: eslint
+        run: node_modules/.bin/ng lint
+      - name: stylelint
+        run: yarn run stylelint
+
+  deploy:
+    needs: [build, test, lint]
+    runs-on: ubuntu-latest
+    container:
+      image: clevercloud/clever-tools
+      env:
+        CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
+        CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
+    steps:
+      - name: Retrieve site bundle
+        uses: actions/download-artifact@v2
+        with:
+          name: bundle
+          path: .
+      - name: Link the application for subsequent operations
+        run: clever link ${{ format('{0}-{1}', env.app-name, env.branch) }} --org ${{ secrets.CLEVER_ORG_ID }}
+      - name: Deploy the application
+        run: clever deploy --force
+      - name: Retrieve the deployment url
+        run: clever domain
+
+  pages:
+    needs: [test, build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Retrieve coverage artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: coverage-report
+          path: pages/coverage
+      - name: Retrieve bundle analysis artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: bundle-report
+          path: pages/report
+      - name: Publish tests Report to GitHub Pages
+        if: success()
+        uses: crazy-max/ghaction-github-pages@v2
+        with:
+          target_branch: pages
+          build_dir: pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

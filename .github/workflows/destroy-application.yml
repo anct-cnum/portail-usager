@@ -1,0 +1,23 @@
+name: Destroy clevercloud demo application
+
+on:
+  workflow_dispatch:
+    branches-ignore: [main]
+  delete:
+    branches-ignore: [main]
+env:
+  app-name: 'portail-usager'
+  branch: ${GITHUB_REF##*/}
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+    container:
+      image: clevercloud/clever-tools
+      env:
+        CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
+        CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
+    steps:
+      - name: Link the application for the next operations
+        run: clever link ${{ format('{0}-{1}', env.app-name, env.branch) }} --org ${{ secrets.CLEVER_ORG_ID }}
+      - name: Delete the application
+        run: clever delete --alias ${{ format('{0}-{1}', env.app-name, env.branch) }} --yes

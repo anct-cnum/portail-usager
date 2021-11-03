@@ -1,0 +1,19 @@
+name: Enable continuous deployment on the current branch to clevercloud
+
+on: workflow_dispatch
+env:
+  app-name: 'portail-usager'
+  branch: ${GITHUB_REF##*/}
+jobs:
+  create:
+    runs-on: ubuntu-latest
+    container:
+      image: clevercloud/clever-tools
+      env:
+        CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
+        CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
+    steps:
+      - name: Create a frontend demo application frontend for current branch, with {app-name}-{branch} alias, based in Paris.
+        run: clever create --type static-apache ${{ format('{0}-{1}', env.app-name, env.branch) }} --alias ${{ format('{0}-{1}', env.app-name, env.branch) }} --region par --org ${{ secrets.CLEVER_ORG_ID }}
+      - name: Scale down to nano
+        run: clever scale --flavor nano
