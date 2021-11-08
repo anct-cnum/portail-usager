@@ -5,7 +5,7 @@ module.exports = {
     es6: true,
     node: true
   },
-  ignorePatterns: ['polyfills.ts', 'src/**/*.html'],
+  ignorePatterns: ['src/**/*.html'],
   overrides: [
     {
       extends: [
@@ -41,7 +41,7 @@ module.exports = {
         '@typescript-eslint/unbound-method': 'off',
         'jest/unbound-method': 'error',
         '@typescript-eslint/no-base-to-string': 'off',
-        '@typescript-eslint/init-declaration': 'off',
+        '@typescript-eslint/init-declaration': 'off'
       }
     }
   ]

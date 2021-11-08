@@ -17,22 +17,4 @@ describe('AppComponent', () => {
     const app: AppComponent = fixture.componentInstance;
     expect(app).toBeTruthy();
   });
-
-  it(`should have as title 'portail-usager'`, () => {
-    const fixture: ComponentFixture<AppComponent> =
-      TestBed.createComponent(AppComponent);
-    const app: AppComponent = fixture.componentInstance;
-    expect(app.title).toBe('portail-usager');
-  });
-
-  it('should render title', () => {
-    const fixture: ComponentFixture<AppComponent> =
-      TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled: HTMLElement =
-      fixture.nativeElement as HTMLElement;
-    expect(
-      compiled.querySelector('.content span')?.textContent
-    ).toContain('portail-usager app is running!');
-  });
 });

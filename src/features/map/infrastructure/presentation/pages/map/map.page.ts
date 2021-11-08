@@ -5,7 +5,6 @@ import {
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'app-root',
-  templateUrl: './app.component.html'
+  templateUrl: './map.page.html'
 })
-export class AppComponent {}
+export class MapPage {}

@@ -9,7 +9,7 @@ if (ENVIRONMENT.type === EnvironmentType.Production)
   enableProdMode();
 
 platformBrowserDynamic()
-  .bootstrapModule(AppModule)
+  .bootstrapModule(AppModule, { ngZone: 'noop' })
   .catch((bootstrapModuleError: Error): void =>
     console.error(bootstrapModuleError)
   );
