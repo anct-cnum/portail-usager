@@ -9,11 +9,11 @@ import { AppComponent } from './app.component';
   bootstrap: [AppComponent],
   declarations: [AppComponent],
   imports: [
+    AppRoutingModule,
     BrowserModule,
     ServiceWorkerModule.register('/ngsw-worker.js', {
       enabled: ENVIRONMENT.type === EnvironmentType.Production
-    }),
-    AppRoutingModule
+    })
   ],
   providers: []
 })
