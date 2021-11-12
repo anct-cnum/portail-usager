@@ -18,6 +18,7 @@ Vise à remplacer à terme l'existant.
 
 ## Prerequisites
 
+[Node](https://nodejs.org/)
 [Yarn](https://yarnpkg.com/)
 
 ## Built with
@@ -89,7 +90,7 @@ Run `yarn stylelint` to lint the project.
 
 ### Prettier
 
-Run `yarn prettier` to prettyfy the solution.
+Run `yarn prettier` to prettify the solution.
 
 ### Pre-commit hooks
 
@@ -100,7 +101,7 @@ Activated pre-commits hooks are :
 
 ## Licence
 
-See LICENSE in repository for details.
+Voir le fichier [LICENSE](./LICENSE.md) | [ETALAB-Licence-Ouverte-v2.0](./ETALAB-Licence-Ouverte-v2.0.pdf) du dépot.
 
 ## Credits
 

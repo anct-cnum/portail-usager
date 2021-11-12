@@ -8,7 +8,7 @@ import { MapPage } from '../../presentation';
  */
 @NgModule({
   declarations: [MapPage],
-  imports: [MapFeatureRoutingModule, CommonModule],
+  imports: [CommonModule, MapFeatureRoutingModule],
   providers: []
 })
 export class MapFeatureModule {}

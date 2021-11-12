@@ -5,4 +5,4 @@
 - eslint: 8
 - eslint-plugin-jest: 25
 - typescript-eslint/eslint-plugin: 5
-- rxjs :
+- rxjs : 4
