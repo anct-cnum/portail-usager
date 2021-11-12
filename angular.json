@@ -27,10 +27,7 @@
             "inlineStyleLanguage": "scss",
             "assets": ["src/favicon.ico", "src/assets"],
             "polyfills": "src/polyfills.ts",
-            "styles": [
-              "src/styles.scss",
-              "node_modules/leaflet/dist/leaflet.css"
-            ],
+            "styles": ["src/styles.scss", "node_modules/leaflet/dist/leaflet.css"],
             "scripts": ["node_modules/leaflet/dist/leaflet.js"]
           },
           "configurations": {
@@ -53,12 +50,6 @@
                   "with": "src/environments/environment.production.ts"
                 }
               ],
-              "outputHashing": "all",
-              "serviceWorker": true,
-              "ngswConfigPath": "./ngsw-config.json"
-            },
-            "development": {
-              "buildOptimizer": false,
               "optimization": {
                 "fonts": {
                   "inline": true
@@ -67,6 +58,12 @@
                   "inlineCritical": true
                 }
               },
+              "outputHashing": "all",
+              "serviceWorker": true,
+              "ngswConfigPath": "./ngsw-config.json"
+            },
+            "development": {
+              "buildOptimizer": false,
               "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
@@ -96,6 +93,7 @@
         "test": {
           "builder": "@angular-builders/jest:run",
           "options": {
+            "configPath": "jest.config.js",
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": ["scss"],
             "assets": ["src/favicon.ico", "src/assets"],

@@ -5,8 +5,11 @@
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "paths": {
-      "@features/*": ["src/features/*"]
+      "@features/*": ["src/features/*"],
+      "@angular-common/*": ["src/utils/angular-common/*"],
+      "@architecture/*": ["src/utils/architecture/*"]
     },
+    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitOverride": true,

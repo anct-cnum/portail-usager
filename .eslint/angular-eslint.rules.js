@@ -1,12 +1,6 @@
 module.exports = {
-  '@angular-eslint/component-class-suffix': [
-    'error',
-    { suffixes: ['Component', 'Layout', 'Page'] }
-  ],
-  '@angular-eslint/component-max-inline-declarations': [
-    'error',
-    { template: 0, styles: 0, animations: 0 }
-  ],
+  '@angular-eslint/component-class-suffix': ['error', { suffixes: ['Component', 'Layout', 'Page'] }],
+  '@angular-eslint/component-max-inline-declarations': ['error', { template: 1, styles: 0, animations: 0 }],
   '@angular-eslint/component-selector': 'error',
   '@angular-eslint/contextual-decorator': 'error',
   '@angular-eslint/contextual-lifecycle': 'error',
@@ -28,14 +22,13 @@ module.exports = {
   '@angular-eslint/no-pipe-impure': 'error',
   '@angular-eslint/no-queries-metadata-property': 'error',
   '@angular-eslint/pipe-prefix': 'error',
-  '@angular-eslint/prefer-on-push-component-change-detection':
-    'error',
+  '@angular-eslint/prefer-on-push-component-change-detection': 'error',
   '@angular-eslint/prefer-output-readonly': 'error',
   '@angular-eslint/relative-url-prefix': 'error',
   '@angular-eslint/sort-ngmodule-metadata-arrays': 'error',
   '@angular-eslint/use-component-selector': 'off',
   '@angular-eslint/use-component-view-encapsulation': 'error',
-  '@angular-eslint/use-injectable-provided-in': 'error',
+  '@angular-eslint/use-injectable-provided-in': 'off',
   '@angular-eslint/use-lifecycle-interface': 'error',
   '@angular-eslint/use-pipe-transform-interface': 'error'
 };

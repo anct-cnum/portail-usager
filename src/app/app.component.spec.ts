@@ -12,8 +12,7 @@ describe('AppComponent', (): void => {
   });
 
   it('should create the app', (): void => {
-    const fixture: ComponentFixture<AppComponent> =
-      TestBed.createComponent(AppComponent);
+    const fixture: ComponentFixture<AppComponent> = TestBed.createComponent(AppComponent);
     const app: AppComponent = fixture.componentInstance;
     expect(app).toBeTruthy();
   });

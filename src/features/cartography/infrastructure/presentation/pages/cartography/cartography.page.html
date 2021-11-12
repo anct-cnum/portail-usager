@@ -1,0 +1,3 @@
+<ng-container *ngIf="cnfsMarkers$ | async as cnfsMarkers">
+  <leaflet-map [mapOptions]="mapOptions" [cnfsMarkers]="cnfsMarkers"></leaflet-map>
+</ng-container>

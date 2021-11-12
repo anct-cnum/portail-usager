@@ -65,15 +65,12 @@ module.exports = {
       requireStringLiterals: true
     }
   ],
-  'accessor-pairs': 'error',
+  'accessor-pairs': 'off',
   'arrow-body-style': ['error', 'as-needed'],
   'block-scoped-var': 'error',
   camelcase: 'error',
   'capitalized-comments': 'error',
-  'class-methods-use-this': [
-    'off',
-    { enforceForClassFields: true }
-  ],
+  'class-methods-use-this': ['off', { enforceForClassFields: true }],
   complexity: ['error', 8],
   'consistent-return': 'error',
   'default-case-last': 'error',
@@ -82,12 +79,8 @@ module.exports = {
   eqeqeq: ['error', 'always', { null: 'ignore' }],
   'func-name-matching': 'error',
   'func-names': 'error',
-  'func-style': [
-    'error',
-    'declaration',
-    { allowArrowFunctions: true }
-  ],
-  'grouped-accessor-pairs': ['error', 'getBeforeSet'],
+  'func-style': ['error', 'declaration', { allowArrowFunctions: true }],
+  'grouped-accessor-pairs': ['off', 'getBeforeSet'],
   'guard-for-in': ['error'],
   'id-denylist': [
     'error',
@@ -108,10 +101,7 @@ module.exports = {
     'value',
     'number'
   ],
-  'id-length': [
-    'error',
-    { min: 2, exceptions: ['i', 'j', 'x', 'y', 'z'] }
-  ],
+  'id-length': ['error', { min: 2, exceptions: ['i', 'j', 'x', 'y', 'z', '_'] }],
   'init-declarations': 'off',
   'max-classes-per-file': ['error', 1],
   'max-depth': ['error', 2],
@@ -142,7 +132,7 @@ module.exports = {
   'no-caller': 'error',
   'no-confusing-arrow': 'error',
   'no-console': 'error',
-  'no-continue': 'error',
+  'no-continue': 'off',
   'no-div-regex': 'error',
   'no-else-return': [
     'error',
@@ -154,10 +144,7 @@ module.exports = {
   'no-eval': 'error',
   'no-extend-native': 'error',
   'no-extra-bind': 'error',
-  'no-extra-boolean-cast': [
-    'error',
-    { enforceForLogicalOperands: true }
-  ],
+  'no-extra-boolean-cast': ['error', { enforceForLogicalOperands: true }],
   'no-floating-decimal': 'error',
   'no-implicit-coercion': 'error',
   'no-implicit-globals': 'error',
@@ -233,16 +220,10 @@ module.exports = {
   'no-undef-init': 'error',
   'no-undefined': 'error',
   'no-underscore-dangle': 'off',
-  'no-unneeded-ternary': [
-    'error',
-    { defaultAssignment: false }
-  ],
+  'no-unneeded-ternary': ['error', { defaultAssignment: false }],
   'no-unused-expressions': 'off',
   'no-useless-call': 'error',
-  'no-useless-computed-key': [
-    'error',
-    { enforceForClassMembers: true }
-  ],
+  'no-useless-computed-key': ['error', { enforceForClassMembers: true }],
   'no-useless-concat': 'error',
   'no-useless-constructor': 'off',
   'no-useless-rename': 'error',
@@ -268,10 +249,7 @@ module.exports = {
   'prefer-numeric-literals': 'error',
   'prefer-object-spread': 'error',
   'prefer-promise-reject-errors': 'error',
-  'prefer-regex-literals': [
-    'error',
-    { disallowRedundantWrapping: true }
-  ],
+  'prefer-regex-literals': ['error', { disallowRedundantWrapping: true }],
   'prefer-rest-params': 'error',
   'prefer-spread': 'error',
   'prefer-template': 'error',
@@ -288,11 +266,7 @@ module.exports = {
   'require-await': 'off',
   'require-unicode-regexp': 'error',
   'sort-imports': 'off',
-  'sort-keys': [
-    'error',
-    'asc',
-    { caseSensitive: true, natural: true, minKeys: 2 }
-  ],
+  'sort-keys': ['error', 'asc', { caseSensitive: true, natural: true, minKeys: 2 }],
   'sort-vars': 'error',
   'spaced-comment': ['error', 'always'],
   strict: 'error',
