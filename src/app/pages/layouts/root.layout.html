@@ -1,9 +1,59 @@
-<div class="fr-container">
-  <div class="fr-grid-row-center">
-    <div class="fr-col-offset-1 fr-col-2">
-      <img src="/assets/brand/logo-rf-conseiller-numerique.svg" alt="Logo Conseiller Numérique" />
+<header role="banner" class="fr-header">
+  <div class="fr-header__body">
+    <div class="fr-container">
+      <div class="fr-header__body-row">
+        <div class="fr-header__brand fr-enlarge-link">
+          <div class="fr-header__brand-top">
+            <div class="MY-CLASS-TO-FIX-SIZE fr-header__logo">
+              <!-- TODO Define class for size management desktop and mobile, remove hardcoded height -->
+              <img
+                src="/assets/brand/logo-rf-conseiller-numerique.svg"
+                alt="Logo Conseiller Numérique"
+                style="min-height: 30px; max-height: 300px" />
+            </div>
+            <div class="fr-header__navbar">
+              <button
+                class="fr-btn--menu fr-btn"
+                data-fr-opened="false"
+                aria-controls="modal-833"
+                aria-haspopup="menu"
+                title="Menu"
+                id="fr-btn-menu-mobile">
+                Menu
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="fr-header__tools">
+          <div class="fr-header__tools-links">
+            <a
+              class="fr-link fr-fi-question-line fr-link--icon-left"
+              href="https://aide.conseiller-numerique.gouv.fr/fr/"
+              target="_blank"
+              rel="noopener">
+              J'ai une question
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+  <!-- Navigation principale -->
+  <div class="fr-header__menu fr-modal" id="modal-833" aria-labelledby="fr-btn-menu-mobile">
+    <div class="fr-container">
+      <button class="fr-link--close fr-link" aria-controls="modal-833">Fermer</button>
+      <div class="fr-header__menu-links"></div>
+      <nav class="fr-nav" id="navigation-832" role="navigation" aria-label="Menu principal">
+        <ul class="fr-nav__list">
+          <li class="fr-nav__item">
+            <a class="fr-nav__link" href="/cartographie" target="_self">Cartographie</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>
+<div class="fr-container">
   <div class="fr-grid-row--center">
     <div class="fr-col-8">
       <router-outlet></router-outlet>
