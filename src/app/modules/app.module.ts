@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { ServiceWorkerModule } from '@angular/service-worker';
-import { ENVIRONMENT, EnvironmentType } from '../environments';
+import { ENVIRONMENT, EnvironmentType } from '../../environments';
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
+import { RootLayout } from '../pages/layouts/root.layout';
 
 @NgModule({
-  bootstrap: [AppComponent],
-  declarations: [AppComponent],
+  bootstrap: [RootLayout],
+  declarations: [RootLayout],
   imports: [
     AppRoutingModule,
     BrowserModule,
