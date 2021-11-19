@@ -2,25 +2,41 @@
   <div class="fr-header__body">
     <div class="fr-container">
       <div class="fr-header__body-row">
-        <div class="fr-header__brand fr-enlarge-link">
+        <div class="fr-header__brand fr-enlarge-link todo">
           <div class="fr-header__brand-top">
-            <div class="todo fr-header__logo">
+            <div class="fr-header__logo">
+              <p class="fr-logo">
+                République
+                <br />
+                Française
+              </p>
+            </div>
+            <div class="fr-header__operator">
               <img
                 src="/assets/brand/logo-rf-conseiller-numerique.svg"
-                alt="Logo Conseiller Numérique"
-                style="min-height: 30px; max-height: 300px" />
+                class="fr-responsive-img"
+                style="max-width: 9.0625rem"
+                alt="Logo Conseiller Numérique" />
             </div>
             <div class="fr-header__navbar">
+              <button class="fr-btn--search fr-btn" data-fr-opened="false" aria-controls="modal-866" title="Rechercher">
+                Rechercher
+              </button>
               <button
                 class="fr-btn--menu fr-btn"
                 data-fr-opened="false"
-                aria-controls="modal-833"
+                aria-controls="modal-870"
                 aria-haspopup="menu"
                 title="Menu"
-                id="fr-btn-menu-mobile">
+                id="fr-btn-menu-mobile-4">
                 Menu
               </button>
             </div>
+          </div>
+          <div class="fr-header__service">
+            <a href="/" title="Accueil - [À MODIFIER | Nom du site / service]">
+              <p class="fr-header__service-title"></p>
+            </a>
           </div>
         </div>
         <div class="fr-header__tools">
@@ -37,7 +53,7 @@
       </div>
     </div>
   </div>
-  <!-- Navigation principale -->
+  <!-- Navbar principale -->
   <div class="fr-header__menu fr-modal" id="modal-833" aria-labelledby="fr-btn-menu-mobile">
     <div class="fr-container">
       <button class="fr-link--close fr-link" aria-controls="modal-833">Fermer</button>
@@ -52,6 +68,8 @@
     </div>
   </div>
 </header>
+
+<!-- Corps -->
 <div class="fr-container">
   <div class="fr-grid-row--center">
     <div class="fr-col-8">
@@ -59,3 +77,61 @@
     </div>
   </div>
 </div>
+
+<!-- Pied de page -->
+<!-- pied de page avec logo opérateur -->
+<footer class="fr-footer" role="contentinfo" id="footer">
+  <div class="fr-container todo">
+    <div class="fr-footer__body fr-footer__body--operator">
+      <div class="fr-footer__brand fr-enlarge-link">
+        <p class="fr-logo" title="république française">
+          république
+          <br />
+          française
+        </p>
+        <a class="fr-footer__brand-link" href="/accueil" title="Retour à l’accueil">
+          <!-- L'alternative de l'image (attribut alt) doit impérativement être renseignée et reprendre le texte visible dans l’image -->
+          <img class="fr-footer__logo" src="/assets/brand/logo-anct.svg" alt="Logo ANCT" />
+        </a>
+        <a class="fr-footer__brand-link" href="/accueil" title="Retour à l’accueil">
+          <!-- L'alternative de l'image (attribut alt) doit impérativement être renseignée et reprendre le texte visible dans l’image -->
+          <img class="fr-footer__logo" src="/assets/brand/logo-france-relance-alt.svg" alt="Logo France Relance" />
+        </a>
+      </div>
+      <div class="fr-footer__content">
+        <p class="fr-footer__content-desc">
+          Conseiller Numérique France services est un dispositif financé par l'État dans le cadre de France Relance. Il est
+          piloté par l'Agence Nationale de la Cohésion des Territoires et opéré par la Banque des Territoires.
+        </p>
+        <a class="fr-footer__content-link" href="https://agence-cohesion-territoires.gouv.fr/">anct.gouv.fr</a>
+        <a class="fr-footer__content-link" href="https://societenumerique.gouv.fr/">societenumerique.gouv.fr</a>
+        <a class="fr-footer__content-link" href="https://www.banquedesterritoires.fr/">banquedesterritoires.fr</a>
+      </div>
+    </div>
+    <div class="fr-footer__bottom">
+      <ul class="fr-footer__bottom-list">
+        <li class="fr-footer__bottom-item">
+          <a class="fr-footer__bottom-link" href="#">Plan du site</a>
+        </li>
+        <li class="fr-footer__bottom-item">
+          <a class="fr-footer__bottom-link" href="#">Accessibilité: non/partiellement/totalement conforme</a>
+        </li>
+        <li class="fr-footer__bottom-item">
+          <a class="fr-footer__bottom-link" href="#">Mentions légales</a>
+        </li>
+        <li class="fr-footer__bottom-item">
+          <a class="fr-footer__bottom-link" href="#">Données personnelles</a>
+        </li>
+        <li class="fr-footer__bottom-item">
+          <a class="fr-footer__bottom-link" href="#">Gestion des cookies</a>
+        </li>
+      </ul>
+      <div class="fr-footer__bottom-copy">
+        <p>
+          Sauf mention contraire, tous les contenus de ce site sont sous
+          <a href="https://github.com/etalab/licence-ouverte/blob/master/LO.md" target="_blank">licence etalab-2.0</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
