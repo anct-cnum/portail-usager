@@ -12,8 +12,9 @@ const ROUTES: Routes = [
         path: ''
       }
     ],
-    path: ''
-  }
+    path: 'cartographie'
+  },
+  { path: '', pathMatch: 'full', redirectTo: '/cartographie' }
 ];
 
 @NgModule({

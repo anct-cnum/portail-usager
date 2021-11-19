@@ -25,6 +25,7 @@
     "@angular/platform-browser-dynamic": "^13.0.0",
     "@angular/router": "~13.0.0",
     "@angular/service-worker": "^13.0.0",
+    "@gouvfr/dsfr": "^1.2.0",
     "leaflet": "^1.7.1",
     "rxjs": "~7.4.0",
     "tslib": "^2.3.0",
