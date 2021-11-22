@@ -3,8 +3,6 @@ name: Destroy clevercloud demo application
 on:
   workflow_dispatch:
     branches-ignore: [main]
-  delete:
-    branches-ignore: [main]
 env:
   app-name: 'portail-usager'
   branch: ${GITHUB_REF##*/}
