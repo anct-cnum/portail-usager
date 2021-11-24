@@ -1,5 +1,10 @@
 import type { Observable } from 'rxjs';
-import type { Cnfs, CnfsRepository } from '../../core';
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { CnfsRepository } from '../../core';
+
+import type { Cnfs } from '../../core';
+
 import type { UseCase } from '@architecture/use-case';
 
 export class ListCnfsPositionUseCase implements UseCase<[], Cnfs[]> {

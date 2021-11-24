@@ -1,3 +1,13 @@
+<br />
+
+<br />
+<div class="todo">
+  <label for="address">Adresse:</label>
+  <input id="address" type="text" [formControl]="address" placeholder="Saisir une adresse" />
+  <button (click)="geocode()">Utiliser cette adresse</button>
+</div>
+<br />
+<br />
 <div class="todo">
   <div #map style="height: 800px"></div>
 </div>
