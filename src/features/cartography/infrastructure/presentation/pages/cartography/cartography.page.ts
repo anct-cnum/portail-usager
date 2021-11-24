@@ -17,16 +17,6 @@ const FIRST_MARKERS: CnfsPresentation = {
   type: 'FeatureCollection'
 };
 
-const SECOND_MARKERS: CnfsPresentation = {
-  features: [CNFS_DATA.features[3], CNFS_DATA.features[4], CNFS_DATA.features[5]],
-  type: 'FeatureCollection'
-};
-
-const THIRD_MARKERS: CnfsPresentation = {
-  features: [CNFS_DATA.features[6], CNFS_DATA.features[7], CNFS_DATA.features[8]],
-  type: 'FeatureCollection'
-};
-
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CartographyPresenter],
@@ -38,6 +28,8 @@ export class CartographyPage {
     type: 'FeatureCollection'
   });
 
+  private _presentation: CnfsPresentation = FIRST_MARKERS;
+
   public readonly cnfsMarkers$: Observable<CnfsPresentation> = this._cnfsMarkers$.asObservable();
 
   public readonly mapOptions: MapOptionsPresentation;
@@ -46,19 +38,14 @@ export class CartographyPage {
     this.mapOptions = this.presenter.defaultMapOptions();
 
     this.presenter.listCnfsPositions$().subscribe((cnfs: CnfsPresentation): void => {
-      this._cnfsMarkers$.next(cnfs);
+      this._presentation = cnfs;
     });
-
     setTimeout((): void => {
       this._cnfsMarkers$.next(FIRST_MARKERS);
     }, 2000);
 
     setTimeout((): void => {
-      this._cnfsMarkers$.next(SECOND_MARKERS);
+      this._cnfsMarkers$.next(this._presentation);
     }, 4000);
-
-    setTimeout((): void => {
-      this._cnfsMarkers$.next(THIRD_MARKERS);
-    }, 6000);
   }
 }

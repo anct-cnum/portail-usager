@@ -18,13 +18,14 @@ const USAGER_MARKER_HEIGTH_IN_PIXEL: number = 16;
 const USAGER_MARKER_DIMENSIONS: Point = new Point(USAGER_MARKER_WIDTH_IN_PIXEL, USAGER_MARKER_HEIGTH_IN_PIXEL, ROUND_FALSE);
 
 export enum AvailableMarkers {
-  CNFS = 'cnfs',
-  USAGER = 'usager'
+  Cnfs = 'cnfs',
+  CnfsCluster = 'cnfsCluster',
+  Usager = 'usager'
 }
 
 export const MARKERS: Map<AvailableMarkers, MarkerConfiguration> = new Map<AvailableMarkers, MarkerConfiguration>([
   [
-    AvailableMarkers.CNFS,
+    AvailableMarkers.Cnfs,
     {
       iconAnchor: new Point(CNFS_MARKER_DIMENSIONS.x * HALF, CNFS_MARKER_DIMENSIONS.y),
       iconSize: CNFS_MARKER_DIMENSIONS,
@@ -32,7 +33,15 @@ export const MARKERS: Map<AvailableMarkers, MarkerConfiguration> = new Map<Avail
     }
   ],
   [
-    AvailableMarkers.USAGER,
+    AvailableMarkers.CnfsCluster,
+    {
+      iconAnchor: new Point(CNFS_MARKER_DIMENSIONS.x * HALF, CNFS_MARKER_DIMENSIONS.y),
+      iconSize: CNFS_MARKER_DIMENSIONS,
+      iconUrl: 'assets/map/pin-cnfs-cluster.svg'
+    }
+  ],
+  [
+    AvailableMarkers.Usager,
     {
       iconAnchor: new Point(USAGER_MARKER_DIMENSIONS.x * HALF, USAGER_MARKER_DIMENSIONS.y),
       iconSize: USAGER_MARKER_DIMENSIONS,

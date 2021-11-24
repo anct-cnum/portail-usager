@@ -1,10 +1,14 @@
-import type { Map as LeafletMap, MapOptions as LeafletMapOptions, LatLng, Layer, IconOptions } from 'leaflet';
-import { geoJSON, icon, latLng, map, marker, tileLayer } from 'leaflet';
-import type { AfterViewInit, ElementRef, OnChanges, SimpleChanges, SimpleChange } from '@angular/core';
+// TODO REVIEW IGNORE
+/* eslint-disable */
+import type { MapOptions as LeafletMapOptions, LatLng, Layer, IconOptions } from 'leaflet';
+import { geoJSON, icon, latLng, map, Map as LeafletMap, marker, tileLayer } from 'leaflet';
+import type { AfterViewInit, ElementRef, OnChanges, SimpleChanges } from '@angular/core';
 import { ChangeDetectionStrategy, Component, Inject, Input, ViewChild } from '@angular/core';
 import type { CnfsPresentation, MapOptionsPresentation } from '../../models';
 import { AvailableMarkers, MARKERS_TOKEN } from '../../../configuration';
 import type { MarkerConfiguration } from '../../../configuration';
+import type { GeoJsonProperties } from 'geojson';
+import Supercluster from 'supercluster';
 
 const EMPTY_MARKERS: CnfsPresentation = {
   features: [],
@@ -19,6 +23,7 @@ const MAX_ZOOM_LEVEL: number = 19;
   templateUrl: './leaflet-map.component.html'
 })
 export class LeafletMapComponent implements AfterViewInit, OnChanges {
+  private readonly _clusterMarkerConfig: IconOptions;
   private _cnfsLayer!: Layer;
   private readonly _cnfsMarkerConfig: IconOptions;
   private _map!: LeafletMap;
@@ -54,16 +59,20 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
   ) {
     // TODO Meilleur moyen de partager ça ?
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this._cnfsMarkerConfig = this.markersConfigurations.get(AvailableMarkers.CNFS)!;
+    this._cnfsMarkerConfig = this.markersConfigurations.get(AvailableMarkers.Cnfs)!;
+    this._clusterMarkerConfig = this.markersConfigurations.get(AvailableMarkers.CnfsCluster)!;
   }
 
   private initMap(): void {
     this._map = map(this.mapContainer.nativeElement, this._mapOptions);
+
     // TODO Mettre la position de l'usager
     // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-    marker([45.864043, 4.835659], {
+    const usagerMarker: [number, number] = [45.864043, 4.835659];
+
+    marker(usagerMarker, {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      icon: icon(this.markersConfigurations.get(AvailableMarkers.USAGER)!)
+      icon: icon(this.markersConfigurations.get(AvailableMarkers.Usager)!)
     }).addTo(this._map);
   }
 
@@ -75,16 +84,37 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
   public ngOnChanges(changes: SimpleChanges): void {
     for (const propertyName in changes) {
       if (propertyName !== 'cnfsMarkers') continue;
-      const changedProperty: SimpleChange = changes[propertyName];
-      if (!changedProperty.isFirstChange()) this._map.removeLayer(this._cnfsLayer);
+      if (!(this._map instanceof LeafletMap)) return;
 
-      this._cnfsLayer = geoJSON(this.cnfsMarkers, {
+      if (this._map.hasLayer(this._cnfsLayer)) this._map.removeLayer(this._cnfsLayer);
+
+      const index: Supercluster<GeoJsonProperties, GeoJsonProperties> = new Supercluster({
+        maxZoom: 16,
+        radius: 40
+      } as Supercluster.Options<GeoJsonProperties, GeoJsonProperties>);
+
+      index.load(this.cnfsMarkers.features);
+
+      const presentation: CnfsPresentation = {
+        features: index.getClusters(
+          [
+            this._map.getBounds().getWest(),
+            this._map.getBounds().getSouth(),
+            this._map.getBounds().getEast(),
+            this._map.getBounds().getNorth()
+          ],
+          this._map.getZoom()
+        ),
+        type: 'FeatureCollection'
+      };
+
+      this._cnfsLayer = geoJSON(presentation, {
         // eslint-disable-next-line @typescript-eslint/typedef,@typescript-eslint/naming-convention
-        pointToLayer: (_, position: LatLng): Layer => marker(position, { icon: icon(this._cnfsMarkerConfig) })
+        pointToLayer: (_, position: LatLng): Layer => marker(position, { icon: icon(this._clusterMarkerConfig) })
       });
 
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      this._map?.addLayer(this._cnfsLayer);
+      this._map.addLayer(this._cnfsLayer);
     }
   }
 }
