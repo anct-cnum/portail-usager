@@ -2,28 +2,39 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CartographyFeatureRoutingModule } from './cartography.feature-routing.module';
 import { ListCnfsPositionUseCase } from '../../../use-cases';
-import type { CnfsRepository } from '../../../core';
-import { CnfsRestTestDouble } from '../../../use-cases/test-doubles/cnfs-rest-test-double';
-import { HttpClient } from '@angular/common/http';
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { CnfsRepository, CoordinatesRepository } from '../../../core';
+
 import { MARKERS, MARKERS_TOKEN } from '../tokens';
 import { CartographyPage } from '../../presentation/pages';
 import { LeafletMapComponent } from '../../presentation/components';
+import { ReactiveFormsModule } from '@angular/forms';
+import { CnfsRest } from '../../data/rest';
+import { CoordinatesRest } from '../../data/rest/coordinates';
+import { GeocodeAddressUseCase } from '../../../use-cases/geocode-address/geocode-address.use-case';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [CartographyPage, LeafletMapComponent],
-  imports: [CartographyFeatureRoutingModule, CommonModule],
+  imports: [CartographyFeatureRoutingModule, CommonModule, HttpClientModule, ReactiveFormsModule],
   providers: [
     {
       provide: MARKERS_TOKEN,
       useValue: MARKERS
     },
-    // TODO Remplacer par le vrai repository CnfsRest quand la route api-conseiller-numerique sera prête
-    CnfsRestTestDouble,
-    HttpClient,
+    CnfsRest,
+    CoordinatesRest,
     {
-      deps: [CnfsRestTestDouble],
+      deps: [CnfsRest],
       provide: ListCnfsPositionUseCase,
       useFactory: (cnfsRepository: CnfsRepository): ListCnfsPositionUseCase => new ListCnfsPositionUseCase(cnfsRepository)
+    },
+    {
+      deps: [CoordinatesRest],
+      provide: GeocodeAddressUseCase,
+      useFactory: (coordinatesRepository: CoordinatesRepository): GeocodeAddressUseCase =>
+        new GeocodeAddressUseCase(coordinatesRepository)
     }
   ]
 })

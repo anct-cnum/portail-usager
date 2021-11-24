@@ -1,3 +1,7 @@
 <ng-container *ngIf="cnfsMarkers$ | async as cnfsMarkers">
-  <leaflet-map [mapOptions]="mapOptions" [cnfsMarkers]="cnfsMarkers"></leaflet-map>
+  <leaflet-map
+    [mapOptions]="mapOptions"
+    [cnfsMarkers]="cnfsMarkers"
+    [usagerCoordinates]="usagerCoordinates$ | async"
+    (addressToGeocode)="geocodeUsagerPosition($event)"></leaflet-map>
 </ng-container>

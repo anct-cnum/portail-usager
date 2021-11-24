@@ -2,13 +2,27 @@ import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
 import { CartographyPage } from './cartography.page';
 import { LeafletMapStubComponent } from '../../test-doubles';
-import { CartographyPresenter } from './cartography.presenter';
 import { FailedToCompileError } from '@angular-common/errors';
 import { ListCnfsPositionUseCase } from '../../../../use-cases';
 import { CnfsRestTestDouble } from '../../../../use-cases/test-doubles/cnfs-rest-test-double';
 import type { CnfsRepository } from '../../../../core';
+import { CartographyPresenter } from './cartography.presenter';
+import type { Observable } from 'rxjs';
+import { of } from 'rxjs';
 
-// TODO Utiliser un double de test plutôt que d'injecter le vrai présenter
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
+class CartographyPresenterStub {
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  public defaultMapOptions() {
+    return {};
+  }
+
+  public listCnfsPositions$(): Observable<null> {
+    return of(null);
+  }
+}
+
+// eslint-disable-next-line max-lines-per-function
 describe('cartography page', (): void => {
   beforeEach(async (): Promise<void> => {
     await TestBed.configureTestingModule({
@@ -20,10 +34,19 @@ describe('cartography page', (): void => {
           deps: [CnfsRestTestDouble],
           provide: ListCnfsPositionUseCase,
           useFactory: (cnfsRepository: CnfsRepository): ListCnfsPositionUseCase => new ListCnfsPositionUseCase(cnfsRepository)
-        },
-        CartographyPresenter
+        }
       ]
     })
+      .overrideComponent(CartographyPage, {
+        set: {
+          providers: [
+            {
+              provide: CartographyPresenter,
+              useClass: CartographyPresenterStub
+            }
+          ]
+        }
+      })
       .compileComponents()
       .catch((): void => {
         throw new FailedToCompileError(`CartographyPage`);
