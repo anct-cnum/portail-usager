@@ -3,5 +3,6 @@
     [mapOptions]="mapOptions"
     [cnfsMarkers]="cnfsMarkers"
     [usagerCoordinates]="usagerCoordinates$ | async"
-    (addressToGeocode)="geocodeUsagerPosition($event)"></leaflet-map>
+    (addressToGeocode)="geocodeUsagerPosition($event)"
+    (usagerAutolocate)="updateUsagerPosition($event)"></leaflet-map>
 </ng-container>

@@ -57,7 +57,11 @@ export class CartographyPage {
 
   public geocodeUsagerPosition($event: string) {
     this.presenter.geocodeAddress$($event).subscribe((usagerCoordinates: Coordinates): void => {
-      this._usagerCoordinates$.next(usagerCoordinates);
+      this.updateUsagerPosition(usagerCoordinates);
     });
+  }
+
+  public updateUsagerPosition($event: Coordinates) {
+    this._usagerCoordinates$.next($event);
   }
 }

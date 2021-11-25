@@ -41,6 +41,8 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
 
   @Output() addressToGeocode = new EventEmitter<string>();
 
+  @Output() usagerAutolocate = new EventEmitter<Coordinates>();
+
   @Input()
   public usagerCoordinates?: Coordinates | null;
 
@@ -129,7 +131,23 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
     }
   }
 
-  geocode() {
+  public geocode() {
     this.addressToGeocode.emit(this.address.value);
+  }
+
+  public locate() {
+    const navigator: Navigator = window.navigator;
+    navigator.geolocation.getCurrentPosition(
+      (e: GeolocationPosition) => {
+        this.emitLocation(e);
+      },
+      (e) => {
+        alert(`Nous n'avons pas réussi à vous localiser : ${e.message}`);
+      }
+    );
+  }
+
+  public emitLocation(e: GeolocationPosition) {
+    this.usagerAutolocate.emit(new Coordinates(e.coords.latitude, e.coords.longitude));
   }
 }
