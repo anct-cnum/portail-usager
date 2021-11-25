@@ -1,12 +1,13 @@
 {
-  "name": "portail-usager-conseille-numerique",
+  "name": "portail-usager-conseiller-numerique",
   "version": "0.0.0",
   "description": "Portail usager - Conseiller Numérique",
   "author": "Romain Cambonie <romain.cambonie@gmail.com>",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start:prod": "ng serve --configuration production",
+    "start:dev": "ng serve --configuration development",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",

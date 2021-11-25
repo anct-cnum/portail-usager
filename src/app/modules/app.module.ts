@@ -6,6 +6,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { RootLayout } from '../pages/layouts/root/root.layout';
 import { ContentLayout } from '../pages/layouts/content/content.layout';
 import { HomePage } from '../pages/home/home.page';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { ApiRewriteUrlInterceptor } from '../interceptors/api-rewrite-url.interceptor';
+
+import { APIS_TOKENS } from '../tokens';
 
 @NgModule({
   bootstrap: [RootLayout],
@@ -13,10 +17,17 @@ import { HomePage } from '../pages/home/home.page';
   imports: [
     AppRoutingModule,
     BrowserModule,
+    HttpClientModule,
     ServiceWorkerModule.register('/ngsw-worker.js', {
       enabled: ENVIRONMENT.type === EnvironmentType.Production
     })
   ],
-  providers: []
+  providers: [
+    {
+      provide: APIS_TOKENS,
+      useValue: ENVIRONMENT.apisConfiguration
+    },
+    { multi: true, provide: HTTP_INTERCEPTORS, useClass: ApiRewriteUrlInterceptor }
+  ]
 })
 export class AppModule {}

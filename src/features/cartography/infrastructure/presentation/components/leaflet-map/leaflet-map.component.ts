@@ -27,12 +27,9 @@ const MAX_ZOOM_LEVEL: number = 19;
   templateUrl: './leaflet-map.component.html'
 })
 export class LeafletMapComponent implements AfterViewInit, OnChanges {
-  private readonly _clusterMarkerConfig: IconOptions;
   private _cnfsLayer!: Layer;
-  private readonly _cnfsMarkerConfig: IconOptions;
   private _map!: LeafletMap;
   private _mapOptions: LeafletMapOptions = {};
-  private readonly _usagerMarkerConfig: IconOptions;
 
   public address: FormControl;
 
@@ -60,7 +57,8 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
         }),
         geoJSON(this.cnfsMarkers, {
           // eslint-disable-next-line @typescript-eslint/typedef,@typescript-eslint/naming-convention
-          pointToLayer: (_, position: LatLng): Layer => marker(position, { icon: icon(this._cnfsMarkerConfig) })
+          pointToLayer: (_, position: LatLng): Layer =>
+            marker(position, { icon: icon(this.markersConfigurations[AvailableMarkers.Cnfs]) })
         })
       ],
       zoom: Math.min(mapOptions.zoomLevel, MAX_ZOOM_LEVEL)
@@ -68,14 +66,8 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
   }
 
   public constructor(
-    @Inject(MARKERS_TOKEN) private readonly markersConfigurations: Map<AvailableMarkers, MarkerConfiguration>
+    @Inject(MARKERS_TOKEN) private readonly markersConfigurations: Record<AvailableMarkers, MarkerConfiguration>
   ) {
-    // TODO Meilleur moyen de partager ça ?
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this._cnfsMarkerConfig = this.markersConfigurations.get(AvailableMarkers.Cnfs)!;
-    this._clusterMarkerConfig = this.markersConfigurations.get(AvailableMarkers.CnfsCluster)!;
-    this._usagerMarkerConfig = this.markersConfigurations.get(AvailableMarkers.Usager)!;
-
     this.address = new FormControl('');
   }
 
@@ -116,7 +108,8 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
 
         this._cnfsLayer = geoJSON(presentation, {
           // eslint-disable-next-line @typescript-eslint/typedef,@typescript-eslint/naming-convention
-          pointToLayer: (_, position: LatLng): Layer => marker(position, { icon: icon(this._clusterMarkerConfig) })
+          pointToLayer: (_, position: LatLng): Layer =>
+            marker(position, { icon: icon(this.markersConfigurations[AvailableMarkers.CnfsCluster]) })
         });
 
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -125,7 +118,7 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
 
       if (propertyName === 'usagerCoordinates') {
         marker([this.usagerCoordinates!.latitude, this.usagerCoordinates!.longitude], {
-          icon: icon(this._usagerMarkerConfig)
+          icon: icon(this.markersConfigurations[AvailableMarkers.Usager])
         }).addTo(this._map);
       }
     }

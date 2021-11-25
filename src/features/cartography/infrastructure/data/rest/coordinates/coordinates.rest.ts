@@ -1,29 +1,32 @@
 import type { Observable } from 'rxjs';
 import { map } from 'rxjs';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { HttpClient } from '@angular/common/http';
 
+import type { Coordinates } from '../../../../core';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { CoordinatesRepository } from '../../../../core';
 
-import type { Coordinates } from '../../../../core';
-
 import type { FeatureCollection, Point } from 'geojson';
 import { featureCollectionToFirstCoordinates } from '../../models/coordinates.transfer-mapper';
+import { Api } from '../../../../../../environments/environment.model';
 
 @Injectable()
 export class CoordinatesRest extends CoordinatesRepository {
-  // TODO Ajouter un intercepteur qui détecte toutes les routes qui commencent par @ et les remplacent le @ par https://API_DOMAINE, cette url étant stockée dans une configuration (token).
-  private readonly _endpointUri: string = 'https://api-adresse.data.gouv.fr/search/?q=';
+  private readonly _queryParameters: string = '?q=';
+  private readonly _searchEndpoint: string = 'search';
 
-  public constructor(private readonly httpClient: HttpClient) {
+  public constructor(@Inject(HttpClient) private readonly httpClient: HttpClient) {
     super();
   }
 
-  public geocodeAddress$(address: string): Observable<Coordinates> {
-    const endpoint: string = `${this._endpointUri}${encodeURI(address)}`;
-    return this.httpClient.get<FeatureCollection<Point>>(endpoint).pipe(map(featureCollectionToFirstCoordinates));
+  public geocodeAddress$(addressQuery: string): Observable<Coordinates> {
+    return this.httpClient
+      .get<FeatureCollection<Point>>(
+        `${Api.Adresse}/${this._searchEndpoint}/${this._queryParameters}${encodeURI(addressQuery)}`
+      )
+      .pipe(map(featureCollectionToFirstCoordinates));
   }
 }

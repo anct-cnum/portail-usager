@@ -1,5 +1,5 @@
 import type { Observable } from 'rxjs';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { HttpClient } from '@angular/common/http';
@@ -9,17 +9,17 @@ import type { Cnfs } from '../../../../core';
 import { CnfsRepository } from '../../../../core';
 import type { CnfsTransfer } from '../../models';
 import { cnfsTransferToCore } from '../../models';
+import { Api } from '../../../../../../environments/environment.model';
 
 @Injectable()
 export class CnfsRest extends CnfsRepository {
-  // TODO Ajouter un intercepteur qui détecte toutes les routes qui commencent par @ et les remplacent le @ par https://API_DOMAINE, cette url étant stockée dans une configuration (token).
-  private readonly _endpointUri: string = 'https://beta.api.conseiller-numerique.gouv.fr/conseillers/geolocalisation';
+  private readonly _cnsfEndpoint: string = 'conseillers/geolocalisation';
 
-  public constructor(private readonly httpClient: HttpClient) {
+  public constructor(@Inject(HttpClient) private readonly httpClient: HttpClient) {
     super();
   }
 
   public listCnfs$(): Observable<Cnfs[]> {
-    return this.httpClient.get<CnfsTransfer>(this._endpointUri).pipe(map(cnfsTransferToCore));
+    return this.httpClient.get<CnfsTransfer>(`${Api.ConseillerNumerique}/${this._cnsfEndpoint}`).pipe(map(cnfsTransferToCore));
   }
 }

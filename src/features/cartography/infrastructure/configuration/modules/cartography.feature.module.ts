@@ -13,11 +13,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CnfsRest } from '../../data/rest';
 import { CoordinatesRest } from '../../data/rest/coordinates';
 import { GeocodeAddressUseCase } from '../../../use-cases/geocode-address/geocode-address.use-case';
-import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [CartographyPage, LeafletMapComponent],
-  imports: [CartographyFeatureRoutingModule, CommonModule, HttpClientModule, ReactiveFormsModule],
+  imports: [CartographyFeatureRoutingModule, CommonModule, ReactiveFormsModule],
   providers: [
     {
       provide: MARKERS_TOKEN,
