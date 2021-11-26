@@ -1,7 +1,7 @@
 // TODO REVIEW IGNORE
 /* eslint-disable */
-import type { MapOptions as LeafletMapOptions, LatLng, Layer, IconOptions } from 'leaflet';
-import { geoJSON, icon, latLng, map, Map as LeafletMap, marker, tileLayer } from 'leaflet';
+import type { MapOptions as LeafletMapOptions, Layer, IconOptions, ZoomPanOptions } from 'leaflet';
+import { geoJSON, icon, latLng, LatLng, map, Map as LeafletMap, marker, tileLayer } from 'leaflet';
 import { AfterViewInit, ElementRef, EventEmitter, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { ChangeDetectionStrategy, Component, Inject, Input, ViewChild } from '@angular/core';
 import type { CnfsPresentation, MapOptionsPresentation } from '../../models';
@@ -19,6 +19,7 @@ const EMPTY_MARKERS: CnfsPresentation = {
 };
 
 const MAX_ZOOM_LEVEL: number = 19;
+const ONE_SECOND_AND_A_HALF = 1.5;
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -117,9 +118,15 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
       }
 
       if (propertyName === 'usagerCoordinates') {
-        marker([this.usagerCoordinates!.latitude, this.usagerCoordinates!.longitude], {
+        const position: LatLng = new LatLng(this.usagerCoordinates!.latitude, this.usagerCoordinates!.longitude);
+        marker(position, {
           icon: icon(this.markersConfigurations[AvailableMarkers.Usager])
         }).addTo(this._map);
+
+        this._map.setView(position, 13, {
+          animate: true,
+          duration: ONE_SECOND_AND_A_HALF
+        } as ZoomPanOptions);
       }
     }
   }
