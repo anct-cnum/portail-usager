@@ -9,6 +9,7 @@ import type { CnfsRepository } from '../../../../core';
 import { CartographyPresenter } from './cartography.presenter';
 import type { Observable } from 'rxjs';
 import { of } from 'rxjs';
+import { AddressGeolocationStubComponent } from '../../test-doubles/components/address-geolocation';
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class CartographyPresenterStub {
@@ -26,7 +27,7 @@ class CartographyPresenterStub {
 describe('cartography page', (): void => {
   beforeEach(async (): Promise<void> => {
     await TestBed.configureTestingModule({
-      declarations: [CartographyPage, LeafletMapStubComponent],
+      declarations: [AddressGeolocationStubComponent, CartographyPage, LeafletMapStubComponent],
       imports: [],
       providers: [
         CnfsRestTestDouble,

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 
-import type { CnfsPresentation, MapOptionsPresentation } from '../../models';
+import type { MapOptionsPresentation } from '../../models';
 import { Coordinates } from '../../../../core';
 
 import type { Observable } from 'rxjs';
@@ -9,6 +9,8 @@ import { cnfsCoreToPresentation } from '../../models';
 
 import { ListCnfsPositionUseCase } from '../../../../use-cases';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
+import type { FeatureCollection, Point } from 'geojson';
+import { ClusterService } from '../../services/cluster.service';
 
 // TODO Exporter dans une configuration, prendre la dernière position connue de l'usager ou le geocoding de l'adresse
 const START_LATITUDE: number = 45.764043;
@@ -19,7 +21,8 @@ const DEFAULT_ZOOM_LEVEL: number = 6;
 export class CartographyPresenter {
   public constructor(
     @Inject(ListCnfsPositionUseCase) private readonly listCnfsPositionUseCase: ListCnfsPositionUseCase,
-    @Inject(GeocodeAddressUseCase) private readonly geocodeAddressUseCase: GeocodeAddressUseCase
+    @Inject(GeocodeAddressUseCase) private readonly geocodeAddressUseCase: GeocodeAddressUseCase,
+    @Inject(ClusterService) public readonly clusterService: ClusterService
   ) {}
 
   // TODO Exporter dans une configuration
@@ -34,7 +37,7 @@ export class CartographyPresenter {
     return this.geocodeAddressUseCase.execute$(address);
   }
 
-  public listCnfsPositions$(): Observable<CnfsPresentation> {
+  public listCnfsPositions$(): Observable<FeatureCollection<Point>> {
     return this.listCnfsPositionUseCase.execute$().pipe(map(cnfsCoreToPresentation));
   }
 }

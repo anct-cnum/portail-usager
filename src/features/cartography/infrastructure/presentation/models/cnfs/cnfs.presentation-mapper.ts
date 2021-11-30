@@ -1,6 +1,7 @@
 import type { Cnfs } from '../../../../core';
-import type { CnfsPresentation } from './cnfs.presentation-model';
-import type { Feature, Point } from 'geojson';
+import type { Feature, FeatureCollection, Point } from 'geojson';
+import type { AvailableMarkers } from '../../../configuration';
+import type { MarkerProperties } from './cnfs.presentation-model';
 
 const cnfsArrayToGeoJsonFeatures = (cnfsArray: Cnfs[]): Feature<Point>[] =>
   cnfsArray.map(
@@ -10,13 +11,21 @@ const cnfsArrayToGeoJsonFeatures = (cnfsArray: Cnfs[]): Feature<Point>[] =>
         type: 'Point'
       },
       properties: {
-        // TODO Iterate over properties if needed in core domain or just flat pass
+        ...singleCnfs.properties
       },
       type: 'Feature'
     })
   );
 
-export const cnfsCoreToPresentation = (cnfs: Cnfs[]): CnfsPresentation => ({
+export const cnfsCoreToPresentation = (cnfs: Cnfs[]): FeatureCollection<Point> => ({
   features: cnfsArrayToGeoJsonFeatures(cnfs),
   type: 'FeatureCollection'
+});
+
+export const featureGeoJsonToMarker = (
+  feature: Feature<Point>,
+  markerIconConfiguration: AvailableMarkers
+): Feature<Point, MarkerProperties> => ({
+  ...feature,
+  ...{ properties: { ...{ markerIconConfiguration } } }
 });

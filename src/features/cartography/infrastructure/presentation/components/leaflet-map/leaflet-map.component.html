@@ -1,17 +1,1 @@
-<!-- TODO REVIEW IGNORE -->
-<br />
-
-<br />
-<div class="todo">
-  <label for="address">Adresse:</label>
-  <input id="address" type="text" [formControl]="address" placeholder="Saisir une adresse" />
-  <button (click)="geocode()">Utiliser cette adresse</button>
-</div>
-<div class="todo">
-  <button (click)="locate()">Me localiser automatiquement</button>
-</div>
-<br />
-<br />
-<div class="todo">
-  <div #map style="height: 800px"></div>
-</div>
+<div #map style="width: 100%; height: 100%"></div>

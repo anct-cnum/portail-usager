@@ -13,9 +13,21 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CnfsRest } from '../../data/rest';
 import { CoordinatesRest } from '../../data/rest/coordinates';
 import { GeocodeAddressUseCase } from '../../../use-cases/geocode-address/geocode-address.use-case';
+import { LeafletMapStateChangeDirective } from '../../presentation/directives/leaflet-map-state-change';
+import { ViewCullingPipe } from '../../presentation/pipes/view-culling.pipe';
+import { ClusterService } from '../../presentation/services/cluster.service';
+import { AddressGeolocationComponent } from '../../presentation/components/address-typeahead/address-geolocation.component';
+import { AddUsagerMarker } from '../../presentation/pipes/add-usager-marker.pipe';
 
 @NgModule({
-  declarations: [CartographyPage, LeafletMapComponent],
+  declarations: [
+    AddressGeolocationComponent,
+    AddUsagerMarker,
+    CartographyPage,
+    LeafletMapComponent,
+    LeafletMapStateChangeDirective,
+    ViewCullingPipe
+  ],
   imports: [CartographyFeatureRoutingModule, CommonModule, ReactiveFormsModule],
   providers: [
     {
@@ -24,6 +36,10 @@ import { GeocodeAddressUseCase } from '../../../use-cases/geocode-address/geocod
     },
     CnfsRest,
     CoordinatesRest,
+    {
+      provide: ClusterService,
+      useFactory: (): ClusterService => new ClusterService(ClusterService.initCluster())
+    },
     {
       deps: [CnfsRest],
       provide: ListCnfsPositionUseCase,

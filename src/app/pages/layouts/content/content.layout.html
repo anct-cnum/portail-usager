@@ -2,7 +2,7 @@
   <div class="fr-header__body">
     <div class="fr-container">
       <div class="fr-header__body-row">
-        <div class="fr-header__brand fr-enlarge-link todo">
+        <div class="fr-header__brand fr-enlarge-link">
           <div class="fr-header__brand-top">
             <div class="fr-header__logo">
               <p class="fr-logo">
@@ -15,7 +15,6 @@
               <img
                 src="/assets/brand/logo-rf-conseiller-numerique.svg"
                 class="fr-responsive-img"
-                style="max-width: 9.0625rem"
                 alt="Logo Conseiller Numérique" />
             </div>
             <div class="fr-header__navbar">
@@ -84,18 +83,11 @@
   </div>
 </header>
 
-<!-- Corps -->
-<div class="fr-container">
-  <div class="fr-grid-row--center">
-    <div class="fr-col-8">
-      <router-outlet></router-outlet>
-    </div>
-  </div>
-</div>
+<router-outlet></router-outlet>
 
 <!-- Pied de page -->
 <footer class="fr-footer" role="contentinfo" id="footer">
-  <div class="fr-container todo">
+  <div class="fr-container">
     <div class="fr-footer__body fr-footer__body--operator">
       <div class="fr-footer__brand fr-enlarge-link">
         <p class="fr-logo" title="république française">
@@ -103,10 +95,6 @@
           <br />
           française
         </p>
-        <a class="fr-footer__brand-link" href="/accueil" title="Retour à l’accueil">
-          <!-- L'alternative de l'image (attribut alt) doit impérativement être renseignée et reprendre le texte visible dans l’image -->
-          <img class="fr-footer__logo" src="/assets/brand/logo-anct.svg" alt="Logo ANCT" />
-        </a>
         <a class="fr-footer__brand-link" href="/accueil" title="Retour à l’accueil">
           <!-- L'alternative de l'image (attribut alt) doit impérativement être renseignée et reprendre le texte visible dans l’image -->
           <img class="fr-footer__logo" src="/assets/brand/logo-france-relance-alt.svg" alt="Logo France Relance" />

@@ -1,0 +1,11 @@
+<!-- TODO REVIEW IGNORE-->
+<div>
+  <pre>
+    <label for="address">Adresse:</label>
+    <input id="address" type="text" [formControl]="address" placeholder="Saisir une adresse" />
+    <button (click)="geocode()">Utiliser cette adresse</button>
+  </pre>
+  <div>
+    <button (click)="locate()">Me localiser automatiquement</button>
+  </div>
+</div>

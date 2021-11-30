@@ -1,7 +1,6 @@
-import type { CnfsPresentation } from '../../infrastructure/presentation/models';
 import type { CnfsTransfer } from '../../infrastructure/data/models';
 import { cnfsData } from './data/cnfs-data';
-import type { GeoJsonProperties, Point, Feature } from 'geojson';
+import type { GeoJsonProperties, Point, Feature, FeatureCollection } from 'geojson';
 import Supercluster from 'supercluster';
 
 const MIN_LATITUDE: number = -90;
@@ -11,13 +10,13 @@ const MAX_LONGITUDE: number = 180;
 const CNFS_DATA: CnfsTransfer = cnfsData() as CnfsTransfer;
 const ZOOM_LEVEL: number = 2;
 
-const FIRST_MARKERS: CnfsPresentation = {
+const FIRST_MARKERS: FeatureCollection<Point> = {
   features: [CNFS_DATA.features[0], CNFS_DATA.features[1], CNFS_DATA.features[2]],
   type: 'FeatureCollection'
 };
 
 describe('Supercluster integration', (): void => {
-  const geojsonFeatureArray: CnfsPresentation = FIRST_MARKERS;
+  const geojsonFeatureArray: FeatureCollection<Point> = FIRST_MARKERS;
 
   it('should create a cluster array with 3 points in one cluster', (): void => {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
