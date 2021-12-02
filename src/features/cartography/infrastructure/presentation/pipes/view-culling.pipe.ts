@@ -3,7 +3,7 @@ import { Inject, Pipe } from '@angular/core';
 import type { Feature, FeatureCollection, Point } from 'geojson';
 import type { ViewBox } from '../directives/leaflet-map-state-change';
 import type { MarkerProperties } from '../models';
-import { EMPTY_COLLECTION } from '../models';
+import { EMPTY_FEATURE_COLLECTION } from '../models';
 import { AvailableMarkers } from '../../configuration';
 import { ClusterService } from '../services/cluster.service';
 
@@ -46,7 +46,7 @@ export class ViewCullingPipe implements PipeTransform {
   }
 
   public transform(viewbox?: ViewBox | null): FeatureCollection<Point, MarkerProperties> {
-    if (viewbox == null || !this.clusterService.isReady) return EMPTY_COLLECTION;
+    if (viewbox == null || !this.clusterService.isReady) return EMPTY_FEATURE_COLLECTION;
 
     const markerIcon: AvailableMarkers = this.clusterService.getMarkerAtZoomLevel(viewbox.zoomLevel);
     return {

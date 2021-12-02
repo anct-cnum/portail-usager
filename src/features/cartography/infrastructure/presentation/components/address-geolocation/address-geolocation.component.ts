@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angul
 import { Coordinates } from '../../../../core';
 import { FormControl } from '@angular/forms';
 
+// TODO geocode et locate sont deux sujets différents qu'il serait bien de séparer dans des composants dédiés
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'address-geolocation',

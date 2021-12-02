@@ -1,4 +1,4 @@
-import type { AfterViewInit } from '@angular/core';
+import type { AfterViewInit, OnDestroy } from '@angular/core';
 import { Directive, EventEmitter, Output } from '@angular/core';
 import type { BBox } from 'geojson';
 import type { LatLng, LatLngBounds } from 'leaflet';
@@ -18,31 +18,31 @@ export interface ViewReset extends ViewBox {
 @Directive({
   selector: 'leaflet-map[stateChange]'
 })
-export class LeafletMapStateChangeDirective implements AfterViewInit {
-  @Output() public readonly viewreset: EventEmitter<ViewReset> = new EventEmitter<ViewReset>();
+export class LeafletMapStateChangeDirective implements AfterViewInit, OnDestroy {
+  @Output() public readonly stateChange: EventEmitter<ViewReset> = new EventEmitter<ViewReset>();
 
   public constructor(public readonly mapComponent: LeafletMapComponent) {}
 
   private bindMoveEnd(): void {
     this.mapComponent.map.on('moveend', (): void => {
-      this.emitViewReset();
+      this.emitStateChange();
     });
   }
 
   private bindViewReset(): void {
     this.mapComponent.map.on('viewreset', (): void => {
-      this.emitViewReset();
+      this.emitStateChange();
     });
   }
 
   private bindZoomEnd(): void {
     this.mapComponent.map.on('zoomend', (): void => {
-      this.emitViewReset();
+      this.emitStateChange();
     });
   }
 
-  private emitViewReset(): void {
-    this.viewreset.emit({
+  private emitStateChange(): void {
+    this.stateChange.emit({
       boundingBox: this.getBoundingBox(this.mapComponent.map.getBounds()),
       center: this.mapComponent.map.getCenter(),
       zoomLevel: this.mapComponent.map.getZoom()
@@ -53,9 +53,33 @@ export class LeafletMapStateChangeDirective implements AfterViewInit {
     return [bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()];
   }
 
+  private unbindMoveEnd(): void {
+    this.mapComponent.map.off('moveend', (): void => {
+      this.emitStateChange();
+    });
+  }
+
+  private unbindViewReset(): void {
+    this.mapComponent.map.off('viewreset', (): void => {
+      this.emitStateChange();
+    });
+  }
+
+  private unbindZoomEnd(): void {
+    this.mapComponent.map.off('zoomend', (): void => {
+      this.emitStateChange();
+    });
+  }
+
   public ngAfterViewInit(): void {
     this.bindViewReset();
     this.bindZoomEnd();
     this.bindMoveEnd();
+  }
+
+  public ngOnDestroy(): void {
+    this.unbindViewReset();
+    this.unbindZoomEnd();
+    this.unbindMoveEnd();
   }
 }

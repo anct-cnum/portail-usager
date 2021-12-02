@@ -16,7 +16,7 @@ import { GeocodeAddressUseCase } from '../../../use-cases/geocode-address/geocod
 import { LeafletMapStateChangeDirective } from '../../presentation/directives/leaflet-map-state-change';
 import { ViewCullingPipe } from '../../presentation/pipes/view-culling.pipe';
 import { ClusterService } from '../../presentation/services/cluster.service';
-import { AddressGeolocationComponent } from '../../presentation/components/address-typeahead/address-geolocation.component';
+import { AddressGeolocationComponent } from '../../presentation/components/address-geolocation/address-geolocation.component';
 import { AddUsagerMarker } from '../../presentation/pipes/add-usager-marker.pipe';
 
 @NgModule({
@@ -38,7 +38,7 @@ import { AddUsagerMarker } from '../../presentation/pipes/add-usager-marker.pipe
     CoordinatesRest,
     {
       provide: ClusterService,
-      useFactory: (): ClusterService => new ClusterService(ClusterService.initCluster())
+      useClass: ClusterService
     },
     {
       deps: [CnfsRest],

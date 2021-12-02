@@ -7,7 +7,7 @@ import { MARKERS_TOKEN } from '../../../configuration';
 import type { AvailableMarkers, MarkerConfiguration } from '../../../configuration';
 import type { Feature, FeatureCollection, Point } from 'geojson';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
-import { EMPTY_COLLECTION } from '../../models';
+import { EMPTY_FEATURE_COLLECTION } from '../../models';
 
 // TODO Convert configuration to injected token for default options then remove
 const MAX_ZOOM_LEVEL: number = 19;
@@ -27,7 +27,7 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
   public mapContainer!: ElementRef<HTMLElement>;
 
   @Input()
-  public markers: FeatureCollection<Point, MarkerProperties> = EMPTY_COLLECTION;
+  public markers: FeatureCollection<Point, MarkerProperties> = EMPTY_FEATURE_COLLECTION;
 
   public get map(): LeafletMap {
     return this._map;

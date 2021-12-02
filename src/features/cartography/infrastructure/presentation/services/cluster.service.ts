@@ -11,13 +11,12 @@ const CLUSTER_RADIUS: number = 40;
 export class ClusterService {
   private _isReady: boolean = false;
   public readonly clusterRadius: number = CLUSTER_RADIUS;
+  public readonly index: Supercluster<MarkerProperties, MarkerProperties> = ClusterService.initCluster();
   public readonly maxZoom: number = CLUSTER_MAX_ZOOM_DISPLAY;
 
   public get isReady(): boolean {
     return this._isReady;
   }
-
-  public constructor(public readonly index: Supercluster<MarkerProperties, MarkerProperties>) {}
 
   public static initCluster(): Supercluster<MarkerProperties, MarkerProperties> {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions

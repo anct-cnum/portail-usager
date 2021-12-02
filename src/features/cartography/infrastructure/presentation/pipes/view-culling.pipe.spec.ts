@@ -1,9 +1,8 @@
 import type { MarkerProperties } from '../models';
-import { EMPTY_COLLECTION } from '../models';
+import { EMPTY_FEATURE_COLLECTION } from '../models';
 import { ViewCullingPipe } from './view-culling.pipe';
 
 import { ClusterService } from '../services/cluster.service';
-import type Supercluster from 'supercluster';
 import { AvailableMarkers } from '../../configuration';
 import type { ViewBox } from '../directives/leaflet-map-state-change';
 import type { Feature, Point } from 'geojson';
@@ -42,14 +41,14 @@ describe('ViewCulling pipe', (): void => {
   beforeEach((): void => {
     ClusterServiceMock.mockClear();
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    pipeInstance = new ViewCullingPipe(new ClusterServiceMock({} as Supercluster<MarkerProperties, MarkerProperties>));
+    pipeInstance = new ViewCullingPipe(new ClusterServiceMock());
 
     // eslint-disable-next-line jest/prefer-spy-on,@typescript-eslint/dot-notation,@typescript-eslint/explicit-function-return-type
     pipeInstance['getFinalFeatures'] = jest.fn(() => DUMMY_FEATURES);
   });
 
   it('should return an empty collection if the viewbox is not defined', (): void => {
-    expect(pipeInstance.transform()).toStrictEqual(EMPTY_COLLECTION);
+    expect(pipeInstance.transform()).toStrictEqual(EMPTY_FEATURE_COLLECTION);
   });
 
   it('should return a collection with one element', (): void => {

@@ -3,7 +3,7 @@ import type { AvailableMarkers } from '../../../configuration';
 
 export type MarkerProperties = GeoJsonProperties & { markerIconConfiguration: AvailableMarkers };
 
-export const EMPTY_COLLECTION: FeatureCollection<Point, MarkerProperties> = {
+export const EMPTY_FEATURE_COLLECTION: FeatureCollection<Point, MarkerProperties> = {
   features: [],
   type: 'FeatureCollection'
 };
