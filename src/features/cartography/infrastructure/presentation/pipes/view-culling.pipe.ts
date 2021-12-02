@@ -1,6 +1,6 @@
 import type { PipeTransform } from '@angular/core';
 import { Inject, Pipe } from '@angular/core';
-import type { Feature, FeatureCollection, Point } from 'geojson';
+import type { Feature, FeatureCollection, GeoJsonProperties, Point } from 'geojson';
 import type { ViewBox } from '../directives/leaflet-map-state-change';
 import type { MarkerProperties } from '../models';
 import { EMPTY_FEATURE_COLLECTION } from '../models';
@@ -35,13 +35,23 @@ export class ViewCullingPipe implements PipeTransform {
     return clustersForViewbox;
   }
 
+  private mergeProperties(
+    properties: MarkerProperties,
+    marker: AvailableMarkers
+  ): GeoJsonProperties & { markerIconConfiguration: AvailableMarkers } {
+    return {
+      ...properties,
+      ...{ markerIconConfiguration: properties['cluster'] === true ? marker : AvailableMarkers.Cnfs }
+    };
+  }
+
   // TODO Mieux gérer la logique d'attribution des marqueurs
   private setMarkerIcon(
     marker: AvailableMarkers
   ): (feature: Feature<Point, MarkerProperties>) => Feature<Point, MarkerProperties> {
     return (feature: Feature<Point, MarkerProperties>): Feature<Point, MarkerProperties> => ({
       ...feature,
-      ...{ properties: { markerIconConfiguration: feature.properties['cluster'] === true ? marker : AvailableMarkers.Cnfs } }
+      ...{ properties: this.mergeProperties(feature.properties, marker) }
     });
   }
 

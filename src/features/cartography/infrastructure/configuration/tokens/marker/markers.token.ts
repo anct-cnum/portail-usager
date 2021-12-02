@@ -13,6 +13,14 @@ const CNFS_MARKER_WIDTH_IN_PIXEL: number = 28.5;
 const CNFS_MARKER_HEIGTH_IN_PIXEL: number = 48;
 const CNFS_MARKER_DIMENSIONS: Point = new Point(CNFS_MARKER_WIDTH_IN_PIXEL, CNFS_MARKER_HEIGTH_IN_PIXEL, ROUND_FALSE);
 
+const CNFS_MARKER_CLUSTER_WIDTH_IN_PIXEL: number = 31;
+const CNFS_MARKER_CLUSTER_HEIGTH_IN_PIXEL: number = 36;
+const CNFS_MARKER_CLUSTER_DIMENSIONS: Point = new Point(
+  CNFS_MARKER_CLUSTER_WIDTH_IN_PIXEL,
+  CNFS_MARKER_CLUSTER_HEIGTH_IN_PIXEL,
+  ROUND_FALSE
+);
+
 const USAGER_MARKER_WIDTH_IN_PIXEL: number = 16;
 const USAGER_MARKER_HEIGTH_IN_PIXEL: number = 16;
 const USAGER_MARKER_DIMENSIONS: Point = new Point(USAGER_MARKER_WIDTH_IN_PIXEL, USAGER_MARKER_HEIGTH_IN_PIXEL, ROUND_FALSE);
@@ -30,8 +38,8 @@ export const MARKERS: Record<AvailableMarkers, MarkerConfiguration> = {
     iconUrl: 'assets/map/pin-cnfs.svg'
   },
   [AvailableMarkers.CnfsCluster]: {
-    iconAnchor: new Point(CNFS_MARKER_DIMENSIONS.x * HALF, CNFS_MARKER_DIMENSIONS.y),
-    iconSize: CNFS_MARKER_DIMENSIONS,
+    iconAnchor: new Point(CNFS_MARKER_CLUSTER_DIMENSIONS.x * HALF, CNFS_MARKER_CLUSTER_DIMENSIONS.y),
+    iconSize: CNFS_MARKER_CLUSTER_DIMENSIONS,
     iconUrl: 'assets/map/pin-cnfs-cluster.svg'
   },
   [AvailableMarkers.Usager]: {
