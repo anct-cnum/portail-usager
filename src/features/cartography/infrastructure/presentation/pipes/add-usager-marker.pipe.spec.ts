@@ -2,7 +2,7 @@ import { AddUsagerMarker } from './add-usager-marker.pipe';
 import type { MarkerProperties } from '../models';
 import type { FeatureCollection, Point } from 'geojson';
 import { Coordinates } from '../../../core';
-import { AvailableMarkers } from '../../configuration';
+import { Marker } from '../../configuration';
 
 // eslint-disable-next-line max-lines-per-function
 describe('AddUsagerMarker pipe', (): void => {
@@ -32,7 +32,7 @@ describe('AddUsagerMarker pipe', (): void => {
             type: 'Point'
           },
           properties: {
-            markerIconConfiguration: AvailableMarkers.Cnfs
+            markerIconConfiguration: Marker.Cnfs
           },
           type: 'Feature'
         }
@@ -48,7 +48,7 @@ describe('AddUsagerMarker pipe', (): void => {
             type: 'Point'
           },
           properties: {
-            markerIconConfiguration: AvailableMarkers.Cnfs
+            markerIconConfiguration: Marker.Cnfs
           },
           type: 'Feature'
         },
@@ -58,7 +58,7 @@ describe('AddUsagerMarker pipe', (): void => {
             type: 'Point'
           },
           properties: {
-            markerIconConfiguration: AvailableMarkers.Usager
+            markerIconConfiguration: Marker.Usager
           },
           type: 'Feature'
         }

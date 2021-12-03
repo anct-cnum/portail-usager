@@ -8,7 +8,7 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import type { Coordinates } from '../../../../core';
 import type { ViewBox, ViewReset } from '../../directives/leaflet-map-state-change';
 import type { Feature, FeatureCollection, Point } from 'geojson';
-import { AvailableMarkers } from '../../../configuration';
+import { Marker } from '../../../configuration';
 
 // TODO Inject though configuration token
 const DEFAULT_VIEW_BOX: ViewBox = {
@@ -49,8 +49,7 @@ export class CartographyPage {
     this.presenter.listCnfsPositions$().subscribe((cnfs: FeatureCollection<Point>): void => {
       this.presenter.clusterService.load(
         cnfs.features.map(
-          (feature: Feature<Point>): Feature<Point, MarkerProperties> =>
-            featureGeoJsonToMarker(feature, AvailableMarkers.CnfsCluster)
+          (feature: Feature<Point>): Feature<Point, MarkerProperties> => featureGeoJsonToMarker(feature, Marker.CnfsCluster)
         )
       );
     });

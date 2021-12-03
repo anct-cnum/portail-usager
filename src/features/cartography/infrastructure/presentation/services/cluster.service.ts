@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import type { PointFeature } from 'supercluster';
 import Supercluster from 'supercluster';
 import type { MarkerProperties } from '../models';
-import { AvailableMarkers } from '../../configuration';
+import { Marker } from '../../configuration';
 
 const CLUSTER_MAX_ZOOM_DISPLAY: number = 12;
 const CLUSTER_RADIUS: number = 40;
@@ -26,8 +26,8 @@ export class ClusterService {
     } as Supercluster.Options<MarkerProperties, MarkerProperties>);
   }
 
-  public getMarkerAtZoomLevel(zoomlevel: number): AvailableMarkers {
-    return this.maxZoom >= zoomlevel ? AvailableMarkers.CnfsCluster : AvailableMarkers.Cnfs;
+  public getMarkerAtZoomLevel(zoomlevel: number): Marker {
+    return this.maxZoom >= zoomlevel ? Marker.CnfsCluster : Marker.Cnfs;
   }
 
   public load(points: PointFeature<MarkerProperties>[]): void {

@@ -1,10 +1,10 @@
-import type { MapOptions as LeafletMapOptions, Layer, LatLng, Icon } from 'leaflet';
-import { DivIcon, geoJSON, icon, latLng, map, Map as LeafletMap, marker, tileLayer } from 'leaflet';
+import type { MapOptions as LeafletMapOptions, Layer, LatLng, Icon, DivIcon } from 'leaflet';
+import { geoJSON, latLng, map, Map as LeafletMap, marker, tileLayer } from 'leaflet';
 import type { AfterViewInit, ElementRef, OnChanges } from '@angular/core';
 import { ChangeDetectionStrategy, Component, Inject, Input, ViewChild } from '@angular/core';
 import type { MapOptionsPresentation, MarkerProperties } from '../../models';
-import { AvailableMarkers, MARKERS_TOKEN } from '../../../configuration';
-import type { MarkerConfiguration } from '../../../configuration';
+import { MARKERS_TOKEN } from '../../../configuration';
+import type { Marker } from '../../../configuration';
 import type { Feature, FeatureCollection, Point } from 'geojson';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
 import { EMPTY_FEATURE_COLLECTION } from '../../models';
@@ -48,23 +48,9 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
   }
 
   public constructor(
-    @Inject(MARKERS_TOKEN) private readonly markersConfigurations: Record<AvailableMarkers, MarkerConfiguration>
+    @Inject(MARKERS_TOKEN)
+    private readonly markersConfigurations: Record<Marker, (feature?: Feature<Point, MarkerProperties>) => DivIcon | Icon>
   ) {}
-
-  // TODO Comment rendre ça propre ?
-  private getIcon(feature: Feature<Point, MarkerProperties>): DivIcon | Icon {
-    if (feature.properties.markerIconConfiguration === AvailableMarkers.CnfsCluster) {
-      return new DivIcon({
-        className: 'cluster-icon',
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        html: `<div style='margin-top: 7px'>${feature.properties['point_count_abbreviated']}</div>`,
-        iconAnchor: this.markersConfigurations[AvailableMarkers.CnfsCluster].iconAnchor,
-        iconSize: this.markersConfigurations[AvailableMarkers.CnfsCluster].iconSize
-      });
-    }
-
-    return icon(this.markersConfigurations[feature.properties.markerIconConfiguration]);
-  }
 
   private initMap(): void {
     this._map = map(this.mapContainer.nativeElement, this._mapOptions);
@@ -81,9 +67,9 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
     this._markersLayer = geoJSON(this.markers, {
       // eslint-disable-next-line @typescript-eslint/typedef,@typescript-eslint/naming-convention
       pointToLayer: (feature: Feature<Point, MarkerProperties>, position: LatLng): Layer =>
-        marker(position, { icon: this.getIcon(feature) })
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        marker(position, { icon: this.markersConfigurations[feature.properties.markerIconConfiguration as Marker](feature) })
     });
-    //
     this._map.addLayer(this._markersLayer);
   }
 }

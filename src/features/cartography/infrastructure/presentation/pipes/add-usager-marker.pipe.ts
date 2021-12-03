@@ -2,7 +2,7 @@ import type { PipeTransform } from '@angular/core';
 import { Pipe } from '@angular/core';
 import type { Feature, FeatureCollection, Point } from 'geojson';
 import type { MarkerProperties } from '../models';
-import { AvailableMarkers } from '../../configuration';
+import { Marker } from '../../configuration';
 import type { Coordinates } from '../../../core';
 
 const usagerFeatureMarker = (usagerCoordinates: Coordinates): Feature<Point, MarkerProperties> => ({
@@ -11,7 +11,7 @@ const usagerFeatureMarker = (usagerCoordinates: Coordinates): Feature<Point, Mar
     type: 'Point'
   },
   properties: {
-    markerIconConfiguration: AvailableMarkers.Usager
+    markerIconConfiguration: Marker.Usager
   },
   type: 'Feature'
 });

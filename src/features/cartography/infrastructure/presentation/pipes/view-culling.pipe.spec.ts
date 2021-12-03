@@ -3,7 +3,7 @@ import { EMPTY_FEATURE_COLLECTION } from '../models';
 import { ViewCullingPipe } from './view-culling.pipe';
 
 import { ClusterService } from '../services/cluster.service';
-import { AvailableMarkers } from '../../configuration';
+import { Marker } from '../../configuration';
 import type { ViewBox } from '../directives/leaflet-map-state-change';
 import type { Feature, Point } from 'geojson';
 
@@ -14,7 +14,7 @@ const ClusterServiceMock = ClusterService as jest.MockedClass<typeof ClusterServ
 
 // eslint-disable-next-line jest/require-hook,@typescript-eslint/explicit-function-return-type,@typescript-eslint/no-explicit-any
 (ClusterServiceMock as jest.MockInstance<any, any>).mockImplementation(() => ({
-  getMarkerAtZoomLevel: (): AvailableMarkers => AvailableMarkers.Cnfs,
+  getMarkerAtZoomLevel: (): Marker => Marker.Cnfs,
   isReady: (): boolean => true
 }));
 
@@ -29,7 +29,7 @@ const DUMMY_FEATURES: Feature<Point, MarkerProperties>[] = [
       coordinates: [0, 0],
       type: 'Point'
     },
-    properties: { markerIconConfiguration: AvailableMarkers.Cnfs },
+    properties: { markerIconConfiguration: Marker.Cnfs },
     type: 'Feature'
   }
 ];
