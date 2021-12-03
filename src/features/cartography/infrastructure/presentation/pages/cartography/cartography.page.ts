@@ -52,6 +52,7 @@ export class CartographyPage {
           (feature: Feature<Point>): Feature<Point, MarkerProperties> => featureGeoJsonToMarker(feature, Marker.CnfsCluster)
         )
       );
+      this._viewBox$.next({ ...DEFAULT_VIEW_BOX });
     });
   }
 

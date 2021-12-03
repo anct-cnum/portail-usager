@@ -1,2 +1,2 @@
-export * from './marker.configuration';
+export * from './markers.configuration';
 export * from './markers.token';

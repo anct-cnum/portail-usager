@@ -3,8 +3,9 @@ import { geoJSON, latLng, map, Map as LeafletMap, marker, tileLayer } from 'leaf
 import type { AfterViewInit, ElementRef, OnChanges } from '@angular/core';
 import { ChangeDetectionStrategy, Component, Inject, Input, ViewChild } from '@angular/core';
 import type { MapOptionsPresentation, MarkerProperties } from '../../models';
-import { MARKERS_TOKEN } from '../../../configuration';
-import type { IconFactory, Marker } from '../../../configuration';
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { MarkersConfiguration, MARKERS_TOKEN } from '../../../configuration';
 import type { Feature, FeatureCollection, Point } from 'geojson';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
 import { EMPTY_FEATURE_COLLECTION } from '../../models';
@@ -49,7 +50,7 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
 
   public constructor(
     @Inject(MARKERS_TOKEN)
-    private readonly markersConfigurations: Record<Marker, IconFactory>
+    private readonly markersConfigurations: MarkersConfiguration
   ) {}
 
   private initMap(): void {
@@ -66,8 +67,7 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
     this._markersLayer = geoJSON(this.markers, {
       // eslint-disable-next-line @typescript-eslint/typedef,@typescript-eslint/naming-convention
       pointToLayer: (feature: Feature<Point, MarkerProperties>, position: LatLng): Layer =>
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-        marker(position, { icon: this.markersConfigurations[feature.properties.markerIconConfiguration as Marker](feature) })
+        marker(position, { icon: this.markersConfigurations[feature.properties.markerIconConfiguration](feature) })
     });
     this._map.addLayer(this._markersLayer);
   }
