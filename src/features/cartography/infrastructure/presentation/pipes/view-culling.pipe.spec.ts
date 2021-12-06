@@ -57,4 +57,8 @@ describe('ViewCulling pipe', (): void => {
       type: 'FeatureCollection'
     });
   });
+
+  it('should spiderify', (): void => {
+    throw new Error('I have not done my test');
+  });
 });
