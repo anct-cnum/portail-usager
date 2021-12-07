@@ -11,7 +11,8 @@ const usagerFeatureMarker = (usagerCoordinates: Coordinates): Feature<Point, Mar
     type: 'Point'
   },
   properties: {
-    markerIconConfiguration: Marker.Usager
+    markerIconConfiguration: Marker.Usager,
+    zIndexOffset: 1000
   },
   type: 'Feature'
 });

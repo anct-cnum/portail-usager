@@ -67,7 +67,11 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
     this._markersLayer = geoJSON(this.markers, {
       // eslint-disable-next-line @typescript-eslint/typedef,@typescript-eslint/naming-convention
       pointToLayer: (feature: Feature<Point, MarkerProperties>, position: LatLng): Layer =>
-        marker(position, { icon: this.markersConfigurations[feature.properties.markerIconConfiguration](feature) })
+        marker(position, {
+          icon: this.markersConfigurations[feature.properties.markerIconConfiguration](feature),
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          zIndexOffset: feature.properties['zIndexOffset'] ?? 0
+        })
     });
     this._map.addLayer(this._markersLayer);
   }
