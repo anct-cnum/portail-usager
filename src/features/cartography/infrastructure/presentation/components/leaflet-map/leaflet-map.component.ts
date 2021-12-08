@@ -73,6 +73,15 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
           zIndexOffset: feature.properties['zIndexOffset'] ?? 0
         })
     });
+
+    // TODO Lier le onclick au marqueur
+    /*
+     *  .on('click', () => {
+     *  // emet l'event avec les properties du marqueur.
+     *
+     *  });
+     */
+
     this._map.addLayer(this._markersLayer);
   }
 

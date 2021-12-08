@@ -3,12 +3,13 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import type { MapOptionsPresentation, MarkersPresentation, MarkerProperties } from '../../models';
 import { featureGeoJsonToMarker } from '../../models';
 import { CartographyPresenter } from './cartography.presenter';
-import type { Observable } from 'rxjs';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import type { Coordinates } from '../../../../core';
 import type { ViewBox, ViewReset } from '../../directives/leaflet-map-state-change';
 import type { Feature, FeatureCollection, Point } from 'geojson';
 import { Marker } from '../../../configuration';
+import { ViewCullingPipe } from '../../pipes/view-culling.pipe';
+import { combineLatestWith, map } from 'rxjs/operators';
 
 // TODO Inject though configuration token
 const DEFAULT_VIEW_BOX: ViewBox = {
@@ -34,6 +35,11 @@ export class CartographyPage {
   // TODO Init with token configuration
   private readonly _viewBox$: BehaviorSubject<ViewBox> = new BehaviorSubject<ViewBox>(DEFAULT_VIEW_BOX);
 
+  private readonly _visibleMarkers$: BehaviorSubject<MarkersPresentation> = new BehaviorSubject<MarkersPresentation>({
+    features: [],
+    type: 'FeatureCollection'
+  });
+
   public readonly cnfsMarkers$: Observable<MarkersPresentation> = this._cnfsMarkers$.asObservable();
 
   public readonly mapOptions: MapOptionsPresentation;
@@ -42,18 +48,30 @@ export class CartographyPage {
 
   public readonly viewBox$: Observable<ViewBox> = this._viewBox$.asObservable();
 
-  public constructor(private readonly presenter: CartographyPresenter) {
-    this.mapOptions = this.presenter.defaultMapOptions();
+  public readonly visibleMarkers$: Observable<MarkersPresentation> = this._visibleMarkers$.asObservable();
 
-    // eslint-disable-next-line
-    this.presenter.listCnfsPositions$().subscribe((cnfs: FeatureCollection<Point>): void => {
-      this.presenter.clusterService.load(
-        cnfs.features.map(
-          (feature: Feature<Point>): Feature<Point, MarkerProperties> => featureGeoJsonToMarker(feature, Marker.CnfsCluster)
-        )
-      );
-      this._viewBox$.next({ ...DEFAULT_VIEW_BOX });
-    });
+  public constructor(private readonly presenter: CartographyPresenter) {
+    this.mapOptions = presenter.defaultMapOptions();
+
+    // TODO Remove subscribe
+    presenter
+      .listCnfsPositions$()
+      .pipe(
+        combineLatestWith(this.viewBox$),
+        map(([cnfsMarkers, viewBox]: [FeatureCollection<Point>, ViewBox]): void => {
+          presenter.clusterService.load(
+            cnfsMarkers.features.map(
+              (feature: Feature<Point>): Feature<Point, MarkerProperties> => featureGeoJsonToMarker(feature, Marker.CnfsCluster)
+            )
+          );
+
+          const pipeInstance: ViewCullingPipe = new ViewCullingPipe(presenter.clusterService);
+
+          this._visibleMarkers$.next(pipeInstance.transform(viewBox));
+        })
+        // eslint-disable-next-line
+      )
+      .subscribe();
   }
 
   public geocodeUsagerPosition($event: string): void {

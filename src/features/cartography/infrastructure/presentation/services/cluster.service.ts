@@ -26,8 +26,12 @@ export class ClusterService {
     } as Supercluster.Options<MarkerProperties, MarkerProperties>);
   }
 
+  public exceedClusterZoomLevel(zoomlevel: number): boolean {
+    return zoomlevel > this.maxZoom;
+  }
+
   public getMarkerAtZoomLevel(zoomlevel: number): Marker {
-    return this.maxZoom >= zoomlevel ? Marker.CnfsCluster : Marker.Cnfs;
+    return this.exceedClusterZoomLevel(zoomlevel) ? Marker.Cnfs : Marker.CnfsCluster;
   }
 
   public load(points: PointFeature<MarkerProperties>[]): void {

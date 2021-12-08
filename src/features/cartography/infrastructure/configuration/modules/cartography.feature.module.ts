@@ -18,12 +18,14 @@ import { ViewCullingPipe } from '../../presentation/pipes/view-culling.pipe';
 import { ClusterService } from '../../presentation/services/cluster.service';
 import { AddressGeolocationComponent } from '../../presentation/components/address-geolocation/address-geolocation.component';
 import { AddUsagerMarker } from '../../presentation/pipes/add-usager-marker.pipe';
+import { CnfsListComponent } from '../../presentation/components/cnfs-list/cnfs-list.component';
 
 @NgModule({
   declarations: [
     AddressGeolocationComponent,
     AddUsagerMarker,
     CartographyPage,
+    CnfsListComponent,
     LeafletMapComponent,
     LeafletMapStateChangeDirective,
     ViewCullingPipe

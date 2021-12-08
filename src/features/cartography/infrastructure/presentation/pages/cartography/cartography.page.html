@@ -1,23 +1,25 @@
-<ng-container *ngIf="cnfsMarkers$ | async as cnfsMarkers">
-  <ng-container *ngIf="viewBox$ | async | viewCulling as visibleMarkers">
-    <div class="fr-grid-row">
-      <div class="fr-col-4">
-        <div class="fr-grid-row todo-alt-1" style="height: 15vw">
-          <address-geolocation
-            (addressToGeocode)="geocodeUsagerPosition($event)"
-            (usagerAutolocate)="updateUsagerPosition($event)"></address-geolocation>
-        </div>
-        <div class="fr-grid-row">Nombre de marqueurs présents visibles : {{ visibleMarkers.features.length }}</div>
+<ng-container *ngIf="visibleMarkers$ | async as visibleMarkers">
+  <div class="fr-grid-row">
+    <div class="fr-col-4">
+      <div class="fr-grid-row todo-alt-1" style="height: 15vw">
+        <address-geolocation
+          (addressToGeocode)="geocodeUsagerPosition($event)"
+          (usagerAutolocate)="updateUsagerPosition($event)"></address-geolocation>
       </div>
-      <!--todo: fix calc-->
-      <div class="fr-col-8" style="height: calc(100vh - 173px)">
-        <leaflet-map
-          [mapOptions]="mapOptions"
-          [markers]="visibleMarkers | addUsagerMarker:(usagerCoordinates$ | async)"
-          (stateChange)="mapViewChanged($event)"></leaflet-map>
+      <div class="fr-grid-row todo" style="width: 100%; height: 45vw">
+        <!--listConseillers$ | async-->
+        <cnfs-list [listConseillers]="[]"></cnfs-list>
       </div>
     </div>
-  </ng-container>
+    toto | async
+    <!--todo: fix calc-->
+    <div class="fr-col-8" style="height: calc(100vh - 173px)">
+      <leaflet-map
+        [mapOptions]="mapOptions"
+        [markers]="visibleMarkers | addUsagerMarker:(usagerCoordinates$ | async)"
+        (stateChange)="mapViewChanged($event)"></leaflet-map>
+    </div>
+  </div>
 </ng-container>
 <!--todo: fix footer overlapping map-->
 <div style="height: 2px"></div>

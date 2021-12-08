@@ -1,7 +1,6 @@
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
 import { CartographyPage } from './cartography.page';
-import { LeafletMapStubComponent } from '../../test-doubles';
 import { FailedToCompileError } from '@angular-common/errors';
 import { ListCnfsPositionUseCase } from '../../../../use-cases';
 import { CnfsRestTestDouble } from '../../../../use-cases/test-doubles/cnfs-rest-test-double';
@@ -9,7 +8,9 @@ import type { CnfsRepository } from '../../../../core';
 import { CartographyPresenter } from './cartography.presenter';
 import type { Observable } from 'rxjs';
 import { of } from 'rxjs';
-import { AddressGeolocationStubComponent } from '../../test-doubles/components/address-geolocation';
+import { CnfsListStubComponent } from '../../test-doubles/components/cnfs-list/cnfs-list.component.stub';
+import { AddressGeolocationStubComponent } from '../../test-doubles/components/address-geolocation/address-geolocation.component.stub';
+import { LeafletMapStubComponent } from '../../test-doubles/components/leaflet-map/leaflet-map.component.stub';
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class CartographyPresenterStub {
@@ -27,7 +28,7 @@ class CartographyPresenterStub {
 describe('cartography page', (): void => {
   beforeEach(async (): Promise<void> => {
     await TestBed.configureTestingModule({
-      declarations: [AddressGeolocationStubComponent, CartographyPage, LeafletMapStubComponent],
+      declarations: [AddressGeolocationStubComponent, CartographyPage, LeafletMapStubComponent, CnfsListStubComponent],
       imports: [],
       providers: [
         CnfsRestTestDouble,
