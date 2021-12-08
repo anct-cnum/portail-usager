@@ -15,7 +15,7 @@ import { Api } from '../../../../../../environments/environment.model';
 
 @Injectable()
 export class CoordinatesRest extends CoordinatesRepository {
-  private readonly _queryParameters: string = '?q=';
+  private readonly _queryParameters: string = '?format=geojson&q=';
   private readonly _searchEndpoint: string = 'search';
 
   public constructor(@Inject(HttpClient) private readonly httpClient: HttpClient) {
