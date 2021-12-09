@@ -1,31 +1,31 @@
 import { Inject, Pipe, PipeTransform } from '@angular/core';
-import { Feature, FeatureCollection, GeoJsonProperties, Point } from 'geojson';
+import { Feature, FeatureCollection, Point } from 'geojson';
 import { ViewBox } from '../directives/leaflet-map-state-change';
-import { EMPTY_FEATURE_COLLECTION, MarkerProperties } from '../models';
-import { Marker } from '../../configuration';
+import { EMPTY_FEATURE_COLLECTION } from '../models';
 import { ClusterService } from '../services/cluster.service';
+import { AnyGeoJsonProperty } from '../../../../../environments/environment.model';
 
 @Pipe({ name: 'viewCulling' })
 export class ViewCullingPipe implements PipeTransform {
   public constructor(@Inject(ClusterService) public readonly clusterService: ClusterService) {}
 
-  private getClusterLeaves(cluster: Feature<Point, MarkerProperties>): Feature<Point, MarkerProperties>[] {
+  private getClusterLeaves(cluster: Feature<Point, AnyGeoJsonProperty>): Feature<Point, AnyGeoJsonProperty>[] {
     if (cluster.properties['cluster'] === true) return this.clusterService.index.getLeaves(Number(cluster.id), Infinity);
     return [cluster];
   }
 
-  private getFinalFeatures(viewbox: ViewBox, markerIcon: Marker): Feature<Point, MarkerProperties>[] {
-    return this.getFinalMarkersPositions(viewbox, markerIcon === Marker.Cnfs).map(this.setMarkerIcon(markerIcon));
+  private getFinalFeatures(viewbox: ViewBox): Feature<Point, AnyGeoJsonProperty>[] {
+    return this.getFinalMarkersPositions(viewbox);
   }
 
-  private getFinalMarkersPositions(viewbox: ViewBox, expandClusters: boolean): Feature<Point, MarkerProperties>[] {
-    const clustersForViewbox: Feature<Point, MarkerProperties>[] = this.clusterService.index.getClusters(
+  private getFinalMarkersPositions(viewbox: ViewBox): Feature<Point, AnyGeoJsonProperty>[] {
+    const clustersForViewbox: Feature<Point, AnyGeoJsonProperty>[] = this.clusterService.index.getClusters(
       viewbox.boundingBox,
       viewbox.zoomLevel
     );
 
-    if (expandClusters) {
-      return clustersForViewbox.flatMap((cluster: Feature<Point, MarkerProperties>): Feature<Point, MarkerProperties>[] =>
+    if (this.clusterService.exceedClusterZoomLevel(viewbox.zoomLevel)) {
+      return clustersForViewbox.flatMap((cluster: Feature<Point, AnyGeoJsonProperty>): Feature<Point, AnyGeoJsonProperty>[] =>
         this.getClusterLeaves(cluster)
       );
     }
@@ -33,30 +33,11 @@ export class ViewCullingPipe implements PipeTransform {
     return clustersForViewbox;
   }
 
-  private mergeProperties(
-    properties: MarkerProperties,
-    marker: Marker
-  ): GeoJsonProperties & { markerIconConfiguration: Marker } {
-    return {
-      ...properties,
-      ...{ markerIconConfiguration: properties['cluster'] === true ? marker : Marker.Cnfs }
-    };
-  }
-
-  // TODO Mieux gérer la logique d'attribution des marqueurs
-  private setMarkerIcon(marker: Marker): (feature: Feature<Point, MarkerProperties>) => Feature<Point, MarkerProperties> {
-    return (feature: Feature<Point, MarkerProperties>): Feature<Point, MarkerProperties> => ({
-      ...feature,
-      ...{ properties: this.mergeProperties(feature.properties, marker) }
-    });
-  }
-
-  public transform(viewbox?: ViewBox | null): FeatureCollection<Point, MarkerProperties> {
+  public transform(viewbox?: ViewBox | null): FeatureCollection<Point, AnyGeoJsonProperty> {
     if (viewbox == null || !this.clusterService.isReady) return EMPTY_FEATURE_COLLECTION;
 
-    const markerIcon: Marker = this.clusterService.getMarkerAtZoomLevel(viewbox.zoomLevel);
     return {
-      features: this.getFinalFeatures(viewbox, markerIcon),
+      features: this.getFinalFeatures(viewbox),
       type: 'FeatureCollection'
     };
   }

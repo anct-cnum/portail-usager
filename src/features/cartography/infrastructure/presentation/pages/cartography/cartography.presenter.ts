@@ -6,6 +6,7 @@ import { ListCnfsPositionUseCase } from '../../../../use-cases';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
 import { FeatureCollection, Point } from 'geojson';
 import { ClusterService } from '../../services/cluster.service';
+import { AnyGeoJsonProperty } from '../../../../../../environments/environment.model';
 
 // TODO Exporter dans une configuration, prendre la dernière position connue de l'usager ou le geocoding de l'adresse
 const START_LATITUDE: number = 45.764043;
@@ -32,7 +33,7 @@ export class CartographyPresenter {
     return this.geocodeAddressUseCase.execute$(address);
   }
 
-  public listCnfsPositions$(): Observable<FeatureCollection<Point>> {
+  public listCnfsPositions$(): Observable<FeatureCollection<Point, AnyGeoJsonProperty>> {
     return this.listCnfsPositionUseCase.execute$().pipe(map(cnfsCoreToPresentation));
   }
 }
