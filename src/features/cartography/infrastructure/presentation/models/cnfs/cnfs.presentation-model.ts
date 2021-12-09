@@ -1,5 +1,5 @@
-import type { Feature, FeatureCollection, GeoJsonProperties, Point } from 'geojson';
-import type { Marker } from '../../../configuration';
+import { Feature, FeatureCollection, GeoJsonProperties, Point } from 'geojson';
+import { Marker } from '../../../configuration';
 
 export type MarkerProperties = GeoJsonProperties & { markerIconConfiguration: Marker };
 

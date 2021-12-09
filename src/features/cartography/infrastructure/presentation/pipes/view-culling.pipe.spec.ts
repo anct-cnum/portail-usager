@@ -1,11 +1,10 @@
-import type { MarkerProperties } from '../models';
-import { EMPTY_FEATURE_COLLECTION } from '../models';
+import { EMPTY_FEATURE_COLLECTION, MarkerProperties } from '../models';
 import { ViewCullingPipe } from './view-culling.pipe';
 
 import { ClusterService } from '../services/cluster.service';
 import { Marker } from '../../configuration';
-import type { ViewBox } from '../directives/leaflet-map-state-change';
-import type { Feature, Point } from 'geojson';
+import { ViewBox } from '../directives/leaflet-map-state-change';
+import { Feature, Point } from 'geojson';
 
 jest.mock('../services/cluster.service');
 

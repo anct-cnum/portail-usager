@@ -1,14 +1,28 @@
-import type { MapOptions as LeafletMapOptions, Layer, LatLng } from 'leaflet';
-import { geoJSON, latLng, map, Map as LeafletMap, marker, tileLayer } from 'leaflet';
-import type { AfterViewInit, ElementRef, OnChanges } from '@angular/core';
-import { ChangeDetectionStrategy, Component, Inject, Input, ViewChild } from '@angular/core';
-import type { MapOptionsPresentation, MarkerProperties } from '../../models';
-
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import {
+  geoJSON,
+  latLng,
+  LatLng,
+  Layer,
+  map,
+  Map as LeafletMap,
+  MapOptions as LeafletMapOptions,
+  marker,
+  tileLayer
+} from 'leaflet';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  Inject,
+  Input,
+  OnChanges,
+  ViewChild
+} from '@angular/core';
+import { EMPTY_FEATURE_COLLECTION, MapOptionsPresentation, MarkerProperties } from '../../models';
 import { MarkersConfiguration, MARKERS_TOKEN } from '../../../configuration';
-import type { Feature, FeatureCollection, Point } from 'geojson';
+import { Feature, FeatureCollection, Point } from 'geojson';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
-import { EMPTY_FEATURE_COLLECTION } from '../../models';
 
 // TODO Convert configuration to injected token for default options then remove
 const MAX_ZOOM_LEVEL: number = 19;

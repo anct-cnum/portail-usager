@@ -1,13 +1,11 @@
-import type { ComponentFixture } from '@angular/core/testing';
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CartographyPage } from './cartography.page';
 import { FailedToCompileError } from '@angular-common/errors';
 import { ListCnfsPositionUseCase } from '../../../../use-cases';
 import { CnfsRestTestDouble } from '../../../../use-cases/test-doubles/cnfs-rest-test-double';
-import type { CnfsRepository } from '../../../../core';
+import { CnfsRepository } from '../../../../core';
 import { CartographyPresenter } from './cartography.presenter';
-import type { Observable } from 'rxjs';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { CnfsListStubComponent } from '../../test-doubles/components/cnfs-list/cnfs-list.component.stub';
 import { AddressGeolocationStubComponent } from '../../test-doubles/components/address-geolocation/address-geolocation.component.stub';
 import { LeafletMapStubComponent } from '../../test-doubles/components/leaflet-map/leaflet-map.component.stub';

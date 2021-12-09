@@ -2,10 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CartographyFeatureRoutingModule } from './cartography.feature-routing.module';
 import { ListCnfsPositionUseCase } from '../../../use-cases';
-
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { CnfsRepository, CoordinatesRepository } from '../../../core';
-
 import { MARKERS, MARKERS_TOKEN } from '../tokens';
 import { CartographyPage } from '../../presentation/pages';
 import { LeafletMapComponent } from '../../presentation/components';

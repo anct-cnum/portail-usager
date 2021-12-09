@@ -1,7 +1,6 @@
-import type { Icon } from 'leaflet';
-import { DivIcon, icon, Point as LeafletPoint } from 'leaflet';
-import type { MarkerProperties } from '../../../presentation/models';
-import type { Feature, Point } from 'geojson';
+import { DivIcon, icon, Icon, Point as LeafletPoint } from 'leaflet';
+import { MarkerProperties } from '../../../presentation/models';
+import { Feature, Point } from 'geojson';
 
 const HALF: number = 0.5;
 const ROUND_FALSE: boolean = false;

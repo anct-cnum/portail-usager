@@ -1,12 +1,11 @@
 // TODO REVIEW IGNORE
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import type { MapOptionsPresentation, MarkersPresentation, MarkerProperties } from '../../models';
-import { featureGeoJsonToMarker } from '../../models';
+import { featureGeoJsonToMarker, MapOptionsPresentation, MarkersPresentation, MarkerProperties } from '../../models';
 import { CartographyPresenter } from './cartography.presenter';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import type { Coordinates } from '../../../../core';
-import type { ViewBox, ViewReset } from '../../directives/leaflet-map-state-change';
-import type { Feature, FeatureCollection, Point } from 'geojson';
+import { Coordinates } from '../../../../core';
+import { ViewBox, ViewReset } from '../../directives/leaflet-map-state-change';
+import { Feature, FeatureCollection, Point } from 'geojson';
 import { Marker } from '../../../configuration';
 import { ViewCullingPipe } from '../../pipes/view-culling.pipe';
 import { combineLatestWith, map } from 'rxjs/operators';
@@ -50,27 +49,29 @@ export class CartographyPage {
 
   public readonly visibleMarkers$: Observable<MarkersPresentation> = this._visibleMarkers$.asObservable();
 
+  // eslint-disable-next-line max-lines-per-function
   public constructor(private readonly presenter: CartographyPresenter) {
     this.mapOptions = presenter.defaultMapOptions();
 
-    // TODO Remove subscribe
+    // TODO Remove subscribe and use async pipe
     presenter
       .listCnfsPositions$()
       .pipe(
         combineLatestWith(this.viewBox$),
         map(([cnfsMarkers, viewBox]: [FeatureCollection<Point>, ViewBox]): void => {
-          presenter.clusterService.load(
-            cnfsMarkers.features.map(
-              (feature: Feature<Point>): Feature<Point, MarkerProperties> => featureGeoJsonToMarker(feature, Marker.CnfsCluster)
-            )
-          );
+          if (!presenter.clusterService.isReady) {
+            presenter.clusterService.load(
+              cnfsMarkers.features.map(
+                (feature: Feature<Point>): Feature<Point, MarkerProperties> =>
+                  featureGeoJsonToMarker(feature, Marker.CnfsCluster)
+              )
+            );
+          }
 
-          const pipeInstance: ViewCullingPipe = new ViewCullingPipe(presenter.clusterService);
-
-          this._visibleMarkers$.next(pipeInstance.transform(viewBox));
+          this._visibleMarkers$.next(new ViewCullingPipe(presenter.clusterService).transform(viewBox));
         })
-        // eslint-disable-next-line
       )
+      // eslint-disable-next-line
       .subscribe();
   }
 

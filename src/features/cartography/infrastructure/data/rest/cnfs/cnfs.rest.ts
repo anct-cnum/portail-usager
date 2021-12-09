@@ -1,14 +1,9 @@
-import type { Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
-
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { HttpClient } from '@angular/common/http';
-
 import { map } from 'rxjs/operators';
-import type { Cnfs } from '../../../../core';
-import { CnfsRepository } from '../../../../core';
-import type { CnfsTransfer } from '../../models';
-import { cnfsTransferToCore } from '../../models';
+import { Cnfs, CnfsRepository } from '../../../../core';
+import { CnfsTransfer, cnfsTransferToCore } from '../../models';
 import { Api } from '../../../../../../environments/environment.model';
 
 @Injectable()

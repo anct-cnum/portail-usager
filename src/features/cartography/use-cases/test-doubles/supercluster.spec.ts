@@ -1,6 +1,6 @@
-import type { CnfsTransfer } from '../../infrastructure/data/models';
+import { CnfsTransfer } from '../../infrastructure/data/models';
 import { cnfsData } from './data/cnfs-data';
-import type { GeoJsonProperties, Point, Feature, FeatureCollection } from 'geojson';
+import { GeoJsonProperties, Point, Feature, FeatureCollection } from 'geojson';
 import Supercluster from 'supercluster';
 
 const MIN_LATITUDE: number = -90;

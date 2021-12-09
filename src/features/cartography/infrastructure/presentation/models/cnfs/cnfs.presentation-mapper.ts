@@ -1,7 +1,7 @@
-import type { Cnfs } from '../../../../core';
-import type { Feature, FeatureCollection, Point } from 'geojson';
-import type { Marker } from '../../../configuration';
-import type { MarkerProperties } from './cnfs.presentation-model';
+import { Cnfs } from '../../../../core';
+import { Feature, FeatureCollection, Point } from 'geojson';
+import { Marker } from '../../../configuration';
+import { MarkerProperties } from './cnfs.presentation-model';
 
 const cnfsArrayToGeoJsonFeatures = (cnfsArray: Cnfs[]): Feature<Point>[] =>
   cnfsArray.map(

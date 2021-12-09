@@ -1,5 +1,4 @@
-import type { ComponentFixture } from '@angular/core/testing';
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LeafletMapComponent } from './leaflet-map.component';
 import { FailedToCompileError } from '@angular-common/errors';
 import { MARKERS_TOKEN } from '../../../configuration';

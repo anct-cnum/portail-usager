@@ -1,5 +1,5 @@
-import type { Observable } from 'rxjs';
-import type { Cnfs } from '../../core';
+import { Observable } from 'rxjs';
+import { Cnfs } from '../../core';
 
 export abstract class CnfsRepository {
   public abstract listCnfs$(): Observable<Cnfs[]>;
