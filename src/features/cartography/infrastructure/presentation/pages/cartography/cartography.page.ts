@@ -1,6 +1,6 @@
 // TODO REVIEW IGNORE
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { featureGeoJsonToMarker, MapOptionsPresentation, MarkersPresentation, MarkerProperties } from '../../models';
+import { MapOptionsPresentation, MarkersPresentation, MarkerProperties } from '../../models';
 import { CartographyPresenter } from './cartography.presenter';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Coordinates } from '../../../../core';
@@ -9,6 +9,8 @@ import { Feature, FeatureCollection, Point } from 'geojson';
 import { Marker } from '../../../configuration';
 import { ViewCullingPipe } from '../../pipes/view-culling.pipe';
 import { combineLatestWith, map } from 'rxjs/operators';
+import { AnyGeoJsonProperty } from '../../../../../../environments/environment.model';
+import { setMarkerIcon } from '../../pipes/marker-icon-helper';
 
 // TODO Inject though configuration token
 const DEFAULT_VIEW_BOX: ViewBox = {
@@ -39,8 +41,6 @@ export class CartographyPage {
     type: 'FeatureCollection'
   });
 
-  public readonly cnfsMarkers$: Observable<MarkersPresentation> = this._cnfsMarkers$.asObservable();
-
   public readonly mapOptions: MapOptionsPresentation;
 
   public readonly usagerCoordinates$: Observable<Coordinates> = this._usagerCoordinates$.asObservable();
@@ -58,17 +58,21 @@ export class CartographyPage {
       .listCnfsPositions$()
       .pipe(
         combineLatestWith(this.viewBox$),
-        map(([cnfsMarkers, viewBox]: [FeatureCollection<Point>, ViewBox]): void => {
-          if (!presenter.clusterService.isReady) {
-            presenter.clusterService.load(
-              cnfsMarkers.features.map(
-                (feature: Feature<Point>): Feature<Point, MarkerProperties> =>
-                  featureGeoJsonToMarker(feature, Marker.CnfsCluster)
-              )
-            );
-          }
+        map(([cnfsFeatureCollection, viewBox]: [FeatureCollection<Point, AnyGeoJsonProperty>, ViewBox]): void => {
+          if (!this.presenter.clusterService.isReady) presenter.clusterService.load(cnfsFeatureCollection.features);
 
-          this._visibleMarkers$.next(new ViewCullingPipe(presenter.clusterService).transform(viewBox));
+          const visibleInMapViewport: FeatureCollection<Point, AnyGeoJsonProperty> = new ViewCullingPipe(
+            presenter.clusterService
+          ).transform(viewBox);
+          const featuresVisibleInViewport: Feature<Point, AnyGeoJsonProperty>[] = visibleInMapViewport.features;
+          const markerIcon: Marker = presenter.clusterService.getMarkerAtZoomLevel(viewBox.zoomLevel);
+          const markersVisibleInViewport: Feature<Point, MarkerProperties>[] = featuresVisibleInViewport.map(
+            setMarkerIcon(markerIcon)
+          );
+          this._visibleMarkers$.next({
+            features: markersVisibleInViewport,
+            type: 'FeatureCollection'
+          });
         })
       )
       // eslint-disable-next-line
@@ -88,6 +92,10 @@ export class CartographyPage {
   }
 
   public updateUsagerPosition($event: Coordinates): void {
+    /*
+     * TODO Centrer la vue sur la position, (avec bon zoom level)
+     *  Réétudier leaflet.Map.setView pour voir comment l'utiliser proprement
+     */
     this._usagerCoordinates$.next($event);
   }
 }
