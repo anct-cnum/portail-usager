@@ -1,9 +1,6 @@
-import type { Cnfs } from '../../core';
-import { CnfsRepository } from '../../core';
-import type { Observable } from 'rxjs';
-import type { CnfsTransfer } from '../../infrastructure/data/models';
-import { cnfsTransferToCore } from '../../infrastructure/data/models';
-import { of } from 'rxjs';
+import { Cnfs, CnfsRepository } from '../../core';
+import { Observable, of } from 'rxjs';
+import { CnfsTransfer, cnfsTransferToCore } from '../../infrastructure/data/models';
 import { cnfsDataCluster } from './data/cnfs-data-cluster';
 
 export class CnfsRestTestDouble extends CnfsRepository {

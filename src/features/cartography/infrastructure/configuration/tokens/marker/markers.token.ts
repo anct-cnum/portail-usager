@@ -1,6 +1,6 @@
 import { InjectionToken } from '@angular/core';
 import { cnfsClusterMarkerFactory, cnfsMarkerFactory, usagerMarkerFactory } from './markers.factories';
-import type { MarkersConfiguration } from './markers.configuration';
+import { MarkersConfiguration } from './markers.configuration';
 
 export const MARKERS_TOKEN: InjectionToken<MarkersConfiguration> = new InjectionToken<MarkersConfiguration>(
   'markers.configuration'

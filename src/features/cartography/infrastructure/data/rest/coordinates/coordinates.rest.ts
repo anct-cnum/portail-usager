@@ -1,15 +1,8 @@
-import type { Observable } from 'rxjs';
-import { map } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
-
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { HttpClient } from '@angular/common/http';
-
-import type { Coordinates } from '../../../../core';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { CoordinatesRepository } from '../../../../core';
-
-import type { FeatureCollection, Point } from 'geojson';
+import { Coordinates, CoordinatesRepository } from '../../../../core';
+import { FeatureCollection, Point } from 'geojson';
 import { featureCollectionToFirstCoordinates } from '../../models/coordinates.transfer-mapper';
 import { Api } from '../../../../../../environments/environment.model';
 

@@ -1,5 +1,4 @@
-import type { HttpHandler } from '@angular/common/http';
-import { HttpRequest } from '@angular/common/http';
+import { HttpHandler, HttpRequest } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { ApiRewriteUrlInterceptor } from './api-rewrite-url.interceptor';
 import { APIS_TOKENS } from '../tokens';

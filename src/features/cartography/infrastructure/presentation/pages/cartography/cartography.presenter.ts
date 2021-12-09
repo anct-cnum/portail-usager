@@ -1,15 +1,10 @@
 import { Inject, Injectable } from '@angular/core';
-
-import type { MapOptionsPresentation } from '../../models';
+import { cnfsCoreToPresentation, MapOptionsPresentation } from '../../models';
 import { Coordinates } from '../../../../core';
-
-import type { Observable } from 'rxjs';
-import { map } from 'rxjs';
-import { cnfsCoreToPresentation } from '../../models';
-
+import { map, Observable } from 'rxjs';
 import { ListCnfsPositionUseCase } from '../../../../use-cases';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
-import type { FeatureCollection, Point } from 'geojson';
+import { FeatureCollection, Point } from 'geojson';
 import { ClusterService } from '../../services/cluster.service';
 
 // TODO Exporter dans une configuration, prendre la dernière position connue de l'usager ou le geocoding de l'adresse

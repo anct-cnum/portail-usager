@@ -1,10 +1,6 @@
-import type { Observable } from 'rxjs';
-import type { UseCase } from '@architecture/use-case';
-import type { Coordinates } from '../../core';
-
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { CoordinatesRepository } from '../../core';
-
+import { Observable } from 'rxjs';
+import { UseCase } from '@architecture/use-case';
+import { Coordinates, CoordinatesRepository } from '../../core';
 import { Injectable } from '@angular/core';
 
 @Injectable()

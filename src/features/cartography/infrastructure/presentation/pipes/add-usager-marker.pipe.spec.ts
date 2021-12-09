@@ -1,6 +1,6 @@
 import { AddUsagerMarker } from './add-usager-marker.pipe';
-import type { MarkerProperties } from '../models';
-import type { FeatureCollection, Point } from 'geojson';
+import { MarkerProperties } from '../models';
+import { FeatureCollection, Point } from 'geojson';
 import { Coordinates } from '../../../core';
 import { Marker } from '../../configuration';
 

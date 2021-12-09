@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
-import type { Routes } from '@angular/router';
-import { RouterModule } from '@angular/router';
-import type { CartographyFeatureModule } from '@features/cartography';
+import { RouterModule, Routes } from '@angular/router';
+import { CartographyFeatureModule } from '@features/cartography';
 import { ContentLayout } from '../pages/layouts/content/content.layout';
 import { HomePage } from '../pages/home/home.page';
 

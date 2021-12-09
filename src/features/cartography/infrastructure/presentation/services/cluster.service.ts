@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
-import type { PointFeature } from 'supercluster';
+import { PointFeature } from 'supercluster';
+
+// eslint-disable-next-line @typescript-eslint/no-duplicate-imports
 import Supercluster from 'supercluster';
-import type { MarkerProperties } from '../models';
+
+import { MarkerProperties } from '../models';
 import { Marker } from '../../configuration';
 
 const CLUSTER_MAX_ZOOM_DISPLAY: number = 12;

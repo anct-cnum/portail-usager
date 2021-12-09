@@ -1,4 +1,4 @@
-import type { Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
 /*
  * TODO Etudier l'option CQS car ni

@@ -1,9 +1,8 @@
-import type { PipeTransform } from '@angular/core';
-import { Pipe } from '@angular/core';
-import type { Feature, FeatureCollection, Point } from 'geojson';
-import type { MarkerProperties } from '../models';
+import { Pipe, PipeTransform } from '@angular/core';
+import { Feature, FeatureCollection, Point } from 'geojson';
+import { MarkerProperties } from '../models';
 import { Marker } from '../../configuration';
-import type { Coordinates } from '../../../core';
+import { Coordinates } from '../../../core';
 
 const usagerFeatureMarker = (usagerCoordinates: Coordinates): Feature<Point, MarkerProperties> => ({
   geometry: {

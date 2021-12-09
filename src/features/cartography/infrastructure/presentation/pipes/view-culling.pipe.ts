@@ -1,9 +1,7 @@
-import type { PipeTransform } from '@angular/core';
-import { Inject, Pipe } from '@angular/core';
-import type { Feature, FeatureCollection, GeoJsonProperties, Point } from 'geojson';
-import type { ViewBox } from '../directives/leaflet-map-state-change';
-import type { MarkerProperties } from '../models';
-import { EMPTY_FEATURE_COLLECTION } from '../models';
+import { Inject, Pipe, PipeTransform } from '@angular/core';
+import { Feature, FeatureCollection, GeoJsonProperties, Point } from 'geojson';
+import { ViewBox } from '../directives/leaflet-map-state-change';
+import { EMPTY_FEATURE_COLLECTION, MarkerProperties } from '../models';
 import { Marker } from '../../configuration';
 import { ClusterService } from '../services/cluster.service';
 

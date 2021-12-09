@@ -1,9 +1,7 @@
-import type { AfterViewInit, OnDestroy } from '@angular/core';
-import { Directive, EventEmitter, Output } from '@angular/core';
-import type { BBox } from 'geojson';
-import type { LatLng, LatLngBounds } from 'leaflet';
+import { AfterViewInit, Directive, EventEmitter, OnDestroy, Output } from '@angular/core';
+import { BBox } from 'geojson';
+import { LatLng, LatLngBounds } from 'leaflet';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { LeafletMapComponent } from '../../components';
 
 export interface ViewBox {

@@ -1,9 +1,8 @@
-import type { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import type { Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
-import type { ApiConfiguration } from '../tokens';
-import { APIS_TOKENS } from '../tokens';
+import { ApiConfiguration, APIS_TOKENS } from '../tokens';
 import { NotInAvailableApisError } from './errors';
 import { Api } from '../../environments/environment.model';
 

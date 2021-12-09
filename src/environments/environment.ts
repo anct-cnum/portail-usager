@@ -1,6 +1,5 @@
 import { EnvironmentType } from './enum/environement';
-import type { EnvironmentModel } from './environment.model';
-import { Api } from './environment.model';
+import { Api, EnvironmentModel } from './environment.model';
 
 // TODO Passer en var d'env
 export const ENVIRONMENT: EnvironmentModel = {

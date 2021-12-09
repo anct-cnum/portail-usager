@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import type { MapOptionsPresentation } from '../../../models';
+import { MapOptionsPresentation } from '../../../models';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
