@@ -1,6 +1,6 @@
 // TODO REVIEW IGNORE
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MapOptionsPresentation, MarkersPresentation, MarkerProperties, MarkerEvent } from '../../models';
+import { MapOptionsPresentation, MarkersPresentation, MarkerProperties, CenterView, MarkerEvent } from '../../models';
 import { CartographyPresenter } from './cartography.presenter';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Coordinates } from '../../../../core';
@@ -19,6 +19,9 @@ const DEFAULT_VIEW_BOX: ViewBox = {
   zoomLevel: 6
 };
 
+const ZOOM_LEVEL_USAGER_POSITION: number = 10;
+const ZOOM_LEVEL_REGIONAL_MARKER: number = 8;
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CartographyPresenter],
@@ -26,6 +29,8 @@ const DEFAULT_VIEW_BOX: ViewBox = {
 })
 // eslint-disable-next-line
 export class CartographyPage {
+  private readonly _centerView$: Subject<CenterView> = new Subject<CenterView>();
+
   private readonly _cnfsMarkers$: BehaviorSubject<MarkersPresentation> = new BehaviorSubject<MarkersPresentation>({
     features: [],
     type: 'FeatureCollection'
@@ -40,6 +45,8 @@ export class CartographyPage {
     features: [],
     type: 'FeatureCollection'
   });
+
+  public readonly centerView$: Observable<CenterView> = this._centerView$.asObservable();
 
   public readonly mapOptions: MapOptionsPresentation;
 
@@ -79,6 +86,10 @@ export class CartographyPage {
       .subscribe();
   }
 
+  public centerView(centerView: CenterView): void {
+    this._centerView$.next(centerView);
+  }
+
   public geocodeUsagerPosition($event: string): void {
     // eslint-disable-next-line
     this.presenter.geocodeAddress$($event).subscribe((usagerCoordinates: Coordinates): void => {
@@ -86,22 +97,25 @@ export class CartographyPage {
     });
   }
 
-  // TODO Replace with marker onCLick behaviour
-  public log($event: MarkerEvent): void {
-    // eslint-disable-next-line no-console
-    console.log($event);
-  }
-
   public mapViewChanged($event: ViewReset): void {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     this._viewBox$.next({ boundingBox: $event.boundingBox, zoomLevel: $event.zoomLevel } as ViewBox);
   }
 
+  public markerEvent($event: MarkerEvent): void {
+    if ($event.eventType === 'click') {
+      this._centerView$.next({
+        coordinates: $event.markerPosition,
+        zoomLevel: ($event.markerProperties['zoomLevel'] ?? ZOOM_LEVEL_REGIONAL_MARKER) as number
+      });
+    } else {
+      // eslint-disable-next-line no-console
+      console.log(`MarkerEvent type not handled : ${$event.eventType}`);
+    }
+  }
+
   public updateUsagerPosition($event: Coordinates): void {
-    /*
-     * TODO Centrer la vue sur la position, (avec bon zoom level)
-     *  Réétudier leaflet.Map.setView pour voir comment l'utiliser proprement
-     */
     this._usagerCoordinates$.next($event);
+    this.centerView({ coordinates: $event, zoomLevel: ZOOM_LEVEL_USAGER_POSITION });
   }
 }

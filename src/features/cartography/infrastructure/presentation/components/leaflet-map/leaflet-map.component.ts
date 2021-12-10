@@ -10,7 +10,8 @@ import {
   Marker as LeafletMarker,
   tileLayer,
   DivIcon,
-  Icon
+  Icon,
+  ZoomPanOptions
 } from 'leaflet';
 import {
   AfterViewInit,
@@ -24,14 +25,16 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import { EMPTY_FEATURE_COLLECTION, MapOptionsPresentation, MarkerEvent, MarkerProperties } from '../../models';
+import { CenterView, EMPTY_FEATURE_COLLECTION, MapOptionsPresentation, MarkerEvent, MarkerProperties } from '../../models';
 import { MarkersConfiguration, MARKERS_TOKEN } from '../../../configuration';
 import { Feature, FeatureCollection, Point } from 'geojson';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
 import { AnyGeoJsonProperty } from '../../../../../../environments/environment.model';
+import { Coordinates } from '../../../../core';
 
 // TODO Convert configuration to injected token for default options then remove
 const MAX_ZOOM_LEVEL: number = 19;
+const DURATION_IN_SECOND: number = 0.5;
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -57,6 +60,11 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
   }
 
   @Input()
+  public set centerView(centerView: CenterView | null) {
+    if (centerView !== null) this.setView(centerView.coordinates, centerView.zoomLevel);
+  }
+
+  @Input()
   public set mapOptions(mapOptions: MapOptionsPresentation) {
     // TODO Convert configuration to injected token for default options then remove
     this._mapOptions = {
@@ -75,6 +83,7 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
     private readonly markersConfigurations: MarkersConfiguration
   ) {}
 
+  // eslint-disable-next-line max-lines-per-function
   private createEventedMarker(
     position: LatLng,
     feature: Feature<Point, MarkerProperties>,
@@ -87,6 +96,8 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
         .on('click', (markerEvent): void => {
           const payload: MarkerEvent = {
             eventType: markerEvent.type,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
+            markerPosition: new Coordinates(markerEvent.target._latlng.lat, markerEvent.target._latlng.lng),
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             markerProperties: markerEvent.target?.feature?.properties as AnyGeoJsonProperty
           };
@@ -122,5 +133,13 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
 
   public ngOnChanges(): void {
     if (this.mapIsInitialized()) this.refreshMarkersLayer();
+  }
+
+  public setView(center: Coordinates, zoomLevel: number): void {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    this._map.setView({ lat: center.latitude, lng: center.longitude }, zoomLevel, {
+      animate: true,
+      duration: DURATION_IN_SECOND
+    } as ZoomPanOptions);
   }
 }

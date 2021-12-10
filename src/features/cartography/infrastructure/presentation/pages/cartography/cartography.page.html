@@ -16,8 +16,9 @@
       <leaflet-map
         [mapOptions]="mapOptions"
         [markers]="visibleMarkers | addUsagerMarker:(usagerCoordinates$ | async)"
-        (stateChange)="mapViewChanged($event)"
-        (markerChange)="log($event)"></leaflet-map>
+        [centerView]="centerView$ | async"
+        (markerChange)="markerEvent($event)"
+        (stateChange)="mapViewChanged($event)"></leaflet-map>
     </div>
   </div>
 </ng-container>
