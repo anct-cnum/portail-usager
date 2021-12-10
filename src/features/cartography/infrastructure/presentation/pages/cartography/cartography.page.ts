@@ -1,6 +1,6 @@
 // TODO REVIEW IGNORE
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MapOptionsPresentation, MarkersPresentation, MarkerProperties } from '../../models';
+import { MapOptionsPresentation, MarkersPresentation, MarkerProperties, MarkerEvent } from '../../models';
 import { CartographyPresenter } from './cartography.presenter';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Coordinates } from '../../../../core';
@@ -84,6 +84,12 @@ export class CartographyPage {
     this.presenter.geocodeAddress$($event).subscribe((usagerCoordinates: Coordinates): void => {
       this.updateUsagerPosition(usagerCoordinates);
     });
+  }
+
+  // TODO Replace with marker onCLick behaviour
+  public log($event: MarkerEvent): void {
+    // eslint-disable-next-line no-console
+    console.log($event);
   }
 
   public mapViewChanged($event: ViewReset): void {

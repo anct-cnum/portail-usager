@@ -7,22 +7,28 @@ import {
   Map as LeafletMap,
   MapOptions as LeafletMapOptions,
   marker,
-  tileLayer
+  Marker as LeafletMarker,
+  tileLayer,
+  DivIcon,
+  Icon
 } from 'leaflet';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  EventEmitter,
   Inject,
   Input,
   OnChanges,
+  Output,
   ViewChild
 } from '@angular/core';
-import { EMPTY_FEATURE_COLLECTION, MapOptionsPresentation, MarkerProperties } from '../../models';
+import { EMPTY_FEATURE_COLLECTION, MapOptionsPresentation, MarkerEvent, MarkerProperties } from '../../models';
 import { MarkersConfiguration, MARKERS_TOKEN } from '../../../configuration';
 import { Feature, FeatureCollection, Point } from 'geojson';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
+import { AnyGeoJsonProperty } from '../../../../../../environments/environment.model';
 
 // TODO Convert configuration to injected token for default options then remove
 const MAX_ZOOM_LEVEL: number = 19;
@@ -40,6 +46,8 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
 
   @ViewChild('map')
   public mapContainer!: ElementRef<HTMLElement>;
+
+  @Output() public readonly markerChange: EventEmitter<MarkerEvent> = new EventEmitter<MarkerEvent>();
 
   @Input()
   public markers: FeatureCollection<Point, MarkerProperties> = EMPTY_FEATURE_COLLECTION;
@@ -67,6 +75,26 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
     private readonly markersConfigurations: MarkersConfiguration
   ) {}
 
+  private createEventedMarker(
+    position: LatLng,
+    feature: Feature<Point, MarkerProperties>,
+    iconMarker: DivIcon | Icon
+  ): LeafletMarker {
+    return (
+      marker(position, { icon: iconMarker, zIndexOffset: (feature.properties['zIndexOffset'] ?? 0) as number })
+        // WARNING : Typing 'event' will cause a error in leaflet.
+        // eslint-disable-next-line @typescript-eslint/typedef
+        .on('click', (markerEvent): void => {
+          const payload: MarkerEvent = {
+            eventType: markerEvent.type,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            markerProperties: markerEvent.target?.feature?.properties as AnyGeoJsonProperty
+          };
+          this.markerChange.emit(payload);
+        })
+    );
+  }
+
   private initMap(): void {
     this._map = map(this.mapContainer.nativeElement, this._mapOptions);
   }
@@ -77,27 +105,16 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
 
   private refreshMarkersLayer(): void {
     if (this._map.hasLayer(this._markersLayer)) this._map.removeLayer(this._markersLayer);
-
-    this._markersLayer = geoJSON(this.markers, {
-      // eslint-disable-next-line @typescript-eslint/typedef,@typescript-eslint/naming-convention
-      pointToLayer: (feature: Feature<Point, MarkerProperties>, position: LatLng): Layer =>
-        marker(position, {
-          icon: this.markersConfigurations[feature.properties.markerIconConfiguration](feature),
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          zIndexOffset: feature.properties['zIndexOffset'] ?? 0
-        })
-    });
-
-    // TODO Lier le onclick au marqueur
-    /*
-     *  .on('click', () => {
-     *  // emet l'event avec les properties du marqueur.
-     *
-     *  });
-     */
-
+    this._markersLayer = geoJSON(this.markers, { pointToLayer: this.featureToMarker });
     this._map.addLayer(this._markersLayer);
   }
+
+  public featureToMarker = (feature: Feature<Point, MarkerProperties>, position: LatLng): Layer =>
+    this.createEventedMarker(
+      position,
+      feature,
+      this.markersConfigurations[feature.properties.markerIconConfiguration](feature)
+    );
 
   public ngAfterViewInit(): void {
     this.initMap();
