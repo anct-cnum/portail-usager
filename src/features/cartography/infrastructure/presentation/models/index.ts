@@ -1,2 +1,2 @@
 export * from './cnfs';
-export * from './map-options.presentation';
+export * from './cnfs-by-region';

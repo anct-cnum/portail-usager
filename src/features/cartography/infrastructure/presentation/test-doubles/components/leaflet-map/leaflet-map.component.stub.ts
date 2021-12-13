@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { MapOptionsPresentation } from '../../../models';
+import {CartographyConfiguration} from '../../../../configuration';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -7,5 +7,5 @@ import { MapOptionsPresentation } from '../../../models';
   template: ''
 })
 export class LeafletMapStubComponent {
-  @Input() public mapOptions!: MapOptionsPresentation;
+  @Input() public mapOptions!: CartographyConfiguration;
 }

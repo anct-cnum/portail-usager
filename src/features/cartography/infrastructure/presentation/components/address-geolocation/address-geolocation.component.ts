@@ -24,6 +24,7 @@ export class AddressGeolocationComponent {
   }
 
   public locate(): void {
+    // Todo: move to address-geolocation presenter
     const webapisService: Navigator = window.navigator;
     webapisService.geolocation.getCurrentPosition(
       (position: GeolocationPosition): void => {

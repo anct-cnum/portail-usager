@@ -1,4 +1,5 @@
 import {
+  control,
   geoJSON,
   latLng,
   LatLng,
@@ -25,9 +26,9 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import { CenterView, EMPTY_FEATURE_COLLECTION, MapOptionsPresentation, MarkerEvent, MarkerProperties } from '../../models';
-import { MarkersConfiguration, MARKERS_TOKEN } from '../../../configuration';
-import { Feature, FeatureCollection, Point } from 'geojson';
+import { CenterView, EMPTY_FEATURE_COLLECTION, MarkerEvent, MarkerProperties, MarkersPresentation } from '../../models';
+import { MarkersConfiguration, CartographyConfiguration, MARKERS_TOKEN } from '../../../configuration';
+import { Feature, Point } from 'geojson';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
 import { AnyGeoJsonProperty } from '../../../../../../environments/environment.model';
 import { Coordinates } from '../../../../core';
@@ -52,8 +53,7 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
 
   @Output() public readonly markerChange: EventEmitter<MarkerEvent> = new EventEmitter<MarkerEvent>();
 
-  @Input()
-  public markers: FeatureCollection<Point, MarkerProperties> = EMPTY_FEATURE_COLLECTION;
+  @Input() public markers: MarkersPresentation = EMPTY_FEATURE_COLLECTION;
 
   public get map(): LeafletMap {
     return this._map;
@@ -65,16 +65,20 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
   }
 
   @Input()
-  public set mapOptions(mapOptions: MapOptionsPresentation) {
+  public set mapOptions(mapOptions: CartographyConfiguration) {
     // TODO Convert configuration to injected token for default options then remove
     this._mapOptions = {
-      center: latLng(mapOptions.centerCoordinates.latitude, mapOptions.centerCoordinates.longitude),
+      center: latLng(mapOptions.center.coordinates[1], mapOptions.center.coordinates[0]),
       layers: [
         tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
           attribution: '&copy; <a href="https://carto.com/attributions">CARTO</a>'
         })
       ],
-      zoom: Math.min(mapOptions.zoomLevel, MAX_ZOOM_LEVEL)
+      maxZoom: MAX_ZOOM_LEVEL,
+      minZoom: 2.5,
+      zoom: mapOptions.zoomLevel,
+      zoomControl: false,
+      zoomDelta: 0.5
     };
   }
 
@@ -108,6 +112,7 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
 
   private initMap(): void {
     this._map = map(this.mapContainer.nativeElement, this._mapOptions);
+    control.zoom({ position: 'bottomright' }).addTo(this._map);
   }
 
   private mapIsInitialized(): boolean {

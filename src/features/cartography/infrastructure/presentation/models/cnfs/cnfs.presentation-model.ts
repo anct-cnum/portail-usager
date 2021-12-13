@@ -1,4 +1,4 @@
-import { Feature, FeatureCollection, GeoJsonProperties, Point } from 'geojson';
+import { FeatureCollection, GeoJsonProperties, Point } from 'geojson';
 import { Marker } from '../../../configuration';
 import { AnyGeoJsonProperty } from '../../../../../../environments/environment.model';
 import { Coordinates } from '../../../../core';
@@ -16,11 +16,9 @@ export interface MarkerEvent {
   markerPosition: Coordinates;
 }
 
-export const EMPTY_FEATURE_COLLECTION: FeatureCollection<Point, MarkerProperties> = {
+export type MarkersPresentation = FeatureCollection<Point, MarkerProperties>;
+
+export const EMPTY_FEATURE_COLLECTION: MarkersPresentation = {
   features: [],
   type: 'FeatureCollection'
 };
-
-export interface MarkersPresentation extends FeatureCollection {
-  features: Feature<Point, MarkerProperties>[];
-}

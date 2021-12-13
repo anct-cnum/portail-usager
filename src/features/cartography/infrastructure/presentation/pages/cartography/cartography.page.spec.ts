@@ -9,12 +9,17 @@ import { Observable, of } from 'rxjs';
 import { CnfsListStubComponent } from '../../test-doubles/components/cnfs-list/cnfs-list.component.stub';
 import { AddressGeolocationStubComponent } from '../../test-doubles/components/address-geolocation/address-geolocation.component.stub';
 import { LeafletMapStubComponent } from '../../test-doubles/components/leaflet-map/leaflet-map.component.stub';
+import { CARTOGRAPHY_TOKEN } from '../../../configuration/tokens/cartography/cartography.token';
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class CartographyPresenterStub {
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   public defaultMapOptions() {
     return {};
+  }
+
+  public geocodeAddress$(): Observable<null> {
+    return of(null);
   }
 
   public listCnfsPositions$(): Observable<null> {
@@ -43,6 +48,10 @@ describe('cartography page', (): void => {
             {
               provide: CartographyPresenter,
               useClass: CartographyPresenterStub
+            },
+            {
+              provide: CARTOGRAPHY_TOKEN,
+              useValue: {}
             }
           ]
         }

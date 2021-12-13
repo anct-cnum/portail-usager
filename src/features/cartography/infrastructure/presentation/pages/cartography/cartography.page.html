@@ -3,8 +3,8 @@
     <div class="fr-col-4">
       <div class="fr-grid-row todo-alt-1" style="height: 15vw">
         <address-geolocation
-          (addressToGeocode)="geocodeUsagerPosition($event)"
-          (usagerAutolocate)="updateUsagerPosition($event)"></address-geolocation>
+          (usagerAutolocate)="autolocateUsagerRequest($event)"
+          (addressToGeocode)="geocodeUsagerRequest($event)"></address-geolocation>
       </div>
       <div class="fr-grid-row todo" style="width: 100%; height: 45vw">
         <!-- TODO Créer à partir des infos de l'api listConseillers$ | async-->
@@ -13,11 +13,9 @@
     </div>
     <!--todo: fix calc-->
     <div class="fr-col-8" style="height: calc(100vh - 173px)">
-      <leaflet-map
-        [mapOptions]="mapOptions"
+     <leaflet-map
+        [mapOptions]="cartographyConfiguration"
         [markers]="visibleMarkers | addUsagerMarker:(usagerCoordinates$ | async)"
-        [centerView]="centerView$ | async"
-        (markerChange)="markerEvent($event)"
         (stateChange)="mapViewChanged($event)"></leaflet-map>
     </div>
   </div>
