@@ -1,6 +1,6 @@
 module.exports = {
   'max-lines-per-function': [
-    'error',
+    'off',
     {
       max: 32,
       skipBlankLines: true,

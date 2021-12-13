@@ -23,12 +23,7 @@ module.exports = {
         ecmaVersion: 2020,
         sourceType: 'module'
       },
-      plugins: [
-        '@typescript-eslint',
-        '@angular-eslint',
-        'rxjs',
-        'rxjs-angular'
-      ],
+      plugins: ['@typescript-eslint', '@angular-eslint', 'rxjs', 'rxjs-angular'],
       rules: {
         ...require('./.eslint/eslint.rules'),
         ...require('./.eslint/typescript-eslint.rules'),

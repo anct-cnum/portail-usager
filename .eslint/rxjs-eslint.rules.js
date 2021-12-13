@@ -11,7 +11,7 @@ module.exports = {
       },
       parameters: true,
       properties: true,
-      strict: true,
+      strict: false,
       types: {
         '^EventEmitter$': false
       },
@@ -27,8 +27,8 @@ module.exports = {
   'rxjs/no-ignored-notifier': 'error',
   'rxjs/no-ignored-observable': 'error',
   'rxjs/no-ignored-replay-buffer': 'error',
-  'rxjs/no-ignored-subscribe': 'error',
-  'rxjs/no-ignored-subscription': 'error',
+  'rxjs/no-ignored-subscribe': 'off',
+  'rxjs/no-ignored-subscription': 'off',
   'rxjs/no-ignored-takewhile-value': 'error',
   'rxjs/no-implicit-any-catch': 'error',
   'rxjs/no-index': 'error',

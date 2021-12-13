@@ -15,10 +15,7 @@ module.exports = {
     }
   ],
   'jest/no-if': 'error',
-  'jest/no-large-snapshots': [
-    'error',
-    { maxSize: 12, inlineMaxSize: 6 }
-  ],
+  'jest/no-large-snapshots': ['error', { maxSize: 12, inlineMaxSize: 6 }],
   'jest/no-test-return-statement': 'error',
   'jest/prefer-called-with': 'error',
   'jest/prefer-hooks-on-top': 'error',
