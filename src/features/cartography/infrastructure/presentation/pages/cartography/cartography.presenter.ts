@@ -1,10 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import {
-  listCnfsByRegionToPresentation,
-  cnfsCoreToPresentation,
-  MarkersPresentation,
-  MarkerProperties,
-} from '../../models';
+import { listCnfsByRegionToPresentation, cnfsCoreToPresentation, MarkersPresentation, MarkerProperties } from '../../models';
 import { Coordinates } from '../../../../core';
 import { map, Observable, switchMap } from 'rxjs';
 import { ListCnfsByRegionUseCase, ListCnfsPositionUseCase } from '../../../../use-cases';
@@ -28,10 +23,13 @@ export class CartographyPresenter {
     FeatureCollection<Point, AnyGeoJsonProperty>,
     ViewBox
   ]) => MarkersPresentation {
-    return ([cnfsFeatureCollection, viewBox]: [FeatureCollection<Point, AnyGeoJsonProperty>, ViewBox]): MarkersPresentation => ({
-        features: this.clusterService.onlyVisibleMarkers(cnfsFeatureCollection, viewBox),
-        type: 'FeatureCollection'
-      });
+    return ([cnfsFeatureCollection, viewBox]: [
+      FeatureCollection<Point, AnyGeoJsonProperty>,
+      ViewBox
+    ]): MarkersPresentation => ({
+      features: this.clusterService.onlyVisibleMarkers(cnfsFeatureCollection, viewBox),
+      type: 'FeatureCollection'
+    });
   }
 
   public geocodeAddress$(addressToGeocode$: Observable<string>): Observable<Coordinates> {

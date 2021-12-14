@@ -1,4 +1,4 @@
-import {Cnfs, CnfsByRegion, CnfsRepository} from '../../core';
+import { Cnfs, CnfsByRegion, CnfsRepository } from '../../core';
 import { Observable, of } from 'rxjs';
 import { CnfsTransfer, cnfsTransferToCore } from '../../infrastructure/data/models';
 import { cnfsDataCluster } from './data/cnfs-data-cluster';

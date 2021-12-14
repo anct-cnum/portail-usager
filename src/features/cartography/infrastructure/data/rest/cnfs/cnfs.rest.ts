@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Cnfs, CnfsByRegion, CnfsRepository } from '../../../../core';
-import {CnfsByRegionTransfer, cnfsByRegionTransferToCore, CnfsTransfer, cnfsTransferToCore} from '../../models';
+import { CnfsByRegionTransfer, cnfsByRegionTransferToCore, CnfsTransfer, cnfsTransferToCore } from '../../models';
 import { Api } from '../../../../../../environments/environment.model';
 
 @Injectable()

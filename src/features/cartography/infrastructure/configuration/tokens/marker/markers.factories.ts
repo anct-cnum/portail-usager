@@ -75,6 +75,7 @@ export const usagerMarkerFactory: IconMarkerFactory = (): Icon =>
     iconUrl: 'assets/map/pin-usager.svg'
   });
 
+// eslint-disable-next-line max-lines-per-function
 export const cnfsByRegionMarkerFactory: DivIconMarkerFactory = (feature: Feature<Point, MarkerProperties>): DivIcon =>
   new DivIcon({
     className: '',

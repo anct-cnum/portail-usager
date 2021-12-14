@@ -306,5 +306,5 @@ module.exports = {
   '@typescript-eslint/no-use-before-define': 'error',
   '@typescript-eslint/no-useless-constructor': 'error',
   '@typescript-eslint/require-await': 'error',
-  '@typescript-eslint/return-await': 'error',
+  '@typescript-eslint/return-await': 'error'
 };

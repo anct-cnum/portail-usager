@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import {CartographyConfiguration} from '../../../../configuration';
+import { CartographyConfiguration } from '../../../../configuration';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

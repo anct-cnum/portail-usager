@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import {MarkerProperties, MarkersPresentation} from '../../models';
+import { MarkerProperties, MarkersPresentation } from '../../models';
 import { CartographyPresenter } from './cartography.presenter';
-import {BehaviorSubject, merge, Observable, Subject} from 'rxjs';
-import { Coordinates} from '../../../../core';
+import { BehaviorSubject, merge, Observable, Subject } from 'rxjs';
+import { Coordinates } from '../../../../core';
 import { ViewBox, ViewReset } from '../../directives/leaflet-map-state-change';
 import { CartographyConfiguration, CARTOGRAPHY_TOKEN } from '../../../configuration';
-import {FeatureCollection, Point} from 'geojson';
+import { FeatureCollection, Point } from 'geojson';
 
 // TODO Inject though configuration token
 const DEFAULT_VIEW_BOX: ViewBox = {
@@ -26,7 +26,8 @@ export class CartographyPage {
 
   private readonly _viewBox$: Subject<ViewBox> = new BehaviorSubject<ViewBox>(DEFAULT_VIEW_BOX);
 
-  public readonly regionMarkers$: Observable<FeatureCollection<Point, MarkerProperties>> = this.presenter.listCnfsByRegionPositions$();
+  public readonly regionMarkers$: Observable<FeatureCollection<Point, MarkerProperties>> =
+    this.presenter.listCnfsByRegionPositions$();
 
   public readonly usagerCoordinates$: Observable<Coordinates> = merge(
     this.presenter.geocodeAddress$(this._addressToGeocode$),

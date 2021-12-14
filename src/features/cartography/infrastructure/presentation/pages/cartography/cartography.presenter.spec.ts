@@ -4,7 +4,7 @@ import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geo
 import { ClusterService } from '../../services/cluster.service';
 import { firstValueFrom, Observable, of } from 'rxjs';
 import { FeatureCollection, Point } from 'geojson';
-import { CnfsByRegion, CnfsByRegionProperties, Coordinates } from '../../../../core';
+import { CnfsByRegion, Coordinates } from '../../../../core';
 import { MarkerProperties } from '../../models';
 import { Marker } from '../../../configuration';
 
