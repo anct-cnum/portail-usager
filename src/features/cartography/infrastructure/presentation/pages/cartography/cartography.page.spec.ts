@@ -3,13 +3,13 @@ import { CartographyPage } from './cartography.page';
 import { FailedToCompileError } from '@angular-common/errors';
 import { ListCnfsPositionUseCase } from '../../../../use-cases';
 import { CnfsRestTestDouble } from '../../../../use-cases/test-doubles/cnfs-rest-test-double';
-import { CnfsRepository } from '../../../../core';
+import { CnfsRepository} from '../../../../core';
 import { CartographyPresenter } from './cartography.presenter';
-import { Observable, of } from 'rxjs';
+import { Observable, of} from 'rxjs';
 import { CnfsListStubComponent } from '../../test-doubles/components/cnfs-list/cnfs-list.component.stub';
 import { AddressGeolocationStubComponent } from '../../test-doubles/components/address-geolocation/address-geolocation.component.stub';
 import { LeafletMapStubComponent } from '../../test-doubles/components/leaflet-map/leaflet-map.component.stub';
-import { CARTOGRAPHY_TOKEN } from '../../../configuration/tokens/cartography/cartography.token';
+import { CARTOGRAPHY_TOKEN } from '../../../configuration';
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class CartographyPresenterStub {
@@ -19,6 +19,10 @@ class CartographyPresenterStub {
   }
 
   public geocodeAddress$(): Observable<null> {
+    return of(null);
+  }
+
+  public listCnfsByRegionPositions$(): Observable<null> {
     return of(null);
   }
 

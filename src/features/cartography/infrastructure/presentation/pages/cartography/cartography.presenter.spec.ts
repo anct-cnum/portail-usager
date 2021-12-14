@@ -5,6 +5,8 @@ import { ClusterService } from '../../services/cluster.service';
 import { firstValueFrom, Observable, of } from 'rxjs';
 import { FeatureCollection, Point } from 'geojson';
 import { CnfsByRegion, CnfsByRegionProperties, Coordinates } from '../../../../core';
+import { MarkerProperties } from '../../models';
+import { Marker } from '../../../configuration';
 
 const LIST_CNFS_BY_REGION_USE_CASE: ListCnfsByRegionUseCase = {
   execute$(): Observable<CnfsByRegion[]> {
@@ -23,7 +25,7 @@ const LIST_CNFS_BY_REGION_USE_CASE: ListCnfsByRegionUseCase = {
 
 describe('cartography presenter', (): void => {
   it('should present list of cnfs by region positions', async (): Promise<void> => {
-    const expectedCnfsByRegionPositions: FeatureCollection<Point, CnfsByRegionProperties> = {
+    const expectedCnfsByRegionPositions: FeatureCollection<Point, MarkerProperties> = {
       features: [
         {
           geometry: {
@@ -32,6 +34,7 @@ describe('cartography presenter', (): void => {
           },
           properties: {
             count: 2,
+            markerIconConfiguration: Marker.CnfsByRegion,
             region: "Provence-Alpes-Côte d'Azur"
           },
           type: 'Feature'
@@ -43,6 +46,7 @@ describe('cartography presenter', (): void => {
           },
           properties: {
             count: 7,
+            markerIconConfiguration: Marker.CnfsByRegion,
             region: 'Hauts-de-France'
           },
           type: 'Feature'
@@ -58,7 +62,7 @@ describe('cartography presenter', (): void => {
       {} as ClusterService
     );
 
-    const cnfsByRegionPositions: FeatureCollection<Point, CnfsByRegionProperties> = await firstValueFrom(
+    const cnfsByRegionPositions: FeatureCollection<Point, MarkerProperties> = await firstValueFrom(
       cartographyPresenter.listCnfsByRegionPositions$()
     );
 

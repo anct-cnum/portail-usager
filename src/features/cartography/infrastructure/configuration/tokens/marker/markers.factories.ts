@@ -21,6 +21,14 @@ const CNFS_MARKER_CLUSTER_DIMENSIONS: LeafletPoint = new LeafletPoint(
   ROUND_FALSE
 );
 
+const CNFS_MARKER_CNFS_BY_REGION_WIDTH_IN_PIXEL: number = 36;
+const CNFS_MARKER_CNFS_BY_REGION_HEIGTH_IN_PIXEL: number = 36;
+const CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS: LeafletPoint = new LeafletPoint(
+  CNFS_MARKER_CNFS_BY_REGION_WIDTH_IN_PIXEL,
+  CNFS_MARKER_CNFS_BY_REGION_HEIGTH_IN_PIXEL,
+  ROUND_FALSE
+);
+
 const USAGER_MARKER_WIDTH_IN_PIXEL: number = 16;
 const USAGER_MARKER_HEIGTH_IN_PIXEL: number = 16;
 const USAGER_MARKER_DIMENSIONS: LeafletPoint = new LeafletPoint(
@@ -65,4 +73,24 @@ export const usagerMarkerFactory: IconMarkerFactory = (): Icon =>
     iconAnchor: new LeafletPoint(USAGER_MARKER_DIMENSIONS.x * HALF, USAGER_MARKER_DIMENSIONS.y),
     iconSize: USAGER_MARKER_DIMENSIONS,
     iconUrl: 'assets/map/pin-usager.svg'
+  });
+
+export const cnfsByRegionMarkerFactory: DivIconMarkerFactory = (feature: Feature<Point, MarkerProperties>): DivIcon =>
+  new DivIcon({
+    className: '',
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    html: `<div
+        style="width: 36px;
+               height: 36px;
+               font-family: Marianne, sans-serif;
+               font-weight: 600;
+               color: #ffff;
+               text-align: center;
+               background-image: url('./assets/map/pin-cnfs-by-region.svg');
+               background-repeat: no-repeat;
+               background-position: center;
+               background-size: contain;">
+      ${feature.properties['count'] as number}</div>`,
+    iconAnchor: new LeafletPoint(CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS.x * HALF, CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS.y),
+    iconSize: CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS
   });
