@@ -18,8 +18,8 @@ import { CnfsListComponent } from '../../presentation/components/cnfs-list/cnfs-
 import { CARTOGRAPHY_TOKEN } from '../tokens/cartography/cartography.token';
 import { Point } from 'geojson';
 
-const DEFAULT_LONGITUDE: number = 4;
-const DEFAULT_LATITUDE: number = 45;
+const DEFAULT_LONGITUDE: number = 4.468874066180609;
+const DEFAULT_LATITUDE: number = 46.28146057911664;
 const DEFAULT_POSITION: Point = {
   coordinates: [DEFAULT_LONGITUDE, DEFAULT_LATITUDE],
   type: 'Point'
