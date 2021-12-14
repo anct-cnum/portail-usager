@@ -21,8 +21,8 @@ const CNFS_MARKER_CLUSTER_DIMENSIONS: LeafletPoint = new LeafletPoint(
   ROUND_FALSE
 );
 
-const CNFS_MARKER_CNFS_BY_REGION_WIDTH_IN_PIXEL: number = 36;
-const CNFS_MARKER_CNFS_BY_REGION_HEIGTH_IN_PIXEL: number = 36;
+const CNFS_MARKER_CNFS_BY_REGION_WIDTH_IN_PIXEL: number = 72;
+const CNFS_MARKER_CNFS_BY_REGION_HEIGTH_IN_PIXEL: number = 72;
 const CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS: LeafletPoint = new LeafletPoint(
   CNFS_MARKER_CNFS_BY_REGION_WIDTH_IN_PIXEL,
   CNFS_MARKER_CNFS_BY_REGION_HEIGTH_IN_PIXEL,
@@ -53,8 +53,8 @@ export const cnfsClusterMarkerFactory: DivIconMarkerFactory = (feature: Feature<
     className: '',
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     html: `<div
-        style="width: 31px;
-               height: 36px;
+        style="width: ${CNFS_MARKER_CLUSTER_DIMENSIONS.x}px;
+               height: ${CNFS_MARKER_CLUSTER_DIMENSIONS.y}px;
                font-family: Marianne, sans-serif;
                font-weight: 600;
                color: #ffff;
@@ -80,17 +80,30 @@ export const cnfsByRegionMarkerFactory: DivIconMarkerFactory = (feature: Feature
     className: '',
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     html: `<div
-        style="width: 36px;
-               height: 36px;
-               font-family: Marianne, sans-serif;
-               font-weight: 600;
-               color: #ffff;
-               text-align: center;
-               background-image: url('./assets/map/pin-cnfs-by-region.svg');
-               background-repeat: no-repeat;
-               background-position: center;
-               background-size: contain;">
-      ${feature.properties['count'] as number}</div>`,
+            style="
+              width: ${CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS.x}px;
+              height: ${CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS.y}px;
+              padding: 8px;
+              background-image: url('./assets/map/pin-cnfs-by-region.svg');
+              background-repeat: no-repeat;
+              background-position: center;
+              background-size: contain;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;">
+              <img style="height: 32px; width: 19px" alt="pin cnfs" src="./assets/map/pin-cnfs.svg"/>
+              <div
+               style="
+                 width: 100%;
+                 color: #ffff;
+                 margin-left: 8px;
+                 font-family: Marianne, sans-serif;
+                 font-weight: 600;
+                 font-size: 16px;
+                 text-rendering: auto;
+                 line-height: 24px">
+               ${feature.properties['count'] as number}</div>
+             </div>`,
     iconAnchor: new LeafletPoint(CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS.x * HALF, CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS.y),
     iconSize: CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS
   });
