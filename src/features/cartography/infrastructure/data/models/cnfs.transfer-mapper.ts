@@ -1,11 +1,12 @@
 import { Cnfs, Coordinates } from '../../../core';
 import { CnfsTransfer } from './cnfs.transfer';
-import { Point, Feature } from 'geojson';
+import { Point, Feature, Position } from 'geojson';
 import { AnyGeoJsonProperty } from '../../../../../environments/environment.model';
 
-const hasValidCoordinates = (feature: Feature<Point>): boolean =>
-  Coordinates.isValidLatitudeAngle(feature.geometry.coordinates[0]) &&
-  Coordinates.isValidLongitudeAngle(feature.geometry.coordinates[1]);
+const hasValidCoordinates = (feature: Feature<Point>): boolean => {
+  const [longitude, latitude]: Position = feature.geometry.coordinates;
+  return Coordinates.isValidLatitudeAngle(latitude) && Coordinates.isValidLongitudeAngle(longitude);
+};
 
 export const cnfsTransferToCore = (cnfsTransfer: CnfsTransfer): Cnfs[] =>
   cnfsTransfer.features
