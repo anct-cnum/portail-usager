@@ -72,7 +72,7 @@ export class LeafletMapComponent implements AfterViewChecked {
     this._mapOptions = {
       center: latLng(mapOptions.center.coordinates[1], mapOptions.center.coordinates[0]),
       layers: [
-        tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png', {
           attribution: '&copy; <a href="https://carto.com/attributions">CARTO</a>'
         })
       ],
