@@ -1,11 +1,11 @@
-import { CartographyPresenter } from './cartography.presenter';
+import { CartographyPresenter, coordinatesToCenterView, markerEventToCenterView } from './cartography.presenter';
 import { ListCnfsPositionUseCase, ListCnfsByRegionUseCase } from '../../../../use-cases';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
 import { ClusterService } from '../../services/cluster.service';
 import { firstValueFrom, Observable, of } from 'rxjs';
 import { FeatureCollection, Point } from 'geojson';
 import { CnfsByRegion, Coordinates } from '../../../../core';
-import { MarkerProperties } from '../../models';
+import { CenterView, MarkerEvent, MarkerProperties } from '../../models';
 import { Marker } from '../../../configuration';
 
 const LIST_CNFS_BY_REGION_USE_CASE: ListCnfsByRegionUseCase = {
@@ -67,5 +67,33 @@ describe('cartography presenter', (): void => {
     );
 
     expect(cnfsByRegionPositions).toStrictEqual(expectedCnfsByRegionPositions);
+  });
+
+  it('should map a markerEvent to a CenterView', (): void => {
+    const markerEvent: MarkerEvent = {
+      eventType: 'click',
+      markerPosition: new Coordinates(2.775278, 49.966111),
+      markerProperties: {
+        boundingZoom: 8
+      }
+    };
+
+    const expectedCenterView: CenterView = {
+      coordinates: new Coordinates(2.775278, 49.966111),
+      zoomLevel: 8
+    };
+
+    expect(markerEventToCenterView(markerEvent)).toStrictEqual(expectedCenterView);
+  });
+
+  it('should create a CenterView from map coordinates', (): void => {
+    const usagerCoordinates: Coordinates = new Coordinates(2.775278, 49.966111);
+
+    const expectedCenterView: CenterView = {
+      coordinates: new Coordinates(2.775278, 49.966111),
+      zoomLevel: 12
+    };
+
+    expect(coordinatesToCenterView(usagerCoordinates)).toStrictEqual(expectedCenterView);
   });
 });

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { MarkerProperties, MarkersPresentation } from '../../models';
-import { CartographyPresenter } from './cartography.presenter';
-import { BehaviorSubject, merge, Observable, Subject } from 'rxjs';
+import { CenterView, MarkerEvent, MarkerProperties, MarkersPresentation } from '../../models';
+import { CartographyPresenter, coordinatesToCenterView, markerEventToCenterView } from './cartography.presenter';
+import { BehaviorSubject, merge, Observable, Subject, tap } from 'rxjs';
 import { Coordinates } from '../../../../core';
 import { ViewBox, ViewReset } from '../../directives/leaflet-map-state-change';
 import { CartographyConfiguration, CARTOGRAPHY_TOKEN } from '../../../configuration';
@@ -26,18 +26,24 @@ export class CartographyPage {
 
   private readonly _viewBox$: Subject<ViewBox> = new BehaviorSubject<ViewBox>(DEFAULT_VIEW_BOX);
 
+  public centerView: CenterView | null = null;
+
   public readonly regionMarkers$: Observable<FeatureCollection<Point, MarkerProperties>> =
     this.presenter.listCnfsByRegionPositions$();
 
   public readonly usagerCoordinates$: Observable<Coordinates> = merge(
     this.presenter.geocodeAddress$(this._addressToGeocode$),
     this._usagerCoordinates$
+  ).pipe(
+    tap((coordinates: Coordinates): void => {
+      this.centerView = coordinatesToCenterView(coordinates);
+    })
   );
 
   public readonly visibleMarkers$: Observable<MarkersPresentation> = this.presenter.listCnfsPositions$(this._viewBox$);
 
   public constructor(
-    private readonly presenter: CartographyPresenter,
+    public readonly presenter: CartographyPresenter,
     @Inject(CARTOGRAPHY_TOKEN) public readonly cartographyConfiguration: CartographyConfiguration
   ) {}
 
@@ -51,5 +57,9 @@ export class CartographyPage {
 
   public mapViewChanged($event: ViewReset): void {
     this._viewBox$.next({ boundingBox: $event.boundingBox, zoomLevel: $event.zoomLevel });
+  }
+
+  public onMarkerChanged(markerEvent: MarkerEvent): void {
+    this.centerView = markerEventToCenterView(markerEvent);
   }
 }

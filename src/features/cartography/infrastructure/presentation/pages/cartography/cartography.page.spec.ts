@@ -10,9 +10,14 @@ import { CnfsListStubComponent } from '../../test-doubles/components/cnfs-list/c
 import { AddressGeolocationStubComponent } from '../../test-doubles/components/address-geolocation/address-geolocation.component.stub';
 import { LeafletMapStubComponent } from '../../test-doubles/components/leaflet-map/leaflet-map.component.stub';
 import { CARTOGRAPHY_TOKEN } from '../../../configuration';
+import { CenterView } from '../../models';
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class CartographyPresenterStub {
+  public centerView(): CenterView {
+    return {} as CenterView;
+  }
+
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   public defaultMapOptions() {
     return {};

@@ -1,5 +1,12 @@
 import { Inject, Injectable } from '@angular/core';
-import { listCnfsByRegionToPresentation, cnfsCoreToPresentation, MarkersPresentation, MarkerProperties } from '../../models';
+import {
+  listCnfsByRegionToPresentation,
+  cnfsCoreToPresentation,
+  MarkersPresentation,
+  MarkerProperties,
+  CenterView,
+  MarkerEvent
+} from '../../models';
 import { Coordinates } from '../../../../core';
 import { map, Observable, switchMap } from 'rxjs';
 import { ListCnfsByRegionUseCase, ListCnfsPositionUseCase } from '../../../../use-cases';
@@ -9,6 +16,18 @@ import { ClusterService } from '../../services/cluster.service';
 import { AnyGeoJsonProperty } from '../../../../../../environments/environment.model';
 import { combineLatestWith } from 'rxjs/operators';
 import { ViewBox } from '../../directives/leaflet-map-state-change';
+
+const CITY_ZOOM_LEVEL: number = 12;
+
+export const markerEventToCenterView = (markerEvent: MarkerEvent): CenterView => ({
+  coordinates: markerEvent.markerPosition,
+  zoomLevel: markerEvent.markerProperties['boundingZoom'] as number
+});
+
+export const coordinatesToCenterView = (coordinates: Coordinates): CenterView => ({
+  coordinates,
+  zoomLevel: CITY_ZOOM_LEVEL
+});
 
 @Injectable()
 export class CartographyPresenter {
@@ -31,7 +50,6 @@ export class CartographyPresenter {
       type: 'FeatureCollection'
     });
   }
-
   public geocodeAddress$(addressToGeocode$: Observable<string>): Observable<Coordinates> {
     return addressToGeocode$.pipe(
       switchMap((address: string): Observable<Coordinates> => this.geocodeAddressUseCase.execute$(address))

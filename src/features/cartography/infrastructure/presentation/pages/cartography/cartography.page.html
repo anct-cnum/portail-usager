@@ -22,7 +22,9 @@
     <ng-container *ngIf="regionMarkers$ | async as regionMarkers">
       <leaflet-map
         [mapOptions]="cartographyConfiguration"
+        [centerView]="centerView"
         [markers]="regionMarkers | addUsagerMarker:(usagerCoordinates$ | async)"
+        (markerChange)="onMarkerChanged($event)"
         (stateChange)="mapViewChanged($event)"></leaflet-map>
     </ng-container>
   </div>
