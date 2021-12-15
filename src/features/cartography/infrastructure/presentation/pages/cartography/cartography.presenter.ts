@@ -3,6 +3,7 @@ import {
   listCnfsByRegionToPresentation,
   cnfsCoreToPresentation,
   MarkersPresentation,
+  MarkerProperties,
   CenterView,
   MarkerEvent
 } from '../../models';
