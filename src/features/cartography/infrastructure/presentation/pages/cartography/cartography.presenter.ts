@@ -3,7 +3,6 @@ import {
   listCnfsByRegionToPresentation,
   cnfsCoreToPresentation,
   MarkersPresentation,
-  MarkerProperties,
   CenterView,
   MarkerEvent
 } from '../../models';
@@ -56,7 +55,7 @@ export class CartographyPresenter {
     );
   }
 
-  public listCnfsByRegionPositions$(): Observable<FeatureCollection<Point, MarkerProperties>> {
+  public listCnfsByRegionPositions$(): Observable<MarkersPresentation> {
     return this.listCnfsByRegionUseCase.execute$().pipe(map(listCnfsByRegionToPresentation));
   }
 

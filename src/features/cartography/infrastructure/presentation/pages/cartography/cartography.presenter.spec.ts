@@ -70,16 +70,18 @@ describe('cartography presenter', (): void => {
   });
 
   it('should map a markerEvent to a CenterView', (): void => {
+    const palaisDeLElyseeCoordinates: Coordinates = new Coordinates(48.87063, 2.316934);
+
     const markerEvent: MarkerEvent = {
       eventType: 'click',
-      markerPosition: new Coordinates(2.775278, 49.966111),
+      markerPosition: palaisDeLElyseeCoordinates,
       markerProperties: {
         boundingZoom: 8
       }
     };
 
     const expectedCenterView: CenterView = {
-      coordinates: new Coordinates(2.775278, 49.966111),
+      coordinates: palaisDeLElyseeCoordinates,
       zoomLevel: 8
     };
 
@@ -87,10 +89,10 @@ describe('cartography presenter', (): void => {
   });
 
   it('should create a CenterView from map coordinates', (): void => {
-    const usagerCoordinates: Coordinates = new Coordinates(2.775278, 49.966111);
+    const usagerCoordinates: Coordinates = new Coordinates(48.87063, 2.316934);
 
     const expectedCenterView: CenterView = {
-      coordinates: new Coordinates(2.775278, 49.966111),
+      coordinates: usagerCoordinates,
       zoomLevel: 12
     };
 
