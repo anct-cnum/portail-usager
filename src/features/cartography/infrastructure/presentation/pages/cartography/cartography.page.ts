@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { CenterView, MarkerEvent, MarkerProperties, MarkersPresentation } from '../../models';
+import { CenterView, MarkerEvent, MarkersPresentation } from '../../models';
 import { CartographyPresenter, coordinatesToCenterView, markerEventToCenterView } from './cartography.presenter';
-import { BehaviorSubject, merge, Observable, Subject, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, merge, Observable, Subject, tap } from 'rxjs';
 import { Coordinates } from '../../../../core';
 import { ViewBox, ViewReset } from '../../directives/leaflet-map-state-change';
 import { CartographyConfiguration, CARTOGRAPHY_TOKEN } from '../../../configuration';
-import { FeatureCollection, Point } from 'geojson';
+import { map } from 'rxjs/operators';
 
 // TODO Inject though configuration token
 const DEFAULT_VIEW_BOX: ViewBox = {
@@ -13,6 +13,8 @@ const DEFAULT_VIEW_BOX: ViewBox = {
   boundingBox: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
   zoomLevel: 6
 };
+
+const SPLIT_REGION_ZOOM: number = 8;
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,9 +30,6 @@ export class CartographyPage {
 
   public centerView: CenterView | null = null;
 
-  public readonly regionMarkers$: Observable<FeatureCollection<Point, MarkerProperties>> =
-    this.presenter.listCnfsByRegionPositions$();
-
   public readonly usagerCoordinates$: Observable<Coordinates> = merge(
     this.presenter.geocodeAddress$(this._addressToGeocode$),
     this._usagerCoordinates$
@@ -40,10 +39,23 @@ export class CartographyPage {
     })
   );
 
-  public readonly visibleMarkers$: Observable<MarkersPresentation> = this.presenter.listCnfsPositions$(this._viewBox$);
+  public readonly visibleMarkers$: Observable<MarkersPresentation> = combineLatest([
+    this.presenter.listCnfsByRegionPositions$(),
+    this.presenter.listCnfsPositions$(this._viewBox$),
+    this._viewBox$ as Observable<ViewBox>
+  ]).pipe(
+    map(
+      ([byRegionPosition, allCnfsPosition, viewBox]: [
+        MarkersPresentation,
+        MarkersPresentation,
+        ViewBox
+      ]): MarkersPresentation =>
+        (viewBox.zoomLevel < SPLIT_REGION_ZOOM ? byRegionPosition : allCnfsPosition)
+    )
+  );
 
   public constructor(
-    public readonly presenter: CartographyPresenter,
+    private readonly presenter: CartographyPresenter,
     @Inject(CARTOGRAPHY_TOKEN) public readonly cartographyConfiguration: CartographyConfiguration
   ) {}
 

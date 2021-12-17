@@ -50,7 +50,7 @@ export class ClusterService {
     viewBox: ViewBox
   ): Feature<Point, MarkerProperties>[] {
     if (!this._isReady) this.load(cnfsFeatureCollection.features);
-    return this.viewCulling(viewBox).features.map(setMarkerIcon(this.getMarkerAtZoomLevel(viewBox.zoomLevel)));
+    return this.viewCulling(viewBox).features.map(setMarkerIcon(Marker.Cnfs));
   }
 
   public viewCulling(viewBox?: ViewBox | null): FeatureCollection<Point, AnyGeoJsonProperty> {

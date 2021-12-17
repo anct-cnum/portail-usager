@@ -12,18 +12,11 @@
   </div>
   <!--todo: fix calc-->
   <div class="fr-col-8" style="height: calc(100vh - 173px)">
-    <!--      <ng-container *ngIf="visibleMarkers$ | async as visibleMarkers">-->
-    <!--     <leaflet-map-->
-    <!--        [mapOptions]="cartographyConfiguration"-->
-    <!--        [markers]="visibleMarkers | addUsagerMarker:(usagerCoordinates$ | async)"-->
-    <!--        (stateChange)="mapViewChanged($event)"></leaflet-map>-->
-    <!--      </ng-container>-->
-
-    <ng-container *ngIf="regionMarkers$ | async as regionMarkers">
+    <ng-container *ngIf="visibleMarkers$ | async as visibleMarkers">
       <leaflet-map
         [mapOptions]="cartographyConfiguration"
         [centerView]="centerView"
-        [markers]="regionMarkers | addUsagerMarker:(usagerCoordinates$ | async)"
+        [markers]="visibleMarkers | addUsagerMarker:(usagerCoordinates$ | async)"
         (markerChange)="onMarkerChanged($event)"
         (stateChange)="mapViewChanged($event)"></leaflet-map>
     </ng-container>
