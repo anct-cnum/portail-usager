@@ -4,9 +4,9 @@
       (usagerAutolocate)="autoLocateUsagerRequest($event)"
       (addressToGeocode)="geocodeUsagerRequest($event)"></address-geolocation>
     <!-- TODO Créer à partir des infos de l'api listConseillers$ | async-->
-    <div class="fr-px-3w fr-background-contrast--blue-cumulus" *ngIf="[].length > 0">
-      Nombre de marqueurs présents visibles : {{ [].length }}
-    </div>
+    <p class="fr-px-3w fr-background-contrast--blue-cumulus" *ngIf="[].length > 0">
+      Nombre de marqueurs présents visibles&nbsp;: {{ [].length }}
+    </p>
     <cnfs-list class="fr-overflow--auto" [listConseillers]="[]"></cnfs-list>
   </div>
   <div class="fr-col-xl-8 fr-col-lg-7">
