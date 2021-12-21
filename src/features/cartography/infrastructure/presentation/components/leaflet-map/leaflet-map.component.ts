@@ -33,7 +33,7 @@ import { AnyGeoJsonProperty } from '../../../../../../environments/environment.m
 import { Coordinates } from '../../../../core';
 
 // TODO Convert configuration to injected token for default options then remove
-const MAX_ZOOM_LEVEL: number = 19;
+const MAX_ZOOM_LEVEL: number = 18;
 const DURATION_IN_SECOND: number = 0.5;
 
 @Component({
@@ -79,6 +79,7 @@ export class LeafletMapComponent implements AfterViewChecked {
       maxZoom: MAX_ZOOM_LEVEL,
       minZoom: 2.5,
       zoom: mapOptions.zoomLevel,
+      zoomAnimationThreshold: 12,
       zoomControl: false,
       zoomDelta: 0.5
     };
