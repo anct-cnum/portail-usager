@@ -113,8 +113,6 @@ jobs:
           path: node_modules
       - name: eslint
         run: node_modules/.bin/ng lint
-      - name: stylelint
-        run: yarn run stylelint
 
   deploy:
     needs: [build, test, lint]
