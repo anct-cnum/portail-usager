@@ -35,7 +35,7 @@ import { AnyGeoJsonProperty } from '../../../../../../environments/environment.m
 import { Coordinates } from '../../../../core';
 
 // TODO Convert configuration to injected token for default options then remove
-const DURATION_IN_SECOND: number = 0.5;
+const ANIMATION_DURATION_IN_SECONDS: number = 0.5;
 // TODO Convert configuration to injected token for default options then remove
 const MAP_OPTIONS: LeafletMapOptions = {
   layers: [
@@ -128,7 +128,7 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
   private setView(centerView: CenterView): void {
     this._map.setView({ lat: centerView.coordinates.latitude, lng: centerView.coordinates.longitude }, centerView.zoomLevel, {
       animate: true,
-      duration: DURATION_IN_SECOND
+      duration: ANIMATION_DURATION_IN_SECONDS
     });
   }
 
