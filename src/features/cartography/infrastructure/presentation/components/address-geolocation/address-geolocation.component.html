@@ -1,11 +1,14 @@
-<!-- TODO REVIEW IGNORE-->
-<div>
-  <pre>
-    <label for="address">Adresse:</label>
-    <input id="address" type="text" [formControl]="address" placeholder="Saisir une adresse" />
-    <button (click)="geocode()">Utiliser cette adresse</button>
-  </pre>
-  <div>
-    <button (click)="locate()">Me localiser automatiquement</button>
-  </div>
+<div class="fr-p-3w fr-gradient--blue">
+  <form (submit)="geocode()" [formGroup]="searchForm">
+    <label class="fr-label fr-text-inverted--white fr-text--bold fr-mb-1w" for="address">Entrez un code postal, une ville, une adresse :</label>
+    <div class="fr-search-bar fr-search-bar--lg" role="search">
+      <input formControlName="address" class="fr-input" placeholder="Code postal, ville, adresse" type="search" id="address" name="address">
+      <button class="fr-btn">
+        Rechercher
+      </button>
+    </div>
+  </form>
+  <button (click)="locate()" class="fr-btn fr-btn--sm fr-btn--icon-left fr-mt-1w">
+    Me localiser automatiquement
+  </button>
 </div>

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
 import { Coordinates } from '../../../../core';
-import { FormControl } from '@angular/forms';
+import {FormControl, FormGroup} from '@angular/forms';
 
 // TODO geocode et locate sont deux sujets différents qu'il serait bien de séparer dans des composants dédiés
 
@@ -10,7 +10,9 @@ import { FormControl } from '@angular/forms';
   templateUrl: './address-geolocation.component.html'
 })
 export class AddressGeolocationComponent {
-  public readonly address: FormControl = new FormControl('');
+  public readonly searchForm: FormGroup = new FormGroup({
+    address: new FormControl('')
+  })
 
   @Output() public readonly addressToGeocode: EventEmitter<string> = new EventEmitter<string>();
   @Output() public readonly usagerAutolocate: EventEmitter<Coordinates> = new EventEmitter<Coordinates>();
@@ -20,7 +22,7 @@ export class AddressGeolocationComponent {
   }
 
   public geocode(): void {
-    this.addressToGeocode.emit(this.address.value as string);
+    this.addressToGeocode.emit(this.searchForm.get('address')?.value as string);
   }
 
   public locate(): void {
