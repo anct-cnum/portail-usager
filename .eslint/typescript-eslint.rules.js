@@ -298,7 +298,7 @@ module.exports = {
   ],
   '@typescript-eslint/no-shadow': ['error', { builtinGlobals: true, hoist: 'all' }],
   '@typescript-eslint/no-throw-literal': 'error',
-  '@typescript-eslint/no-unused-expressions': 'error',
+  '@typescript-eslint/no-unused-expressions': ['error', { allowShortCircuit: true }],
   '@typescript-eslint/no-unused-vars': [
     'error',
     {
