@@ -3,7 +3,7 @@
   <title>bulle-région</title>
   <defs>
     <linearGradient x1="50%" y1="-4.60742555e-13%" x2="50%" y2="76.9968313%" id="linearGradient-1">
-      <stop stop-color="#0A76F6" stop-opacity="0.995356206" offset="0%"></stop>
+      <stop stop-color="#0078f3" stop-opacity="0.995356206" offset="0%"></stop>
       <stop stop-color="#000091" offset="100%"></stop>
     </linearGradient>
   </defs>

@@ -92,7 +92,7 @@ export const cnfsByRegionMarkerFactory: DivIconMarkerFactory = (feature: Feature
               display: flex;
               justify-content: space-between;
               align-items: center;">
-              <img style="height: 32px; width: 19px" alt="pin cnfs" src="./assets/map/pin-cnfs.svg"/>
+              <img style="height: 32px; width: 19px" alt="" src="./assets/map/pin-cnfs.svg"/>
               <div
                style="
                  width: 100%;
