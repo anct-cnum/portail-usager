@@ -59,7 +59,7 @@ export class CartographyPage {
     @Inject(CARTOGRAPHY_TOKEN) public readonly cartographyConfiguration: CartographyConfiguration
   ) {}
 
-  public autolocateUsagerRequest(coordinates: Coordinates): void {
+  public autoLocateUsagerRequest(coordinates: Coordinates): void {
     this._usagerCoordinates$.next(coordinates);
   }
 

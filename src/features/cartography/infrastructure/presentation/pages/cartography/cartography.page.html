@@ -1,17 +1,15 @@
-<div class="fr-grid-row">
-  <div class="fr-col-4">
-    <div class="fr-grid-row todo-alt-1" style="height: 15vw">
-      <address-geolocation
-        (usagerAutolocate)="autolocateUsagerRequest($event)"
-        (addressToGeocode)="geocodeUsagerRequest($event)"></address-geolocation>
+<div class="fr-grid-row fr-flex-wrap--nowrap fr-full-container--height">
+  <div class="fr-col-xl-4 fr-col-lg-5 fr-display--flex fr-flex-direction--column fr-index--over fr-shadow--right">
+    <address-geolocation
+      (usagerAutolocate)="autoLocateUsagerRequest($event)"
+      (addressToGeocode)="geocodeUsagerRequest($event)"></address-geolocation>
+    <!-- TODO Créer à partir des infos de l'api listConseillers$ | async-->
+    <div class="fr-px-3w fr-background-contrast--blue-cumulus" *ngIf="[].length > 0">
+      Nombre de marqueurs présents visibles : {{ [].length }}
     </div>
-    <div class="fr-grid-row todo" style="width: 100%; height: 45vw">
-      <!-- TODO Créer à partir des infos de l'api listConseillers$ | async-->
-      <cnfs-list [listConseillers]="[]"></cnfs-list>
-    </div>
+    <cnfs-list class="fr-overflow--auto" [listConseillers]="[]"></cnfs-list>
   </div>
-  <!--todo: fix calc-->
-  <div class="fr-col-8" style="height: calc(100vh - 173px)">
+  <div class="fr-col-xl-8 fr-col-lg-7">
     <ng-container *ngIf="visibleMarkers$ | async as visibleMarkers">
       <leaflet-map
         [mapOptions]="cartographyConfiguration"
@@ -22,6 +20,3 @@
     </ng-container>
   </div>
 </div>
-
-<!--todo: fix footer overlapping map-->
-<div style="height: 2px"></div>
