@@ -13,7 +13,7 @@ describe('HeaderComponent', (): void => {
       });
   });
 
-  it('should create the content layout', (): void => {
+  it('should create component', (): void => {
     const fixture: ComponentFixture<HeaderComponent> = TestBed.createComponent(HeaderComponent);
     const component: HeaderComponent = fixture.componentInstance;
     expect(component).toBeTruthy();
