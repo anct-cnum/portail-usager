@@ -13,7 +13,8 @@
     "test": "ng test",
     "lint": "ng lint portail-usager",
     "stylelint": "stylelint \"**/*.scss\"",
-    "prettier": "prettier --write --ignore-unknown ."
+    "prettier": "prettier --write --ignore-unknown .",
+    "prepare": "husky install"
   },
   "private": true,
   "dependencies": {
