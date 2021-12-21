@@ -1,0 +1,36 @@
+////
+/// Core Variables
+/// Les utilitaires des cores sont paramétrables ici, ces variables reprennent celles des settings de chaque utilitaire sans le '!default' à la fin.
+/// De cette façon les utilitaires générés peuvent être modifiés ici au besoin (en reprenant la même structure de données) ou retirés en les passant à 'false'
+/// @group core
+////
+
+$variables: (
+  color: (
+    gradient: (
+      active: true,
+    ),
+    shadow: (
+      active: true,
+    ),
+  ),
+  display: (
+    display: (
+      active: true,
+      breakpoints: sm md lg,
+    ),
+    flex-properties: (
+      active: true,
+      breakpoints: sm md lg,
+    ),
+    overflow: (
+      active: true,
+    ),
+    size: (
+      active: true,
+    ),
+    z-index: (
+      active: true,
+    ),
+  ),
+) !default;

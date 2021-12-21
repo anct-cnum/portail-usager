@@ -1,0 +1,16 @@
+////
+/// Core Tool : Color shadow
+/// @group core
+////
+
+@mixin build-shadow() {
+  $shadow-vars: map-get($color-vars, shadow);
+
+  @if ($shadow-vars != false and map-get($shadow-vars, active) != false) {
+    @each $key, $value in $shadows-settings {
+      #{ns(shadow)}--#{$key} {
+        box-shadow: $value;
+      }
+    }
+  }
+}

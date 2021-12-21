@@ -1,0 +1,9 @@
+////
+/// Core Setting : Color
+/// @group core
+////
+
+$color-vars: map-get($variables, color);
+
+@import 'setting/gradient';
+@import 'setting/shadow';

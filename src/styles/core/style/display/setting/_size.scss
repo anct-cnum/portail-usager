@@ -1,0 +1,35 @@
+////
+/// Core Settings : size
+/// @group core
+////
+
+$size: (
+  full-screen: (
+    size: (
+      width: '100vw',
+      height: '100vh',
+    ),
+    width: (
+      width: '100vw',
+      height: null,
+    ),
+    height: (
+      width: null,
+      height: '100vh',
+    ),
+  ),
+  full-container: (
+    size: (
+      width: '100%',
+      height: '100%',
+    ),
+    width: (
+      width: '100%',
+      height: null,
+    ),
+    height: (
+      width: null,
+      height: '100%',
+    ),
+  ),
+) !default;

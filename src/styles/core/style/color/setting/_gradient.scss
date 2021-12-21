@@ -1,0 +1,11 @@
+////
+/// Core Setting : Color gradient
+/// @group core
+////
+
+$gradient-settings: (
+  blue: (
+    start: get-color(blue-france-sun-113),
+    stop: get-color(info-main-525),
+  ),
+);

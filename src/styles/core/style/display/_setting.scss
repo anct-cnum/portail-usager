@@ -1,0 +1,11 @@
+////
+/// Core Setting : Display
+/// @group core
+////
+
+$display-vars: map-get($variables, display);
+
+@import 'setting/display';
+@import 'setting/flex-properties';
+@import 'setting/overflow';
+@import 'setting/size';
