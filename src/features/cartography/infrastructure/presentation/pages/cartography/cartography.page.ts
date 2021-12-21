@@ -28,7 +28,7 @@ export class CartographyPage {
 
   private readonly _viewBox$: Subject<ViewBox> = new BehaviorSubject<ViewBox>(DEFAULT_VIEW_BOX);
 
-  public centerView: CenterView | null = null;
+  public centerView: CenterView = this.cartographyConfiguration;
 
   public readonly usagerCoordinates$: Observable<Coordinates> = merge(
     this.presenter.geocodeAddress$(this._addressToGeocode$),
@@ -49,14 +49,13 @@ export class CartographyPage {
         MarkersPresentation,
         MarkersPresentation,
         ViewBox
-      ]): MarkersPresentation =>
-        (viewBox.zoomLevel < SPLIT_REGION_ZOOM ? byRegionPosition : allCnfsPosition)
+      ]): MarkersPresentation => (viewBox.zoomLevel < SPLIT_REGION_ZOOM ? byRegionPosition : allCnfsPosition)
     )
   );
 
   public constructor(
     private readonly presenter: CartographyPresenter,
-    @Inject(CARTOGRAPHY_TOKEN) public readonly cartographyConfiguration: CartographyConfiguration
+    @Inject(CARTOGRAPHY_TOKEN) private readonly cartographyConfiguration: CartographyConfiguration
   ) {}
 
   public autoLocateUsagerRequest(coordinates: Coordinates): void {

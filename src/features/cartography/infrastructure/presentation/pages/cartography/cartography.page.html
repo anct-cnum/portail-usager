@@ -12,7 +12,6 @@
   <div class="fr-col-xl-8 fr-col-lg-7">
     <ng-container *ngIf="visibleMarkers$ | async as visibleMarkers">
       <leaflet-map
-        [mapOptions]="cartographyConfiguration"
         [centerView]="centerView"
         [markers]="visibleMarkers | addUsagerMarker:(usagerCoordinates$ | async)"
         (markerChange)="onMarkerChanged($event)"

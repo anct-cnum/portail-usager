@@ -11,8 +11,7 @@ import {
   Marker as LeafletMarker,
   tileLayer,
   DivIcon,
-  Icon,
-  ZoomPanOptions
+  Icon
 } from 'leaflet';
 import {
   AfterViewChecked,
@@ -22,19 +21,44 @@ import {
   EventEmitter,
   Inject,
   Input,
+  OnChanges,
   Output,
+  SimpleChange,
+  SimpleChanges,
   ViewChild
 } from '@angular/core';
 import { CenterView, EMPTY_FEATURE_COLLECTION, MarkerEvent, MarkerProperties, MarkersPresentation } from '../../models';
-import { MarkersConfiguration, CartographyConfiguration, MARKERS_TOKEN } from '../../../configuration';
+import { MarkersConfiguration, MARKERS_TOKEN } from '../../../configuration';
 import { Feature, Point } from 'geojson';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
 import { AnyGeoJsonProperty } from '../../../../../../environments/environment.model';
 import { Coordinates } from '../../../../core';
 
 // TODO Convert configuration to injected token for default options then remove
-const MAX_ZOOM_LEVEL: number = 18;
 const DURATION_IN_SECOND: number = 0.5;
+// TODO Convert configuration to injected token for default options then remove
+const MAP_OPTIONS: LeafletMapOptions = {
+  layers: [
+    tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://carto.com/attributions">CARTO</a>'
+    })
+  ],
+  maxZoom: 18,
+  minZoom: 2.5,
+  zoomAnimationThreshold: 12,
+  zoomControl: false,
+  zoomDelta: 0.5
+};
+// TODO Convert configuration to injected token for default options then remove
+const DEFAULT_LONGITUDE: number = 4.468874066180609;
+// TODO Convert configuration to injected token for default options then remove
+const DEFAULT_LATITUDE: number = 46.28146057911664;
+// TODO Convert configuration to injected token for default options then remove
+const DEFAULT_ZOOM_LEVEL: number = 6;
+
+const shouldSetView = (centerViewChange: SimpleChange | undefined): boolean => !(centerViewChange?.firstChange ?? true);
+
+const currentValue = <T>(simpleChange: SimpleChange | undefined): T => simpleChange?.currentValue as T;
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,10 +66,14 @@ const DURATION_IN_SECOND: number = 0.5;
   selector: 'leaflet-map',
   templateUrl: './leaflet-map.component.html'
 })
-export class LeafletMapComponent implements AfterViewChecked {
+export class LeafletMapComponent implements AfterViewChecked, OnChanges {
   private _map!: LeafletMap;
-  private _mapOptions: LeafletMapOptions = {};
   private _markersLayer: Layer = geoJSON();
+
+  @Input() public centerView: CenterView = {
+    coordinates: new Coordinates(DEFAULT_LATITUDE, DEFAULT_LONGITUDE),
+    zoomLevel: DEFAULT_ZOOM_LEVEL
+  };
 
   @Output() public readonly markerChange: EventEmitter<MarkerEvent> = new EventEmitter<MarkerEvent>();
 
@@ -55,40 +83,17 @@ export class LeafletMapComponent implements AfterViewChecked {
     return this._map;
   }
 
-  @Input()
-  public set centerView(centerView: CenterView | null) {
-    if (centerView !== null) this.setView(centerView.coordinates, centerView.zoomLevel);
-  }
-
   @ViewChild('map')
   public set mapContainer(mapContainer: ElementRef<HTMLElement>) {
-    this._map = map(mapContainer.nativeElement, this._mapOptions);
+    this._map = map(mapContainer.nativeElement, {
+      ...MAP_OPTIONS,
+      center: latLng(this.centerView.coordinates.latitude, this.centerView.coordinates.longitude),
+      zoom: this.centerView.zoomLevel
+    });
     control.zoom({ position: 'bottomright' }).addTo(this._map);
   }
 
-  @Input()
-  public set mapOptions(mapOptions: CartographyConfiguration) {
-    // TODO Convert configuration to injected token for default options then remove
-    this._mapOptions = {
-      center: latLng(mapOptions.center.coordinates[1], mapOptions.center.coordinates[0]),
-      layers: [
-        tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://carto.com/attributions">CARTO</a>'
-        })
-      ],
-      maxZoom: MAX_ZOOM_LEVEL,
-      minZoom: 2.5,
-      zoom: mapOptions.zoomLevel,
-      zoomAnimationThreshold: 12,
-      zoomControl: false,
-      zoomDelta: 0.5
-    };
-  }
-
-  public constructor(
-    @Inject(MARKERS_TOKEN)
-    private readonly markersConfigurations: MarkersConfiguration
-  ) {}
+  public constructor(@Inject(MARKERS_TOKEN) private readonly markersConfigurations: MarkersConfiguration) {}
 
   // eslint-disable-next-line max-lines-per-function
   private createEventedMarker(
@@ -113,12 +118,19 @@ export class LeafletMapComponent implements AfterViewChecked {
     );
   }
 
-  public featureToMarker = (feature: Feature<Point, MarkerProperties>, position: LatLng): Layer =>
+  private readonly featureToMarker = (feature: Feature<Point, MarkerProperties>, position: LatLng): Layer =>
     this.createEventedMarker(
       position,
       feature,
       this.markersConfigurations[feature.properties.markerIconConfiguration](feature)
     );
+
+  private setView(centerView: CenterView): void {
+    this._map.setView({ lat: centerView.coordinates.latitude, lng: centerView.coordinates.longitude }, centerView.zoomLevel, {
+      animate: true,
+      duration: DURATION_IN_SECOND
+    });
+  }
 
   public ngAfterViewChecked(): void {
     if (this._map.hasLayer(this._markersLayer)) this._map.removeLayer(this._markersLayer);
@@ -126,11 +138,7 @@ export class LeafletMapComponent implements AfterViewChecked {
     this._map.addLayer(this._markersLayer);
   }
 
-  public setView(center: Coordinates, zoomLevel: number): void {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    this._map.setView({ lat: center.latitude, lng: center.longitude }, zoomLevel, {
-      animate: true,
-      duration: DURATION_IN_SECOND
-    } as ZoomPanOptions);
+  public ngOnChanges(changes: SimpleChanges): void {
+    shouldSetView(changes['centerView']) && this.setView(currentValue<CenterView>(changes['centerView']));
   }
 }

@@ -1,6 +1,3 @@
-import { Point } from 'geojson';
+import { CenterView } from '../../../presentation/models';
 
-export interface CartographyConfiguration {
-  center: Point;
-  zoomLevel: number;
-}
+export type CartographyConfiguration = CenterView;
