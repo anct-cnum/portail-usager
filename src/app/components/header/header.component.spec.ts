@@ -5,7 +5,7 @@ import { FailedToCompileError } from '@angular-common/errors';
 describe('HeaderComponent', (): void => {
   beforeEach(async (): Promise<void> => {
     await TestBed.configureTestingModule({
-      declarations: [HeaderComponent],
+      declarations: [HeaderComponent]
     })
       .compileComponents()
       .catch((): void => {

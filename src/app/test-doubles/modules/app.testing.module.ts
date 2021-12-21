@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {HeaderStubComponent} from '../components/header/header.component.stub';
-
+import { HeaderStubComponent } from '../components/header/header.component.stub';
 
 @NgModule({
   declarations: [HeaderStubComponent],

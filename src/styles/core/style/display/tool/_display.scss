@@ -10,11 +10,9 @@
 }
 
 @mixin display-flex($flex-direction: row, $align-items: null, $justify-content: null, $flex-wrap: null, $inline: false) {
-
   @if $inline == true {
     @include display(inline-flex);
-  }
-  @else {
+  } @else {
     @include display(flex);
   }
 

@@ -8,29 +8,29 @@
 $variables: (
   color: (
     gradient: (
-      active: true,
+      active: true
     ),
     shadow: (
-      active: true,
-    ),
+      active: true
+    )
   ),
   display: (
     display: (
       active: true,
-      breakpoints: sm md lg,
+      breakpoints: sm md lg
     ),
     flex-properties: (
       active: true,
-      breakpoints: sm md lg,
+      breakpoints: sm md lg
     ),
     overflow: (
-      active: true,
+      active: true
     ),
     size: (
-      active: true,
+      active: true
     ),
     z-index: (
-      active: true,
-    ),
-  ),
+      active: true
+    )
+  )
 ) !default;
