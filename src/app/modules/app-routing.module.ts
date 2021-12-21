@@ -2,19 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CartographyFeatureModule } from '@features/cartography';
 import { ContentLayout } from '../pages/layouts/content/content.layout';
-import { HomePage } from '../pages/home/home.page';
 
 const ROUTES: Routes = [
-  {
-    children: [
-      {
-        component: HomePage,
-        path: ''
-      }
-    ],
-    component: ContentLayout,
-    path: ''
-  },
   {
     children: [
       {
@@ -24,7 +13,7 @@ const ROUTES: Routes = [
       }
     ],
     component: ContentLayout,
-    path: 'cartographie'
+    path: ''
   },
   { path: '**', pathMatch: 'full', redirectTo: '' }
 ];

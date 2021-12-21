@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './home.page.html'
+  selector: 'app-header',
+  templateUrl: './header.component.html'
 })
-export class HomePage {}
+export class HeaderComponent {}
