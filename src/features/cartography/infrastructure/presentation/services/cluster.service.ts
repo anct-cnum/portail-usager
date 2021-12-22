@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-// eslint-disable-next-line @typescript-eslint/no-duplicate-imports
 import Supercluster, { PointFeature } from 'supercluster';
 
 import { Marker } from '../../configuration';

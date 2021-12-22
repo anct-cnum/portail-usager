@@ -1,17 +1,25 @@
-<!-- TODO REVIEW IGNORE -->
-<div *ngIf="listConseillers.length > 0">
-  <!-- TODO REMOVE -->
-  <!-- eslint-disable -->
-  <div *ngFor="let conseiller of listConseillers; index as i">
-    {{ conseiller.properties | json }}
-  </div>
-</div>
-<div class="fr-p-3w" *ngIf="listConseillers.length === 0">
-  <p class="fr-text--bold">
+<ng-container *ngIf="listStructures.length > 0; else empty_conseillersList">
+  <ul class="fr-list-group fr-list-group--flush">
+    <li *ngFor="let structure of listStructures; index as i; trackBy: trackByStructureAddress" class="fr-list-group__item">
+      <div class="fr-display--flex fr-justify-content--space-between fr-column-gap-3v">
+        <h4 class="fr-list-group__item__title">{{ structure.name }}</h4>
+        <p class="fr-text-mention--grey fr-white-space--nowrap">{{ structure.type }}</p>
+      </div>
+      <div class="fr-display--flex fr-justify-content--space-between fr-column-gap-3v">
+        <p class="fr-text-mention--grey">{{ structure.address }}</p>
+        <div>
+          <button class="fr-btn fr-btn--secondary fr-white-space--nowrap" disabled>Afficher les détails</button>
+        </div>
+      </div>
+    </li>
+  </ul>
+</ng-container>
+<ng-template #empty_conseillersList>
+  <p class="fr-text--bold fr-mt-3w">
     Cette cartographie vous permet de localiser les permanences des conseillers numériques France Service de votre territoire.
   </p>
   <p>
     Autorisez la géolocalisation pour positionner la carte là où vous vous trouvez, tapez une adresse, une ville, ou un code
     postal dans le champ de recherche afin de visualiser les permanences de conseillers numériques les plus proches.
   </p>
-</div>
+</ng-template>

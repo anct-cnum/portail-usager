@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { Feature, Point } from 'geojson';
-import { MarkerProperties } from '../../models';
+import { StructurePresentation } from '../../models';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -8,6 +7,9 @@ import { MarkerProperties } from '../../models';
   templateUrl: './cnfs-list.component.html'
 })
 export class CnfsListComponent {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-arguments
-  @Input() public listConseillers: Feature<Point, MarkerProperties>[] = [];
+  @Input() public listStructures: StructurePresentation[] = [];
+
+  public trackByStructureAddress(_: number, structurePresentation: StructurePresentation): string {
+    return structurePresentation.address;
+  }
 }

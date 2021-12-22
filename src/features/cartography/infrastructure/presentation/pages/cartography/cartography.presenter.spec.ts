@@ -4,8 +4,8 @@ import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geo
 import { ClusterService } from '../../services/cluster.service';
 import { firstValueFrom, Observable, of } from 'rxjs';
 import { FeatureCollection, Point } from 'geojson';
-import { CnfsByRegion, Coordinates } from '../../../../core';
-import { CenterView, MarkerEvent, MarkerProperties } from '../../models';
+import { Cnfs, CnfsByRegion, Coordinates } from '../../../../core';
+import { CenterView, MarkerEvent, MarkerProperties, StructurePresentation } from '../../models';
 import { Marker } from '../../../configuration';
 
 const LIST_CNFS_BY_REGION_USE_CASE: ListCnfsByRegionUseCase = {
@@ -22,6 +22,37 @@ const LIST_CNFS_BY_REGION_USE_CASE: ListCnfsByRegionUseCase = {
     ]);
   }
 } as ListCnfsByRegionUseCase;
+
+const LIST_CNFS_POSITION_USE_CASE: ListCnfsPositionUseCase = {
+  execute$(): Observable<Cnfs[]> {
+    return of([
+      new Cnfs(new Coordinates(45.734377, 4.816864), {
+        conseiller: {
+          email: 'john.doe@conseiller-numerique.fr',
+          name: 'John Doe'
+        },
+        structure: {
+          address: '12 rue des Acacias, 69002 Lyon',
+          isLabeledFranceServices: false,
+          name: 'Association des centres sociaux et culturels de Lyon',
+          phone: '0456789012'
+        }
+      }),
+      new Cnfs(new Coordinates(43.305645, 5.380007), {
+        conseiller: {
+          email: 'mary.doe@conseiller-numerique.fr',
+          name: 'Mary Doe'
+        },
+        structure: {
+          address: '31 Avenue de la mer, 13003 Marseille',
+          isLabeledFranceServices: true,
+          name: 'Médiathèque de la mer',
+          phone: '0478563641'
+        }
+      })
+    ]);
+  }
+} as ListCnfsPositionUseCase;
 
 describe('cartography presenter', (): void => {
   it('should present list of cnfs by region positions', async (): Promise<void> => {
@@ -97,5 +128,31 @@ describe('cartography presenter', (): void => {
     };
 
     expect(coordinatesToCenterView(usagerCoordinates)).toStrictEqual(expectedCenterView);
+  });
+
+  it('should list structures', async (): Promise<void> => {
+    const expectedStructureList: StructurePresentation[] = [
+      {
+        address: '12 rue des Acacias, 69002 Lyon',
+        name: 'Association des centres sociaux et culturels de Lyon',
+        type: ''
+      },
+      {
+        address: '31 Avenue de la mer, 13003 Marseille',
+        name: 'Médiathèque de la mer',
+        type: ''
+      }
+    ];
+
+    const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+      LIST_CNFS_POSITION_USE_CASE,
+      {} as ListCnfsByRegionUseCase,
+      {} as GeocodeAddressUseCase,
+      {} as ClusterService
+    );
+
+    const structuresList: StructurePresentation[] = await firstValueFrom(cartographyPresenter.structuresList$());
+
+    expect(structuresList).toStrictEqual(expectedStructureList);
   });
 });

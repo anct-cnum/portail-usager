@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { CenterView, MarkerEvent, MarkersPresentation } from '../../models';
+import { CenterView, MarkerEvent, MarkersPresentation, StructurePresentation } from '../../models';
 import { CartographyPresenter, coordinatesToCenterView, markerEventToCenterView } from './cartography.presenter';
 import { BehaviorSubject, combineLatest, merge, Observable, Subject, tap } from 'rxjs';
 import { Coordinates } from '../../../../core';
@@ -29,6 +29,8 @@ export class CartographyPage {
   private readonly _viewBox$: Subject<ViewBox> = new BehaviorSubject<ViewBox>(DEFAULT_VIEW_BOX);
 
   public centerView: CenterView = this.cartographyConfiguration;
+
+  public structuresList$: Observable<StructurePresentation[]> = this.presenter.structuresList$();
 
   public readonly usagerCoordinates$: Observable<Coordinates> = merge(
     this.presenter.geocodeAddress$(this._addressToGeocode$),

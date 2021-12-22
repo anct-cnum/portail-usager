@@ -4,10 +4,11 @@ import {
   cnfsCoreToPresentation,
   MarkersPresentation,
   CenterView,
-  MarkerEvent
+  MarkerEvent,
+  StructurePresentation
 } from '../../models';
 import { Coordinates } from '../../../../core';
-import { map, Observable, switchMap } from 'rxjs';
+import { map, Observable, of, switchMap } from 'rxjs';
 import { ListCnfsByRegionUseCase, ListCnfsPositionUseCase } from '../../../../use-cases';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
 import { FeatureCollection, Point } from 'geojson';
@@ -49,6 +50,7 @@ export class CartographyPresenter {
       type: 'FeatureCollection'
     });
   }
+
   public geocodeAddress$(addressToGeocode$: Observable<string>): Observable<Coordinates> {
     return addressToGeocode$.pipe(
       switchMap((address: string): Observable<Coordinates> => this.geocodeAddressUseCase.execute$(address))
@@ -63,5 +65,20 @@ export class CartographyPresenter {
     return this.listCnfsPositionUseCase
       .execute$()
       .pipe(map(cnfsCoreToPresentation), combineLatestWith(viewBox$), map(this.onlyVisibleMarkers()));
+  }
+
+  public structuresList$(): Observable<StructurePresentation[]> {
+    return of([
+      {
+        address: '12 rue des Acacias, 69002 Lyon',
+        name: 'Association des centres sociaux et culturels de Lyon',
+        type: ''
+      },
+      {
+        address: '31 Avenue de la mer, 13003 Marseille',
+        name: 'Médiathèque de la mer',
+        type: ''
+      }
+    ]);
   }
 }
