@@ -34,6 +34,10 @@ class CartographyPresenterStub {
   public listCnfsPositions$(): Observable<null> {
     return of(null);
   }
+
+  public structuresList$(): Observable<null> {
+    return of(null);
+  }
 }
 
 // eslint-disable-next-line max-lines-per-function
