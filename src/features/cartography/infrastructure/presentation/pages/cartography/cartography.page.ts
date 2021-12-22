@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { CenterView, MarkerEvent, MarkersPresentation } from '../../models';
 import { CartographyPresenter, coordinatesToCenterView, markerEventToCenterView } from './cartography.presenter';
-import { BehaviorSubject, combineLatest, merge, Observable, Subject, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, merge, Observable, of, Subject, tap } from 'rxjs';
 import { Coordinates } from '../../../../core';
 import { ViewBox, ViewReset } from '../../directives/leaflet-map-state-change';
 import { CartographyConfiguration, CARTOGRAPHY_TOKEN } from '../../../configuration';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 // TODO Inject though configuration token
 const DEFAULT_VIEW_BOX: ViewBox = {
@@ -30,12 +30,18 @@ export class CartographyPage {
 
   public centerView: CenterView = this.cartographyConfiguration;
 
-  public readonly usagerCoordinates$: Observable<Coordinates> = merge(
+  public hasAddressError: boolean = false;
+
+  public readonly usagerCoordinates$: Observable<Coordinates | null> = merge(
     this.presenter.geocodeAddress$(this._addressToGeocode$),
     this._usagerCoordinates$
   ).pipe(
     tap((coordinates: Coordinates): void => {
       this.centerView = coordinatesToCenterView(coordinates);
+    }),
+    catchError((): Observable<null> => {
+      this.hasAddressError = true;
+      return of(null);
     })
   );
 
