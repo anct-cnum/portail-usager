@@ -123,7 +123,7 @@ module.exports = {
     {
       selector: 'default',
       format: ['camelCase'],
-      leadingUnderscore: 'forbid',
+      leadingUnderscore: 'allow',
       trailingUnderscore: 'forbid'
     },
     {
