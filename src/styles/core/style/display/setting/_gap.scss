@@ -1,0 +1,22 @@
+////
+/// Core Settings : gap
+/// @group core
+////
+
+$gap-settings: (
+  props: (
+    gap: (
+      from: 0,
+      through: 8
+    ),
+    row-gap: (
+      from: 0,
+      through: 8
+    ),
+    column-gap: (
+      from: 0,
+      through: 8
+    )
+  ),
+  breakpoints: md
+);
