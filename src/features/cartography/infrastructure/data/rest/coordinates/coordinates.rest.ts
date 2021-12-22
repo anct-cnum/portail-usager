@@ -23,7 +23,6 @@ const firstResultLocalityNameOrEmpty = (geoResult: ApiGeoResult[]): string => (g
 
 @Injectable()
 export class CoordinatesRest extends CoordinatesRepository {
-  private readonly _addressQueryParameters: string = '?q=';
   private readonly _addressSearchEndpoint: string = 'search';
 
   private readonly _geoCodePostalParameter: string = 'codePostal=';
@@ -35,7 +34,10 @@ export class CoordinatesRest extends CoordinatesRepository {
 
   private combinedGeoAndAddressRequests$(postalCode: string, addressQuery: string): Observable<Coordinates> {
     const getAddressApiFullUrlWithLocality = (localityName: string): string =>
-      this.getAddressApiFullUrl(replacePostalCodeByLocalityName(addressQuery, postalCode, localityName));
+      this.getAddressApiFullUrl(
+        replacePostalCodeByLocalityName(addressQuery, postalCode, localityName),
+        `?postcode=${postalCode}&q=`
+      );
 
     return this.httpClient
       .get<ApiGeoResult[]>(this.getGeoApiFullUrl(postalCode))
@@ -54,25 +56,25 @@ export class CoordinatesRest extends CoordinatesRepository {
     };
   }
 
-  private getAddressApiFullUrl(addressQuery: string): string {
-    return `${Api.Adresse}/${this._addressSearchEndpoint}/${this._addressQueryParameters}${encodeURI(addressQuery)}`;
+  private getAddressApiFullUrl(userAddressQuery: string, queryParameters: string = '?q='): string {
+    return `${Api.Adresse}/${this._addressSearchEndpoint}/${queryParameters}${encodeURI(userAddressQuery)}`;
   }
 
   private getGeoApiFullUrl(postalCode: string): string {
-    return`${Api.Geo}/${this._geoCommunesEndpoint}?${this._geoCodePostalParameter}${postalCode}`;
+    return `${Api.Geo}/${this._geoCommunesEndpoint}?${this._geoCodePostalParameter}${postalCode}`;
   }
 
-  private simpleAddressRequest$(addressQuery: string): Observable<Coordinates> {
+  private simpleAddressRequest$(usagerAddressInput: string): Observable<Coordinates> {
     return this.httpClient
-      .get<FeatureCollection<Point>>(this.getAddressApiFullUrl(addressQuery))
+      .get<FeatureCollection<Point>>(this.getAddressApiFullUrl(usagerAddressInput))
       .pipe(map(featureCollectionToFirstCoordinates));
   }
 
-  public geocodeAddress$(addressQuery: string): Observable<Coordinates> {
-    const { capturedPostalCode, hasPostalCode }: PostalCodeRegexResult = capturePostalCode(addressQuery);
+  public geocodeAddress$(usagerAddressInput: string): Observable<Coordinates> {
+    const { capturedPostalCode, hasPostalCode }: PostalCodeRegexResult = capturePostalCode(usagerAddressInput);
 
     return hasPostalCode
-      ? this.combinedGeoAndAddressRequests$(capturedPostalCode, addressQuery)
-      : this.simpleAddressRequest$(addressQuery);
+      ? this.combinedGeoAndAddressRequests$(capturedPostalCode, usagerAddressInput)
+      : this.simpleAddressRequest$(usagerAddressInput);
   }
 }
