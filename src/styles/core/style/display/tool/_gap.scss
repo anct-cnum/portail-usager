@@ -1,0 +1,78 @@
+////
+/// Core Tools : Global gap
+/// @group core
+////
+
+@function _gap-name($prop: gap, $value: 1, $unit: null, $breakpoint: null) {
+  $middle: '';
+
+  @if $breakpoint != null {
+    $middle: '#{$breakpoint}-';
+  }
+
+  $end: #{$value};
+
+  @if $value != 0 and $unit != null {
+    $end: '#{$end}#{$unit}';
+  }
+
+  $selector: '#{$prop}-#{$middle}#{$end}';
+
+  @return $selector;
+}
+
+@function _gap-selectors($prop, $value, $breakpoint) {
+  @if type-of($value) != 'number' {
+    @return '#{ns(_gap-name($prop, $value, null, $breakpoint))}';
+  }
+
+  $w: null;
+  @if (abs($value) % 2) == 0 and $value != 0 {
+    $w: abs($value) * 0.5;
+  }
+
+  $selectors: '#{ns(_gap-name($prop, $value, v, $breakpoint))}';
+
+  @if $w != null {
+    $selectors: '#{$selectors},#{ns(_gap-name($prop, $value * 0.5, w, $breakpoint))}';
+  }
+
+  @return $selectors;
+}
+
+@mixin _gap-property-variations($prop: gap, $value: 1, $breakpoint: null) {
+  $v: $value;
+
+  @if type-of($value) == 'number' {
+    $v: space('#{$value}v') !important;
+  }
+
+  #{_gap-selectors($prop, $value, $breakpoint)} {
+    #{$prop}: $v;
+  }
+}
+
+@mixin _gap-properties($props, $breakpoint: null) {
+  @each $prop, $settings in $props {
+    $from: map_get($settings, from);
+    $through: map_get($settings, through);
+
+    @for $i from $from through $through {
+      @include _gap-property-variations($prop, $i, $breakpoint);
+    }
+  }
+}
+
+@mixin create-gap-properties($settings) {
+  $props: map_get($settings, props);
+
+  @include _gap-properties($props);
+
+  @if map_has_key($settings, breakpoints) {
+    @each $breakpoint in map_get($settings, breakpoints) {
+      @include respond-from($breakpoint) {
+        @include _gap-properties($props, $breakpoint);
+      }
+    }
+  }
+}
