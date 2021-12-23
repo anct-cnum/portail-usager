@@ -23,6 +23,7 @@ const DEFAULT_VIEW_BOX: ViewBox = {
 };
 
 export const SPLIT_REGION_ZOOM: number = 8;
+const SPLIT_DEPARTEMENT_ZOOM: number = 10;
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,12 +41,14 @@ export class CartographyPage {
     FeatureCollection<Point, CnfsByRegionProperties | CnfsPermanenceProperties>
   > = combineLatest([
     this.presenter.listCnfsByRegionPositions$(),
+    this.presenter.listCnfsByDepartementPositions$(),
     this.presenter.listCnfsPositions$(this._viewBox$),
     this._viewBox$ as Observable<ViewBox>
   ]).pipe(
     map(
-      ([byRegionPosition, allCnfsPosition, viewBox]: [
+      ([byRegionPosition, byDepartementPosition, allCnfsPosition, viewBox]: [
         FeatureCollection<Point, CnfsByRegionProperties>,
+        FeatureCollection<Point, CnfsByDepartementProperties>,
         FeatureCollection<Point, CnfsPermanenceProperties>,
         ViewBox
       ]): FeatureCollection<Point, CnfsByRegionProperties | CnfsPermanenceProperties> =>

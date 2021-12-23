@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CartographyFeatureRoutingModule } from './cartography.feature-routing.module';
-import { ListCnfsByRegionUseCase, ListCnfsPositionUseCase } from '../../../use-cases';
+import { ListCnfsByRegionUseCase, ListCnfsByDepartementUseCase, ListCnfsPositionUseCase } from '../../../use-cases';
 import { CnfsRepository, Coordinates, CoordinatesRepository } from '../../../core';
 import { CARTOGRAPHY_TOKEN, MARKERS, MARKERS_TOKEN } from '../tokens';
 import { CartographyPage } from '../../presentation/pages';
@@ -60,6 +60,11 @@ const METROPOLITAN_FRANCE_CENTER_LATITUDE: number = 46.28146057911664;
       provide: GeocodeAddressUseCase,
       useFactory: (coordinatesRepository: CoordinatesRepository): GeocodeAddressUseCase =>
         new GeocodeAddressUseCase(coordinatesRepository)
+    },
+    {
+      deps: [CnfsRest],
+      provide: ListCnfsByDepartementUseCase,
+      useFactory: (cnfsRepository: CnfsRepository): ListCnfsByDepartementUseCase => new ListCnfsByDepartementUseCase(cnfsRepository)
     }
   ]
 })

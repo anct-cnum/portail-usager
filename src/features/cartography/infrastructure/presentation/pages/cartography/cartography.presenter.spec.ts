@@ -4,12 +4,12 @@ import {
   permanenceMarkerEventToCenterView,
   regionMarkerEventToCenterView
 } from './cartography.presenter';
-import { ListCnfsPositionUseCase, ListCnfsByRegionUseCase } from '../../../../use-cases';
+import { ListCnfsPositionUseCase, ListCnfsByRegionUseCase, ListCnfsByDepartementUseCase } from "../../../../use-cases";
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
 import { MapViewCullingService } from '../../services/map-view-culling.service';
 import { firstValueFrom, Observable, of } from 'rxjs';
 import { BBox, Feature, FeatureCollection, Point } from 'geojson';
-import { Cnfs, CnfsByRegion, CnfsByRegionProperties, Coordinates } from '../../../../core';
+import { Cnfs, CnfsByDepartement, CnfsByRegion, CnfsByRegionProperties, Coordinates } from "../../../../core";
 import { CenterView, CnfsPermanenceProperties, emptyFeatureCollection, MarkerEvent, StructurePresentation } from '../../models';
 import { ViewBox } from '../../directives/leaflet-map-state-change';
 import { SPLIT_REGION_ZOOM } from './cartography.page';
@@ -30,6 +30,24 @@ const LIST_CNFS_BY_REGION_USE_CASE: ListCnfsByRegionUseCase = {
     ]);
   }
 } as ListCnfsByRegionUseCase;
+
+const LIST_CNFS_BY_DEPARTEMENT_USE_CASE: ListCnfsByDepartementUseCase = {
+  execute$(): Observable<CnfsByDepartement[]> {
+    return of(
+      [
+        new CnfsByDepartement(new Coordinates(46.099798450280282, 5.348666025399395), {
+          codeDepartement: '01',
+          count: 12,
+          nomDepartement: "Ain"
+        }),
+        new CnfsByDepartement(new Coordinates(-12.820655090736881, 45.147364453253317), {
+          codeDepartement: '976',
+          count: 27,
+          nomDepartement: 'Mayotte'
+        })
+      ]);
+  }
+} as ListCnfsByDepartementUseCase;
 
 const LIST_CNFS_POSITION_USE_CASE: ListCnfsPositionUseCase = {
   execute$(): Observable<Cnfs[]> {
@@ -142,6 +160,7 @@ describe('cartography presenter', (): void => {
       const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
         LIST_CNFS_POSITION_USE_CASE,
         {} as ListCnfsByRegionUseCase,
+        {} as ListCnfsByDepartementUseCase,
         {} as GeocodeAddressUseCase,
         {
           cull: (): Feature<Point, CnfsPermanenceProperties>[] => []
@@ -196,6 +215,7 @@ describe('cartography presenter', (): void => {
       const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
         {} as ListCnfsPositionUseCase,
         LIST_CNFS_BY_REGION_USE_CASE,
+        {} as ListCnfsByDepartementUseCase,
         {} as GeocodeAddressUseCase,
         {} as MapViewCullingService
       );
@@ -273,6 +293,7 @@ describe('cartography presenter', (): void => {
       const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
         {} as ListCnfsPositionUseCase,
         {} as ListCnfsByRegionUseCase,
+        {} as ListCnfsByDepartementUseCase,
         {} as GeocodeAddressUseCase,
         {} as MapViewCullingService
       );
@@ -297,6 +318,7 @@ describe('cartography presenter', (): void => {
       const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
         {} as ListCnfsPositionUseCase,
         {} as ListCnfsByRegionUseCase,
+        {} as ListCnfsByDepartementUseCase,
         {} as GeocodeAddressUseCase,
         {} as MapViewCullingService
       );
@@ -380,6 +402,7 @@ describe('cartography presenter', (): void => {
       const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
         {} as ListCnfsPositionUseCase,
         {} as ListCnfsByRegionUseCase,
+        {} as ListCnfsByDepartementUseCase,
         {} as GeocodeAddressUseCase,
         {} as MapViewCullingService
       );

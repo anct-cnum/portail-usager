@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { DivIcon, icon, Icon, Point as LeafletPoint } from 'leaflet';
 import { CnfsPermanenceProperties, MarkerProperties } from '../../../presentation/models';
 import { Feature, Point } from 'geojson';
@@ -19,6 +20,14 @@ const CNFS_MARKER_CNFS_BY_REGION_HEIGTH_IN_PIXEL: number = 72;
 const CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS: LeafletPoint = new LeafletPoint(
   CNFS_MARKER_CNFS_BY_REGION_WIDTH_IN_PIXEL,
   CNFS_MARKER_CNFS_BY_REGION_HEIGTH_IN_PIXEL,
+  ROUND_FALSE
+);
+
+const CNFS_MARKER_CNFS_BY_DEPARTEMENT_WIDTH_IN_PIXEL: number = 72;
+const CNFS_MARKER_CNFS_BY_DEPARTEMENT_HEIGTH_IN_PIXEL: number = 72;
+const CNFS_MARKER_CNFS_BY_DEPARTEMENT_DIMENSIONS: LeafletPoint = new LeafletPoint(
+  CNFS_MARKER_CNFS_BY_DEPARTEMENT_WIDTH_IN_PIXEL,
+  CNFS_MARKER_CNFS_BY_DEPARTEMENT_HEIGTH_IN_PIXEL,
   ROUND_FALSE
 );
 
@@ -83,4 +92,41 @@ export const cnfsByRegionMarkerFactory: DivIconMarkerFactory<CnfsByRegionPropert
              </div>`,
     iconAnchor: new LeafletPoint(CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS.x * HALF, CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS.y),
     iconSize: CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS
+  });
+
+// eslint-disable-next-line max-lines-per-function
+export const cnfsByDepartementMarkerFactory: DivIconMarkerFactory = (feature: Feature<Point, MarkerProperties>): DivIcon =>
+  new DivIcon({
+    className: '',
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    html: `<div
+          style="
+            width: ${CNFS_MARKER_CNFS_BY_DEPARTEMENT_DIMENSIONS.x}px;
+            height: ${CNFS_MARKER_CNFS_BY_DEPARTEMENT_DIMENSIONS.y}px;
+            padding: 8px;
+            background-image: url('./assets/map/pin-cnfs-by-departement.svg');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;">
+            <img style="height: 32px; width: 19px" alt="" src="./assets/map/pin-cnfs.svg"/>
+            <div
+             style="
+               width: 100%;
+               color: #ffff;
+               margin-left: 8px;
+               font-family: Marianne, sans-serif;
+               font-weight: 600;
+               font-size: 16px;
+               text-rendering: auto;
+              line-height: 24px">
+             ${feature.properties['count'] as number}</div>
+           </div>`,
+    iconAnchor: new LeafletPoint(
+      CNFS_MARKER_CNFS_BY_DEPARTEMENT_DIMENSIONS.x * HALF,
+      CNFS_MARKER_CNFS_BY_DEPARTEMENT_DIMENSIONS.y
+    ),
+    iconSize: CNFS_MARKER_CNFS_BY_DEPARTEMENT_DIMENSIONS
   });

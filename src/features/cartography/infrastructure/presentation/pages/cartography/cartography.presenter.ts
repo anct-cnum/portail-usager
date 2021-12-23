@@ -48,6 +48,7 @@ export class CartographyPresenter {
   public constructor(
     @Inject(ListCnfsPositionUseCase) private readonly listCnfsPositionUseCase: ListCnfsPositionUseCase,
     @Inject(ListCnfsByRegionUseCase) private readonly listCnfsByRegionUseCase: ListCnfsByRegionUseCase,
+    @Inject(ListCnfsByDepartementUseCase) private readonly listCnfsByDepartementUseCase: ListCnfsByDepartementUseCase,
     @Inject(GeocodeAddressUseCase) private readonly geocodeAddressUseCase: GeocodeAddressUseCase,
     @Inject(MapViewCullingService) private readonly mapViewCullingService: MapViewCullingService
   ) {}
@@ -66,6 +67,10 @@ export class CartographyPresenter {
     return addressToGeocode$.pipe(
       switchMap((address: string): Observable<Coordinates> => this.geocodeAddressUseCase.execute$(address))
     );
+  }
+
+  public listCnfsByDepartementPositions$(): Observable<FeatureCollection<Point, CnfsByRegionProperties>> {
+    return this.listCnfsByDepartementUseCase.execute$().pipe(map(listCnfsByDepartementToPresentation));
   }
 
   public listCnfsByRegionPositions$(): Observable<FeatureCollection<Point, CnfsByRegionProperties>> {
