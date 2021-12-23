@@ -1,21 +1,19 @@
 import { StructurePresentation } from './structure.presentation';
-import { Feature, FeatureCollection, Point } from 'geojson';
-import { CnfsByRegionProperties, StructureProperties } from '../../../../core';
-import { CnfsPermanenceProperties } from '../cnfs';
+import { Feature, Point } from 'geojson';
+import { CnfsPermanenceProperties } from '../cnfs-permanence';
+import { MarkerProperties } from '../markers';
 
-export const mapPositionsToStructurePresentationArray = (
-  visiblePositions: FeatureCollection<Point, CnfsByRegionProperties | CnfsPermanenceProperties>
+export const cnfsPermanencesToStructurePresentations = (
+  cnfsPermanences: Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[]
 ): StructurePresentation[] =>
-  visiblePositions.features.map(
-    (feature: Feature<Point, CnfsByRegionProperties | CnfsPermanenceProperties>): StructurePresentation => {
-      const { structure }: { structure: StructureProperties } = (feature as Feature<Point, CnfsPermanenceProperties>)
-        .properties;
-      return {
-        address: structure.address,
-        isLabeledFranceServices: structure.isLabeledFranceServices,
-        name: structure.name,
-        phone: structure.phone,
-        type: structure.type
-      };
-    }
+  cnfsPermanences.map(
+    // TODO Je ne trouve pas la syntaxe pour typer
+    // eslint-disable-next-line @typescript-eslint/typedef
+    ({ properties: { structure } }: Feature<Point, MarkerProperties<CnfsPermanenceProperties>>): StructurePresentation => ({
+      address: structure.address,
+      isLabeledFranceServices: structure.isLabeledFranceServices,
+      name: structure.name,
+      phone: structure.phone,
+      type: structure.type
+    })
   );

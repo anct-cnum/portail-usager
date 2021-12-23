@@ -4,12 +4,12 @@ import { LatLng, LatLngBounds } from 'leaflet';
 
 import { LeafletMapComponent } from '../../components';
 
-export interface ViewBox {
-  boundingBox: BBox;
+export interface ViewportAndZoom {
+  viewport: BBox;
   zoomLevel: number;
 }
 
-export interface ViewReset extends ViewBox {
+export interface ViewReset extends ViewportAndZoom {
   center: LatLng;
 }
 
@@ -41,13 +41,13 @@ export class LeafletMapStateChangeDirective implements AfterViewInit, OnDestroy 
 
   private emitStateChange(): void {
     this.stateChange.emit({
-      boundingBox: this.getBoundingBox(this.mapComponent.map.getBounds()),
       center: this.mapComponent.map.getCenter(),
+      viewport: this.getViewport(this.mapComponent.map.getBounds()),
       zoomLevel: this.mapComponent.map.getZoom()
     });
   }
 
-  private getBoundingBox(bounds: LatLngBounds): BBox {
+  private getViewport(bounds: LatLngBounds): BBox {
     return [bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()];
   }
 

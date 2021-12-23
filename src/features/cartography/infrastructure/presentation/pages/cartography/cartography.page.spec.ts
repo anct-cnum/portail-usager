@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CartographyPage } from './cartography.page';
 import { FailedToCompileError } from '@angular-common/errors';
-import { ListCnfsPositionUseCase } from '../../../../use-cases';
+import { ListCnfsUseCase } from '../../../../use-cases';
 import { CnfsRestTestDouble } from '../../../../use-cases/test-doubles/cnfs-rest-test-double';
 import { CnfsRepository } from '../../../../core';
 import { CartographyPresenter } from './cartography.presenter';
@@ -10,32 +10,18 @@ import { CnfsListStubComponent } from '../../test-doubles/components/cnfs-list/c
 import { AddressGeolocationStubComponent } from '../../test-doubles/components/address-geolocation/address-geolocation.component.stub';
 import { LeafletMapStubComponent } from '../../test-doubles/components/leaflet-map/leaflet-map.component.stub';
 import { CARTOGRAPHY_TOKEN } from '../../../configuration';
-import { CenterView } from '../../models';
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class CartographyPresenterStub {
-  public centerView(): CenterView {
-    return {} as CenterView;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  public defaultMapOptions() {
-    return {};
-  }
-
   public geocodeAddress$(): Observable<null> {
     return of(null);
   }
 
-  public listCnfsByRegionPositions$(): Observable<null> {
-    return of(null);
-  }
-
-  public listCnfsPositions$(): Observable<null> {
-    return of(null);
-  }
-
   public structuresList$(): Observable<null> {
+    return of(null);
+  }
+
+  public visibleMapPointsOfInterestThroughViewportAtZoomLevel$(): Observable<null> {
     return of(null);
   }
 }
@@ -50,8 +36,8 @@ describe('cartography page', (): void => {
         CnfsRestTestDouble,
         {
           deps: [CnfsRestTestDouble],
-          provide: ListCnfsPositionUseCase,
-          useFactory: (cnfsRepository: CnfsRepository): ListCnfsPositionUseCase => new ListCnfsPositionUseCase(cnfsRepository)
+          provide: ListCnfsUseCase,
+          useFactory: (cnfsRepository: CnfsRepository): ListCnfsUseCase => new ListCnfsUseCase(cnfsRepository)
         }
       ]
     })

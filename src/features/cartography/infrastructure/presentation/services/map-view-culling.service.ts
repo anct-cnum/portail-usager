@@ -1,23 +1,25 @@
 import { Injectable } from '@angular/core';
 import Supercluster from 'supercluster';
-import { ViewBox } from '../directives/leaflet-map-state-change';
-import { Feature, FeatureCollection, Point } from 'geojson';
-import { CnfsPermanenceProperties } from '../models';
+import { ViewportAndZoom } from '../directives/leaflet-map-state-change';
+import { Feature, Point } from 'geojson';
+import { CnfsPermanenceProperties, MarkerProperties } from '../models';
 import { CnfsProperties } from '../../../core';
+import { Marker } from '../../configuration';
 
 const CLUSTER_RADIUS: number = 1;
 
 type ClusterOrPointFeature =
-  | Supercluster.ClusterFeature<CnfsPermanenceProperties>
-  | Supercluster.PointFeature<CnfsPermanenceProperties>;
+  | Supercluster.ClusterFeature<MarkerProperties<CnfsPermanenceProperties>>
+  | Supercluster.PointFeature<MarkerProperties<CnfsPermanenceProperties>>;
 
 export const reduceCnfsProperties = (
-  accumulator: Feature<Point, CnfsPermanenceProperties>,
-  current: Feature<Point, CnfsPermanenceProperties>
-): Feature<Point, CnfsPermanenceProperties> => ({
+  accumulator: Feature<Point, MarkerProperties<CnfsPermanenceProperties>>,
+  current: Feature<Point, MarkerProperties<CnfsPermanenceProperties>>
+): Feature<Point, MarkerProperties<CnfsPermanenceProperties>> => ({
   geometry: current.geometry,
   properties: {
     cnfs: accumulator.properties.cnfs.concat(current.properties.cnfs),
+    markerType: Marker.CnfsPermanence,
     structure: { ...current.properties.structure }
   },
   type: 'Feature'
@@ -26,55 +28,57 @@ export const reduceCnfsProperties = (
 @Injectable()
 export class MapViewCullingService {
   private _isReady: boolean = false;
-  public readonly index: Supercluster<CnfsPermanenceProperties, CnfsPermanenceProperties> =
+  public readonly index: Supercluster<MarkerProperties<CnfsPermanenceProperties>, MarkerProperties<CnfsPermanenceProperties>> =
     MapViewCullingService.initClusters();
 
   public get isReady(): boolean {
     return this._isReady;
   }
 
-  public static initClusters(): Supercluster<CnfsPermanenceProperties, CnfsPermanenceProperties> {
+  public static initClusters(): Supercluster<
+    MarkerProperties<CnfsPermanenceProperties>,
+    MarkerProperties<CnfsPermanenceProperties>
+  > {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     return new Supercluster({
       maxZoom: 19,
       radius: CLUSTER_RADIUS
-    } as Supercluster.Options<CnfsPermanenceProperties, CnfsPermanenceProperties>);
+    } as Supercluster.Options<MarkerProperties<CnfsPermanenceProperties>, MarkerProperties<CnfsPermanenceProperties>>);
   }
 
   private aggregateInPermanence(
     clusterOrPointFeature:
-      | Supercluster.ClusterFeature<CnfsPermanenceProperties>
-      | Supercluster.PointFeature<CnfsPermanenceProperties>
-  ): Feature<Point, CnfsPermanenceProperties> {
+      | Supercluster.ClusterFeature<MarkerProperties<CnfsPermanenceProperties>>
+      | Supercluster.PointFeature<MarkerProperties<CnfsPermanenceProperties>>
+  ): Feature<Point, MarkerProperties<CnfsPermanenceProperties>> {
     return this.index.getLeaves(Number(clusterOrPointFeature.id), Infinity).reduce(reduceCnfsProperties);
   }
 
-  private getCulledPointFeatures(viewBox: ViewBox): Feature<Point, CnfsPermanenceProperties>[] {
+  private getCulledPointFeatures(viewBox: ViewportAndZoom): Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[] {
     return this.index
-      .getClusters(viewBox.boundingBox, viewBox.zoomLevel)
-      .flatMap((clusterOrPointFeature: ClusterOrPointFeature): Feature<Point, CnfsPermanenceProperties>[] => [
+      .getClusters(viewBox.viewport, viewBox.zoomLevel)
+      .flatMap((clusterOrPointFeature: ClusterOrPointFeature): Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[] => [
         this.toSinglePointFeature(clusterOrPointFeature)
       ]);
   }
 
-  private toSinglePointFeature(clusterOrPointFeature: ClusterOrPointFeature): Feature<Point, CnfsPermanenceProperties> {
+  private toSinglePointFeature(
+    clusterOrPointFeature: ClusterOrPointFeature
+  ): Feature<Point, MarkerProperties<CnfsPermanenceProperties>> {
     const { properties }: { properties: { cluster?: boolean; cnfs?: CnfsProperties[] } } = clusterOrPointFeature;
     if (properties.cluster === true) return this.aggregateInPermanence(clusterOrPointFeature);
     return clusterOrPointFeature;
   }
 
   public cull(
-    featureCollection: FeatureCollection<Point, CnfsPermanenceProperties>,
-    viewBox: ViewBox
-  ): FeatureCollection<Point, CnfsPermanenceProperties> {
+    features: Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[],
+    viewBox: ViewportAndZoom
+  ): Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[] {
     if (!this._isReady) {
-      this.index.load(featureCollection.features);
+      this.index.load(features);
       this._isReady = true;
     }
 
-    return {
-      features: this.getCulledPointFeatures(viewBox),
-      type: 'FeatureCollection'
-    };
+    return this.getCulledPointFeatures(viewBox);
   }
 }

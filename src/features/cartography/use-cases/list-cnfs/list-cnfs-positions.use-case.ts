@@ -2,7 +2,7 @@ import { Observable } from 'rxjs';
 import { Cnfs, CnfsRepository } from '../../core';
 import { UseCase } from '@architecture/use-case';
 
-export class ListCnfsPositionUseCase implements UseCase<[], Cnfs[]> {
+export class ListCnfsUseCase implements UseCase<[], Cnfs[]> {
   public constructor(private readonly cnfsRepository: CnfsRepository) {}
 
   public execute$(): Observable<Cnfs[]> {

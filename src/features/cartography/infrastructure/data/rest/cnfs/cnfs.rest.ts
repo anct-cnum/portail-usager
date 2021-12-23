@@ -2,8 +2,15 @@ import { Observable } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
-import { Cnfs, CnfsByRegion, CnfsRepository } from '../../../../core';
-import { CnfsByRegionTransfer, cnfsByRegionTransferToCore, CnfsTransfer, cnfsTransferToCore } from '../../models';
+import { Cnfs, CnfsByDepartment, CnfsByRegion, CnfsRepository } from '../../../../core';
+import {
+  CnfsByRegionTransfer,
+  cnfsByRegionTransferToCore,
+  CnfsByDepartmentTransfer,
+  cnfsByDepartmentTransferToCore,
+  CnfsTransfer,
+  cnfsTransferToCore
+} from '../../models';
 import { Api } from '../../../../../../environments/environment.model';
 
 @Injectable()
@@ -16,6 +23,12 @@ export class CnfsRest extends CnfsRepository {
     return this.httpClient
       .get<CnfsTransfer>(`${Api.ConseillerNumerique}/conseillers/geolocalisation`)
       .pipe(map(cnfsTransferToCore));
+  }
+
+  public listCnfsByDepartment$(): Observable<CnfsByDepartment[]> {
+    return this.httpClient
+      .get<CnfsByDepartmentTransfer>(`${Api.ConseillerNumerique}/conseillers/geolocalisation/par-departement`)
+      .pipe(map(cnfsByDepartmentTransferToCore));
   }
 
   public listCnfsByRegion$(): Observable<CnfsByRegion[]> {

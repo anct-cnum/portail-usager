@@ -1,8 +1,8 @@
 <div class="fr-grid-row fr-flex-wrap--nowrap fr-full-container--height">
   <div class="fr-col-xl-4 fr-col-lg-5 fr-col-12 fr-display--flex fr-flex-direction--column fr-index--over fr-shadow--right">
     <address-geolocation
-      (usagerAutolocate)="autoLocateUsagerRequest($event)"
-      (addressToGeocode)="geocodeUsagerRequest($event)"></address-geolocation>
+      (usagerAutolocate)="onAutoLocateUsagerRequest($event)"
+      (addressToGeocode)="onGeocodeUsagerRequest($event)"></address-geolocation>
     <ng-container *ngIf="structuresList$ | async as structuresList">
       <small class="fr-px-3w fr-background-contrast--blue-cumulus" *ngIf="structuresList.length > 0">
         Nombre de structures visibles&nbsp;: {{ structuresList.length }}
@@ -11,12 +11,12 @@
     </ng-container>
   </div>
   <div class="fr-col-xl-8 fr-col-lg-7">
-    <ng-container *ngIf="visibleMarkers$ | async as markers">
+    <ng-container *ngIf="visibleMarkersWithUsager$ | async as markers">
       <leaflet-map
         [centerView]="centerView"
         [markers]="markers"
         (markerChange)="onMarkerChanged($event)"
-        (stateChange)="mapViewChanged($event)"></leaflet-map>
+        (stateChange)="onMapViewChanged($event)"></leaflet-map>
     </ng-container>
   </div>
 </div>

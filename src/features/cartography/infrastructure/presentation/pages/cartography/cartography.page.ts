@@ -1,28 +1,42 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { CenterView, CnfsPermanenceProperties, MarkerEvent, MarkerProperties, StructurePresentation } from '../../models';
 import {
-  CartographyPresenter,
+  CenterView,
+  CnfsPermanenceProperties,
+  MarkerEvent,
+  MarkerProperties,
+  PointOfInterestMarkerProperties,
+  StructurePresentation,
+  TypedMarker
+} from '../../models';
+import { CartographyPresenter } from './cartography.presenter';
+import { BehaviorSubject, merge, Observable, of, Subject, tap } from 'rxjs';
+import { CnfsByDepartmentProperties, CnfsByRegionProperties, Coordinates } from '../../../../core';
+import { ViewportAndZoom, ViewReset } from '../../directives/leaflet-map-state-change';
+import { CartographyConfiguration, CARTOGRAPHY_TOKEN, Marker } from '../../../configuration';
+import { Feature, FeatureCollection, Point } from 'geojson';
+import { catchError, combineLatestWith, map, startWith } from 'rxjs/operators';
+import { usagerFeatureFromCoordinates } from '../../helpers';
+import {
   coordinatesToCenterView,
-  isCnfsPermanence,
+  departmentMarkerEventToCenterView,
   permanenceMarkerEventToCenterView,
   regionMarkerEventToCenterView
-} from './cartography.presenter';
-import { BehaviorSubject, combineLatest, merge, Observable, of, Subject, tap } from 'rxjs';
-import { CnfsByRegionProperties, Coordinates } from '../../../../core';
-import { ViewBox, ViewReset } from '../../directives/leaflet-map-state-change';
-import { CartographyConfiguration, CARTOGRAPHY_TOKEN } from '../../../configuration';
-import { FeatureCollection, Point } from 'geojson';
-import { mapPositionsToMarkers } from '../../models/markers/markers.presentation-mapper';
-import { catchError, map } from 'rxjs/operators';
+} from '../../models/center-view/center-view.presentation-mapper';
 
 // TODO Inject though configuration token
-const DEFAULT_VIEW_BOX: ViewBox = {
+const DEFAULT_MAP_VIEWPORT_AND_ZOOM: ViewportAndZoom = {
   // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-  boundingBox: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
+  viewport: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
   zoomLevel: 6
 };
 
-export const SPLIT_REGION_ZOOM: number = 8;
+const addUsagerFeatureToMarkers = (
+  visibleMapPointsOfInterest: Feature<Point, PointOfInterestMarkerProperties>[],
+  usagerCoordinates: Coordinates | null
+): Feature<Point, PointOfInterestMarkerProperties | TypedMarker>[] =>
+  usagerCoordinates == null
+    ? visibleMapPointsOfInterest
+    : [...visibleMapPointsOfInterest, usagerFeatureFromCoordinates(usagerCoordinates)];
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,31 +45,20 @@ export const SPLIT_REGION_ZOOM: number = 8;
 })
 export class CartographyPage {
   private readonly _addressToGeocode$: Subject<string> = new Subject<string>();
-
+  private readonly _mapViewportAndZoom$: Subject<ViewportAndZoom> = new BehaviorSubject<ViewportAndZoom>(
+    DEFAULT_MAP_VIEWPORT_AND_ZOOM
+  );
   private readonly _usagerCoordinates$: Subject<Coordinates> = new Subject<Coordinates>();
 
-  private readonly _viewBox$: Subject<ViewBox> = new BehaviorSubject<ViewBox>(DEFAULT_VIEW_BOX);
-
-  private readonly _visibleMapPositions$: Observable<
-    FeatureCollection<Point, CnfsByRegionProperties | CnfsPermanenceProperties>
-  > = combineLatest([
-    this.presenter.listCnfsByRegionPositions$(),
-    this.presenter.listCnfsPositions$(this._viewBox$),
-    this._viewBox$ as Observable<ViewBox>
-  ]).pipe(
-    map(
-      ([byRegionPosition, allCnfsPosition, viewBox]: [
-        FeatureCollection<Point, CnfsByRegionProperties>,
-        FeatureCollection<Point, CnfsPermanenceProperties>,
-        ViewBox
-      ]): FeatureCollection<Point, CnfsByRegionProperties | CnfsPermanenceProperties> =>
-        viewBox.zoomLevel < SPLIT_REGION_ZOOM ? byRegionPosition : allCnfsPosition
-    )
-  );
+  private readonly _visibleMapPointsOfInterest$: Observable<Feature<Point, PointOfInterestMarkerProperties>[]> = this.presenter
+    .visibleMapPointsOfInterestThroughViewportAtZoomLevel$(this._mapViewportAndZoom$)
+    .pipe(startWith([]));
 
   public centerView: CenterView = this.cartographyConfiguration;
 
   public hasAddressError: boolean = false;
+
+  public structuresList$: Observable<StructurePresentation[]> = this.presenter.structuresList$(this._mapViewportAndZoom$);
 
   public readonly usagerCoordinates$: Observable<Coordinates | null> = merge(
     this.presenter.geocodeAddress$(this._addressToGeocode$),
@@ -64,43 +67,72 @@ export class CartographyPage {
     tap((coordinates: Coordinates): void => {
       this.centerView = coordinatesToCenterView(coordinates);
     }),
+    startWith(null),
     catchError((): Observable<null> => {
       this.hasAddressError = true;
       return of(null);
     })
   );
 
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  public structuresList$: Observable<StructurePresentation[]> = this.presenter.structuresList$(
-    this._viewBox$,
-    this._visibleMapPositions$
+  public readonly visibleMarkersWithUsager$: Observable<
+    FeatureCollection<Point, PointOfInterestMarkerProperties | TypedMarker>
+  > = this._visibleMapPointsOfInterest$.pipe(
+    combineLatestWith(this.usagerCoordinates$),
+    map(
+      ([visibleMapPointsOfInterest, usagerCoordinates]: [
+        Feature<Point, PointOfInterestMarkerProperties>[],
+        Coordinates | null
+      ]): FeatureCollection<Point, PointOfInterestMarkerProperties | TypedMarker> => ({
+        features: addUsagerFeatureToMarkers(visibleMapPointsOfInterest, usagerCoordinates),
+        type: 'FeatureCollection'
+      })
+    )
   );
-
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  public readonly visibleMarkers$: Observable<
-    FeatureCollection<Point, MarkerProperties<CnfsByRegionProperties | CnfsPermanenceProperties>>
-  > = this._visibleMapPositions$.pipe(map(mapPositionsToMarkers));
 
   public constructor(
     private readonly presenter: CartographyPresenter,
     @Inject(CARTOGRAPHY_TOKEN) private readonly cartographyConfiguration: CartographyConfiguration
   ) {}
 
-  public autoLocateUsagerRequest(coordinates: Coordinates): void {
+  private handleCnfsByDepartmentMarkerEvents(markerEvent: MarkerEvent<PointOfInterestMarkerProperties>): void {
+    this.centerView = departmentMarkerEventToCenterView(
+      markerEvent as MarkerEvent<MarkerProperties<CnfsByDepartmentProperties>>
+    );
+  }
+
+  private handleCnfsByRegionMarkerEvents(markerEvent: MarkerEvent<PointOfInterestMarkerProperties>): void {
+    this.centerView = regionMarkerEventToCenterView(markerEvent as MarkerEvent<MarkerProperties<CnfsByRegionProperties>>);
+  }
+
+  private handleCnfsPermanenceMarkerEvents(markerEvent: MarkerEvent<PointOfInterestMarkerProperties>): void {
+    this.centerView = permanenceMarkerEventToCenterView(markerEvent as MarkerEvent<MarkerProperties<CnfsPermanenceProperties>>);
+  }
+
+  public onAutoLocateUsagerRequest(coordinates: Coordinates): void {
     this._usagerCoordinates$.next(coordinates);
   }
 
-  public geocodeUsagerRequest(address: string): void {
+  public onGeocodeUsagerRequest(address: string): void {
     this._addressToGeocode$.next(address);
   }
 
-  public mapViewChanged($event: ViewReset): void {
-    this._viewBox$.next({ boundingBox: $event.boundingBox, zoomLevel: $event.zoomLevel });
+  public onMapViewChanged($event: ViewReset): void {
+    this._mapViewportAndZoom$.next({ viewport: $event.viewport, zoomLevel: $event.zoomLevel });
   }
 
-  public onMarkerChanged(markerEvent: MarkerEvent<CnfsByRegionProperties | CnfsPermanenceProperties>): void {
-    this.centerView = isCnfsPermanence(markerEvent.markerProperties)
-      ? permanenceMarkerEventToCenterView(markerEvent as MarkerEvent<CnfsPermanenceProperties>)
-      : regionMarkerEventToCenterView(markerEvent as MarkerEvent<CnfsByRegionProperties>);
+  public onMarkerChanged(markerEvent: MarkerEvent<PointOfInterestMarkerProperties>): void {
+    switch (markerEvent.markerProperties.markerType) {
+      case Marker.CnfsPermanence:
+        this.handleCnfsPermanenceMarkerEvents(markerEvent);
+        break;
+      case Marker.CnfsByRegion:
+        this.handleCnfsByRegionMarkerEvents(markerEvent);
+        break;
+      case Marker.CnfsByDepartment:
+        this.handleCnfsByDepartmentMarkerEvents(markerEvent);
+        break;
+      case Marker.Usager:
+        break;
+    }
   }
 }
