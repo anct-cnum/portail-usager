@@ -1,21 +1,28 @@
 import { Inject, Injectable } from '@angular/core';
 import {
-  listCnfsByRegionToPresentation,
-  cnfsCoreToPresentation,
-  MarkersPresentation,
   CenterView,
+  cnfsCoreToPresentation,
+  emptyFeatureCollection,
+  listCnfsByRegionToPresentation,
   MarkerEvent,
   StructurePresentation
 } from '../../models';
 import { Coordinates } from '../../../../core';
-import { map, Observable, of, switchMap } from 'rxjs';
+import { iif, map, Observable, of, switchMap } from 'rxjs';
 import { ListCnfsByRegionUseCase, ListCnfsPositionUseCase } from '../../../../use-cases';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
 import { FeatureCollection, Point } from 'geojson';
-import { ClusterService } from '../../services/cluster.service';
-import { AnyGeoJsonProperty } from '../../../../../../environments/environment.model';
-import { combineLatestWith } from 'rxjs/operators';
+import { MapViewCullingService } from '../../services/map-view-culling.service';
+import {
+  CnfsByRegionProperties,
+  CnfsMapProperties,
+  CnfsPermanenceProperties,
+  StructureProperties
+} from '../../../../../../environments/environment.model';
+import { combineLatestWith, filter, mergeMap, tap } from 'rxjs/operators';
 import { ViewBox } from '../../directives/leaflet-map-state-change';
+import { SPLIT_REGION_ZOOM } from './cartography.page';
+import { mapPositionsToStructurePresentationArray } from '../../models/structure/structure.presentation-mapper';
 
 const CITY_ZOOM_LEVEL: number = 12;
 
@@ -29,26 +36,34 @@ export const coordinatesToCenterView = (coordinates: Coordinates): CenterView =>
   zoomLevel: CITY_ZOOM_LEVEL
 });
 
+const inferByFirstFeatureProperties = ({
+  structure
+}: {
+  region?: string;
+  department?: string;
+  structure?: StructureProperties;
+}): boolean => structure != null;
+
+const isCnfsPermanenceFeatureCollection = (featureCollection: FeatureCollection<Point, CnfsMapProperties>): boolean =>
+  inferByFirstFeatureProperties(featureCollection.features[0]?.properties ?? {});
+
 @Injectable()
 export class CartographyPresenter {
   public constructor(
     @Inject(ListCnfsPositionUseCase) private readonly listCnfsPositionUseCase: ListCnfsPositionUseCase,
     @Inject(ListCnfsByRegionUseCase) private readonly listCnfsByRegionUseCase: ListCnfsByRegionUseCase,
     @Inject(GeocodeAddressUseCase) private readonly geocodeAddressUseCase: GeocodeAddressUseCase,
-    @Inject(ClusterService) private readonly clusterService: ClusterService
+    @Inject(MapViewCullingService) private readonly mapViewCullingService: MapViewCullingService
   ) {}
 
-  private onlyVisibleMarkers(): ([cnfsFeatureCollection, viewBox]: [
-    FeatureCollection<Point, AnyGeoJsonProperty>,
+  private onlyVisiblePositions(): ([cnfsFeatureCollection, viewBox]: [
+    FeatureCollection<Point, CnfsPermanenceProperties>,
     ViewBox
-  ]) => MarkersPresentation {
-    return ([cnfsFeatureCollection, viewBox]: [
-      FeatureCollection<Point, AnyGeoJsonProperty>,
-      ViewBox
-    ]): MarkersPresentation => ({
-      features: this.clusterService.onlyVisibleMarkers(cnfsFeatureCollection, viewBox),
-      type: 'FeatureCollection'
-    });
+  ]) => FeatureCollection<Point, CnfsPermanenceProperties> {
+    return ([cnfsFeatureCollection, viewBox]: [FeatureCollection<Point, CnfsPermanenceProperties>, ViewBox]): FeatureCollection<
+      Point,
+      CnfsPermanenceProperties
+    > => this.mapViewCullingService.cull(cnfsFeatureCollection, viewBox);
   }
 
   public geocodeAddress$(addressToGeocode$: Observable<string>): Observable<Coordinates> {
@@ -57,28 +72,45 @@ export class CartographyPresenter {
     );
   }
 
-  public listCnfsByRegionPositions$(): Observable<MarkersPresentation> {
+  public listCnfsByRegionPositions$(): Observable<FeatureCollection<Point, CnfsByRegionProperties>> {
     return this.listCnfsByRegionUseCase.execute$().pipe(map(listCnfsByRegionToPresentation));
   }
 
-  public listCnfsPositions$(viewBox$: Observable<ViewBox>): Observable<MarkersPresentation> {
-    return this.listCnfsPositionUseCase
+  public listCnfsPositions$(viewBox$: Observable<ViewBox>): Observable<FeatureCollection<Point, CnfsPermanenceProperties>> {
+    const onlyVisiblePositions$: Observable<FeatureCollection<Point, CnfsPermanenceProperties>> = this.listCnfsPositionUseCase
       .execute$()
-      .pipe(map(cnfsCoreToPresentation), combineLatestWith(viewBox$), map(this.onlyVisibleMarkers()));
+      .pipe(map(cnfsCoreToPresentation), combineLatestWith(viewBox$), map(this.onlyVisiblePositions()));
+
+    const emptyPositions$: Observable<FeatureCollection<Point, CnfsPermanenceProperties>> = of(
+      emptyFeatureCollection<CnfsPermanenceProperties>()
+    );
+
+    // TODO Remplacer par SPLIT_DEPARTEMENT_ZOOM quand la feature aura été mergée
+    return viewBox$.pipe(
+      mergeMap(
+        (viewBox: ViewBox): Observable<FeatureCollection<Point, CnfsPermanenceProperties>> =>
+          iif((): boolean => viewBox.zoomLevel < SPLIT_REGION_ZOOM, emptyPositions$, onlyVisiblePositions$)
+      )
+    );
   }
 
-  public structuresList$(): Observable<StructurePresentation[]> {
-    return of([
-      {
-        address: '12 rue des Acacias, 69002 Lyon',
-        name: 'Association des centres sociaux et culturels de Lyon',
-        type: ''
-      },
-      {
-        address: '31 Avenue de la mer, 13003 Marseille',
-        name: 'Médiathèque de la mer',
-        type: ''
-      }
-    ]);
+  public structuresList$(
+    viewBox$: Observable<ViewBox>,
+    visibleMapPositions$: Observable<FeatureCollection<Point, CnfsMapProperties>>
+  ): Observable<StructurePresentation[]> {
+    const onlyVisiblePositions$: Observable<StructurePresentation[]> = visibleMapPositions$.pipe(
+      filter(isCnfsPermanenceFeatureCollection),
+      map(mapPositionsToStructurePresentationArray)
+    );
+
+    const emptyPositions$: Observable<StructurePresentation[]> = of([]);
+
+    // TODO Remplacer par SPLIT_DEPARTEMENT_ZOOM quand la feature aura été mergée
+    return viewBox$.pipe(
+      mergeMap(
+        (viewBox: ViewBox): Observable<StructurePresentation[]> =>
+          iif((): boolean => viewBox.zoomLevel < SPLIT_REGION_ZOOM, emptyPositions$, onlyVisiblePositions$)
+      )
+    );
   }
 }

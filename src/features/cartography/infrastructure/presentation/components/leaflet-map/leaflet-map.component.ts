@@ -27,7 +27,7 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import { CenterView, EMPTY_FEATURE_COLLECTION, MarkerEvent, MarkerProperties, MarkersPresentation } from '../../models';
+import { CenterView, emptyFeatureCollection, MarkerEvent, MarkerProperties, MarkersPresentation } from '../../models';
 import { MarkersConfiguration, MARKERS_TOKEN } from '../../../configuration';
 import { Feature, Point } from 'geojson';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
@@ -77,7 +77,7 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
 
   @Output() public readonly markerChange: EventEmitter<MarkerEvent> = new EventEmitter<MarkerEvent>();
 
-  @Input() public markers: MarkersPresentation = EMPTY_FEATURE_COLLECTION;
+  @Input() public markers: MarkersPresentation = emptyFeatureCollection<MarkerProperties>();
 
   public get map(): LeafletMap {
     return this._map;
@@ -102,7 +102,7 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
     iconMarker: DivIcon | Icon
   ): LeafletMarker {
     return (
-      marker(position, { icon: iconMarker, zIndexOffset: (feature.properties['zIndexOffset'] ?? 0) as number })
+      marker(position, { icon: iconMarker, zIndexOffset: feature.properties.zIndexOffset ?? 0 })
         // WARNING : Typing 'event' will cause a error in leaflet.
         // eslint-disable-next-line @typescript-eslint/typedef
         .on('click', (markerEvent): void => {

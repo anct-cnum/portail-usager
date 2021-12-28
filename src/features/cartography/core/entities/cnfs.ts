@@ -1,6 +1,9 @@
 import { Coordinates } from '../value-objects';
-import { AnyGeoJsonProperty } from '../../../../environments/environment.model';
+import { CnfsProperties, StructureProperties } from '../../../../environments/environment.model';
 
 export class Cnfs {
-  public constructor(public readonly position: Coordinates, public readonly properties: AnyGeoJsonProperty) {}
+  public constructor(
+    public readonly position: Coordinates,
+    public readonly properties: { cnfs: CnfsProperties; structure: StructureProperties }
+  ) {}
 }

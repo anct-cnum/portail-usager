@@ -1,22 +1,23 @@
 import { Cnfs } from '../../../../core';
 import { Feature, FeatureCollection, Point } from 'geojson';
-import { AnyGeoJsonProperty } from '../../../../../../environments/environment.model';
+import { CnfsPermanenceProperties } from '../../../../../../environments/environment.model';
 
-const cnfsArrayToGeoJsonFeatures = (cnfsArray: Cnfs[]): Feature<Point, AnyGeoJsonProperty>[] =>
+const cnfsArrayToGeoJsonFeatures = (cnfsArray: Cnfs[]): Feature<Point, CnfsPermanenceProperties>[] =>
   cnfsArray.map(
-    (singleCnfs: Cnfs): Feature<Point, AnyGeoJsonProperty> => ({
+    (singleCnfs: Cnfs): Feature<Point, CnfsPermanenceProperties> => ({
       geometry: {
-        coordinates: [singleCnfs.position.latitude, singleCnfs.position.longitude],
+        coordinates: [singleCnfs.position.longitude, singleCnfs.position.latitude],
         type: 'Point'
       },
       properties: {
-        ...singleCnfs.properties
+        cnfs: [{ ...singleCnfs.properties.cnfs }],
+        structure: { ...singleCnfs.properties.structure }
       },
       type: 'Feature'
     })
   );
 
-export const cnfsCoreToPresentation = (cnfs: Cnfs[]): FeatureCollection<Point, AnyGeoJsonProperty> => ({
+export const cnfsCoreToPresentation = (cnfs: Cnfs[]): FeatureCollection<Point, CnfsPermanenceProperties> => ({
   features: cnfsArrayToGeoJsonFeatures(cnfs),
   type: 'FeatureCollection'
 });

@@ -5,6 +5,9 @@ import { BehaviorSubject, combineLatest, merge, Observable, of, Subject, tap } f
 import { Coordinates } from '../../../../core';
 import { ViewBox, ViewReset } from '../../directives/leaflet-map-state-change';
 import { CartographyConfiguration, CARTOGRAPHY_TOKEN } from '../../../configuration';
+import { CnfsMapProperties } from '../../../../../../environments/environment.model';
+import { FeatureCollection, Point } from 'geojson';
+import { mapPositionsToMarkers } from '../../models/markers/markers.presentation-mapper';
 import { catchError, map } from 'rxjs/operators';
 
 // TODO Inject though configuration token
@@ -14,7 +17,7 @@ const DEFAULT_VIEW_BOX: ViewBox = {
   zoomLevel: 6
 };
 
-const SPLIT_REGION_ZOOM: number = 8;
+export const SPLIT_REGION_ZOOM: number = 8;
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,8 +35,6 @@ export class CartographyPage {
 
   public hasAddressError: boolean = false;
 
-  public structuresList$: Observable<StructurePresentation[]> = this.presenter.structuresList$();
-
   public readonly usagerCoordinates$: Observable<Coordinates | null> = merge(
     this.presenter.geocodeAddress$(this._addressToGeocode$),
     this._usagerCoordinates$
@@ -47,18 +48,31 @@ export class CartographyPage {
     })
   );
 
-  public readonly visibleMarkers$: Observable<MarkersPresentation> = combineLatest([
+  // TODO  viewBox.zoomLevel < SPLIT_REGION_ZOOM is present multiple times in the code... Refactor ?
+  public readonly visibleMapPositions$: Observable<FeatureCollection<Point, CnfsMapProperties>> = combineLatest([
     this.presenter.listCnfsByRegionPositions$(),
     this.presenter.listCnfsPositions$(this._viewBox$),
     this._viewBox$ as Observable<ViewBox>
   ]).pipe(
     map(
       ([byRegionPosition, allCnfsPosition, viewBox]: [
-        MarkersPresentation,
-        MarkersPresentation,
+        FeatureCollection<Point, CnfsMapProperties>,
+        FeatureCollection<Point, CnfsMapProperties>,
         ViewBox
-      ]): MarkersPresentation => (viewBox.zoomLevel < SPLIT_REGION_ZOOM ? byRegionPosition : allCnfsPosition)
+      ]): FeatureCollection<Point, CnfsMapProperties> =>
+        viewBox.zoomLevel < SPLIT_REGION_ZOOM ? byRegionPosition : allCnfsPosition
     )
+  );
+
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  public structuresList$: Observable<StructurePresentation[]> = this.presenter.structuresList$(
+    this._viewBox$,
+    this.visibleMapPositions$
+  );
+
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  public readonly visibleCnfsPermanenceMarkers$: Observable<MarkersPresentation> = this.visibleMapPositions$.pipe(
+    map(mapPositionsToMarkers)
   );
 
   public constructor(
@@ -80,5 +94,9 @@ export class CartographyPage {
 
   public onMarkerChanged(markerEvent: MarkerEvent): void {
     this.centerView = markerEventToCenterView(markerEvent);
+
+    // TODO Remove after details page feature is up and running.
+    // eslint-disable-next-line no-console
+    console.log(markerEvent.markerProperties);
   }
 }

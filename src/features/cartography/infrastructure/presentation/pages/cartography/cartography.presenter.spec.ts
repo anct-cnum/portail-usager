@@ -1,21 +1,25 @@
 import { CartographyPresenter, coordinatesToCenterView, markerEventToCenterView } from './cartography.presenter';
 import { ListCnfsPositionUseCase, ListCnfsByRegionUseCase } from '../../../../use-cases';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
-import { ClusterService } from '../../services/cluster.service';
+import { MapViewCullingService } from '../../services/map-view-culling.service';
 import { firstValueFrom, Observable, of } from 'rxjs';
-import { FeatureCollection, Point } from 'geojson';
+import { BBox, Feature, FeatureCollection, Point } from 'geojson';
 import { Cnfs, CnfsByRegion, Coordinates } from '../../../../core';
-import { CenterView, MarkerEvent, MarkerProperties, StructurePresentation } from '../../models';
-import { Marker } from '../../../configuration';
+import { CenterView, emptyFeatureCollection, MarkerEvent, StructurePresentation } from '../../models';
+import { CnfsByRegionProperties, CnfsPermanenceProperties } from '../../../../../../environments/environment.model';
+import { ViewBox } from '../../directives/leaflet-map-state-change';
+import { SPLIT_REGION_ZOOM } from './cartography.page';
 
 const LIST_CNFS_BY_REGION_USE_CASE: ListCnfsByRegionUseCase = {
   execute$(): Observable<CnfsByRegion[]> {
     return of([
       new CnfsByRegion(new Coordinates(43.955, 6.053333), {
+        boundingZoom: 8,
         count: 2,
         region: "Provence-Alpes-Côte d'Azur"
       }),
       new CnfsByRegion(new Coordinates(49.966111, 2.775278), {
+        boundingZoom: 8,
         count: 7,
         region: 'Hauts-de-France'
       })
@@ -27,7 +31,7 @@ const LIST_CNFS_POSITION_USE_CASE: ListCnfsPositionUseCase = {
   execute$(): Observable<Cnfs[]> {
     return of([
       new Cnfs(new Coordinates(45.734377, 4.816864), {
-        conseiller: {
+        cnfs: {
           email: 'john.doe@conseiller-numerique.fr',
           name: 'John Doe'
         },
@@ -35,11 +39,12 @@ const LIST_CNFS_POSITION_USE_CASE: ListCnfsPositionUseCase = {
           address: '12 rue des Acacias, 69002 Lyon',
           isLabeledFranceServices: false,
           name: 'Association des centres sociaux et culturels de Lyon',
-          phone: '0456789012'
+          phone: '0456789012',
+          type: 'association'
         }
       }),
       new Cnfs(new Coordinates(43.305645, 5.380007), {
-        conseiller: {
+        cnfs: {
           email: 'mary.doe@conseiller-numerique.fr',
           name: 'Mary Doe'
         },
@@ -47,112 +52,311 @@ const LIST_CNFS_POSITION_USE_CASE: ListCnfsPositionUseCase = {
           address: '31 Avenue de la mer, 13003 Marseille',
           isLabeledFranceServices: true,
           name: 'Médiathèque de la mer',
-          phone: '0478563641'
+          phone: '0478563641',
+          type: ''
         }
       })
     ]);
   }
 } as ListCnfsPositionUseCase;
 
+const CNFS_PERMANENCE_FEATURE_COLLECTION: FeatureCollection<Point, CnfsPermanenceProperties> = {
+  features: [
+    {
+      geometry: {
+        coordinates: [1.302737, 43.760536],
+        type: 'Point'
+      },
+      properties: {
+        cnfs: [
+          {
+            email: 'janette.smith@conseiller-numerique.fr',
+            name: 'Janette Smith'
+          }
+        ],
+        structure: {
+          address: 'RUE DES PYRENEES, 31330 GRENADE',
+          isLabeledFranceServices: false,
+          name: 'COMMUNAUTE DE COMMUNES DES HAUTS-TOLOSANS',
+          phone: '0561828555',
+          type: 'communauté de commune'
+        }
+      },
+      type: 'Feature'
+    },
+    {
+      geometry: {
+        coordinates: [1.302737, 43.760536],
+        type: 'Point'
+      },
+      properties: {
+        cnfs: [
+          {
+            email: 'henry.doe@conseiller-numerique.fr',
+            name: 'Henry Doe'
+          }
+        ],
+        structure: {
+          address: 'RUE DU MOULIN, 32000 GRENOBLE',
+          isLabeledFranceServices: false,
+          name: 'Mairie de grenoble',
+          phone: '0561828555',
+          type: 'Mairie'
+        }
+      },
+      type: 'Feature'
+    },
+    {
+      geometry: {
+        coordinates: [1.029654, 47.793923],
+        type: 'Point'
+      },
+      properties: {
+        cnfs: [
+          {
+            email: 'charles.doe@conseiller-numerique.fr',
+            name: 'Charles Doe'
+          }
+        ],
+        structure: {
+          address: 'PL LOUIS LEYGUE, 41100 NAVEIL',
+          isLabeledFranceServices: false,
+          name: 'COMMUNE DE NAVEIL',
+          phone: '0254735757',
+          type: 'association'
+        }
+      },
+      type: 'Feature'
+    }
+  ],
+  type: 'FeatureCollection'
+};
+
 describe('cartography presenter', (): void => {
-  it('should present list of cnfs by region positions', async (): Promise<void> => {
-    const expectedCnfsByRegionPositions: FeatureCollection<Point, MarkerProperties> = {
-      features: [
+  describe('list cnfs position', (): void => {
+    it('should be empty if zoom is inferior to split zoom level', async (): Promise<void> => {
+      const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+        LIST_CNFS_POSITION_USE_CASE,
+        {} as ListCnfsByRegionUseCase,
+        {} as GeocodeAddressUseCase,
         {
-          geometry: {
-            coordinates: [6.053333, 43.955],
-            type: 'Point'
+          cull: (): Feature<Point, CnfsPermanenceProperties>[] => []
+        } as unknown as MapViewCullingService
+      );
+
+      const viewBox$: Observable<ViewBox> = of({
+        boundingBox: {} as BBox,
+        zoomLevel: SPLIT_REGION_ZOOM - 1
+      });
+
+      const cnfsPositions: FeatureCollection<Point, CnfsPermanenceProperties> = await firstValueFrom(
+        cartographyPresenter.listCnfsPositions$(viewBox$)
+      );
+
+      expect(cnfsPositions).toStrictEqual(emptyFeatureCollection<CnfsPermanenceProperties>());
+    });
+  });
+
+  describe('cnsf by region', (): void => {
+    it('should present list of cnfs by region positions', async (): Promise<void> => {
+      const expectedCnfsByRegionPositions: FeatureCollection<Point, CnfsByRegionProperties> = {
+        features: [
+          {
+            geometry: {
+              coordinates: [6.053333, 43.955],
+              type: 'Point'
+            },
+            properties: {
+              boundingZoom: 8,
+              count: 2,
+              region: "Provence-Alpes-Côte d'Azur"
+            },
+            type: 'Feature'
           },
-          properties: {
-            count: 2,
-            markerIconConfiguration: Marker.CnfsByRegion,
-            region: "Provence-Alpes-Côte d'Azur"
+          {
+            geometry: {
+              coordinates: [2.775278, 49.966111],
+              type: 'Point'
+            },
+            properties: {
+              boundingZoom: 8,
+              count: 7,
+              region: 'Hauts-de-France'
+            },
+            type: 'Feature'
+          }
+        ],
+        type: 'FeatureCollection'
+      };
+
+      const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+        {} as ListCnfsPositionUseCase,
+        LIST_CNFS_BY_REGION_USE_CASE,
+        {} as GeocodeAddressUseCase,
+        {} as MapViewCullingService
+      );
+
+      const cnfsByRegionPositions: FeatureCollection<Point, CnfsByRegionProperties> = await firstValueFrom(
+        cartographyPresenter.listCnfsByRegionPositions$()
+      );
+
+      expect(cnfsByRegionPositions).toStrictEqual(expectedCnfsByRegionPositions);
+    });
+  });
+
+  describe('center view', (): void => {
+    it('should map a markerEvent to a CenterView', (): void => {
+      const palaisDeLElyseeCoordinates: Coordinates = new Coordinates(48.87063, 2.316934);
+
+      const markerEvent: MarkerEvent = {
+        eventType: 'click',
+        markerPosition: palaisDeLElyseeCoordinates,
+        markerProperties: {
+          boundingZoom: 8
+        }
+      };
+
+      const expectedCenterView: CenterView = {
+        coordinates: palaisDeLElyseeCoordinates,
+        zoomLevel: 8
+      };
+
+      expect(markerEventToCenterView(markerEvent)).toStrictEqual(expectedCenterView);
+    });
+
+    it('should create a CenterView from map coordinates', (): void => {
+      const usagerCoordinates: Coordinates = new Coordinates(48.87063, 2.316934);
+
+      const expectedCenterView: CenterView = {
+        coordinates: usagerCoordinates,
+        zoomLevel: 12
+      };
+
+      expect(coordinatesToCenterView(usagerCoordinates)).toStrictEqual(expectedCenterView);
+    });
+  });
+
+  describe('structures list', (): void => {
+    it('should be empty if zoom is inferior to split zoom level', async (): Promise<void> => {
+      const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+        {} as ListCnfsPositionUseCase,
+        {} as ListCnfsByRegionUseCase,
+        {} as GeocodeAddressUseCase,
+        {} as MapViewCullingService
+      );
+
+      const viewBox$: Observable<ViewBox> = of({
+        boundingBox: {} as BBox,
+        zoomLevel: SPLIT_REGION_ZOOM - 1
+      });
+
+      const cnfsPositions$: Observable<FeatureCollection<Point, CnfsPermanenceProperties>> = of(
+        CNFS_PERMANENCE_FEATURE_COLLECTION
+      );
+
+      const structuresList: StructurePresentation[] = await firstValueFrom(
+        cartographyPresenter.structuresList$(viewBox$, cnfsPositions$)
+      );
+
+      expect(structuresList).toStrictEqual([]);
+    });
+
+    it(`should be empty if map position features properties are not of type CnfsPermanenceProperties`, async (): Promise<void> => {
+      const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+        {} as ListCnfsPositionUseCase,
+        {} as ListCnfsByRegionUseCase,
+        {} as GeocodeAddressUseCase,
+        {} as MapViewCullingService
+      );
+
+      const viewBox$: Observable<ViewBox> = of({
+        boundingBox: {} as BBox,
+        zoomLevel: SPLIT_REGION_ZOOM - 1
+      });
+
+      const cnfsPositions$: Observable<FeatureCollection<Point, CnfsByRegionProperties>> = of({
+        features: [
+          {
+            geometry: {
+              coordinates: [1.302737, 43.760536],
+              type: 'Point'
+            },
+            properties: {
+              boundingZoom: 8,
+              count: 2,
+              region: "Provence-Alpes-Côte d'Azur"
+            },
+            type: 'Feature'
           },
-          type: 'Feature'
+          {
+            geometry: {
+              coordinates: [1.302737, 43.760536],
+              type: 'Point'
+            },
+            properties: {
+              boundingZoom: 8,
+              count: 7,
+              region: 'Hauts-de-France'
+            },
+            type: 'Feature'
+          }
+        ],
+        type: 'FeatureCollection'
+      });
+
+      const structuresList: StructurePresentation[] = await firstValueFrom(
+        cartographyPresenter.structuresList$(viewBox$, cnfsPositions$)
+      );
+
+      expect(structuresList).toStrictEqual([]);
+    });
+
+    it('should list all received structures if zoom is equal or superior to split zoom level', async (): Promise<void> => {
+      const expectedStructureList: StructurePresentation[] = [
+        {
+          address: 'RUE DES PYRENEES, 31330 GRENADE',
+          isLabeledFranceServices: false,
+          name: 'COMMUNAUTE DE COMMUNES DES HAUTS-TOLOSANS',
+          phone: '0561828555',
+          type: 'communauté de commune'
         },
         {
-          geometry: {
-            coordinates: [2.775278, 49.966111],
-            type: 'Point'
-          },
-          properties: {
-            count: 7,
-            markerIconConfiguration: Marker.CnfsByRegion,
-            region: 'Hauts-de-France'
-          },
-          type: 'Feature'
+          address: 'RUE DU MOULIN, 32000 GRENOBLE',
+          isLabeledFranceServices: false,
+          name: 'Mairie de grenoble',
+          phone: '0561828555',
+          type: 'Mairie'
+        },
+        {
+          address: 'PL LOUIS LEYGUE, 41100 NAVEIL',
+          isLabeledFranceServices: false,
+          name: 'COMMUNE DE NAVEIL',
+          phone: '0254735757',
+          type: 'association'
         }
-      ],
-      type: 'FeatureCollection'
-    };
+      ];
 
-    const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
-      {} as ListCnfsPositionUseCase,
-      LIST_CNFS_BY_REGION_USE_CASE,
-      {} as GeocodeAddressUseCase,
-      {} as ClusterService
-    );
+      const viewBox$: Observable<ViewBox> = of({
+        boundingBox: {} as BBox,
+        zoomLevel: SPLIT_REGION_ZOOM
+      });
 
-    const cnfsByRegionPositions: FeatureCollection<Point, MarkerProperties> = await firstValueFrom(
-      cartographyPresenter.listCnfsByRegionPositions$()
-    );
+      const receivedCnfsPermanences$: Observable<FeatureCollection<Point, CnfsPermanenceProperties>> = of(
+        CNFS_PERMANENCE_FEATURE_COLLECTION
+      );
 
-    expect(cnfsByRegionPositions).toStrictEqual(expectedCnfsByRegionPositions);
-  });
+      const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+        {} as ListCnfsPositionUseCase,
+        {} as ListCnfsByRegionUseCase,
+        {} as GeocodeAddressUseCase,
+        {} as MapViewCullingService
+      );
 
-  it('should map a markerEvent to a CenterView', (): void => {
-    const palaisDeLElyseeCoordinates: Coordinates = new Coordinates(48.87063, 2.316934);
+      const structuresList: StructurePresentation[] = await firstValueFrom(
+        cartographyPresenter.structuresList$(viewBox$, receivedCnfsPermanences$)
+      );
 
-    const markerEvent: MarkerEvent = {
-      eventType: 'click',
-      markerPosition: palaisDeLElyseeCoordinates,
-      markerProperties: {
-        boundingZoom: 8
-      }
-    };
-
-    const expectedCenterView: CenterView = {
-      coordinates: palaisDeLElyseeCoordinates,
-      zoomLevel: 8
-    };
-
-    expect(markerEventToCenterView(markerEvent)).toStrictEqual(expectedCenterView);
-  });
-
-  it('should create a CenterView from map coordinates', (): void => {
-    const usagerCoordinates: Coordinates = new Coordinates(48.87063, 2.316934);
-
-    const expectedCenterView: CenterView = {
-      coordinates: usagerCoordinates,
-      zoomLevel: 12
-    };
-
-    expect(coordinatesToCenterView(usagerCoordinates)).toStrictEqual(expectedCenterView);
-  });
-
-  it('should list structures', async (): Promise<void> => {
-    const expectedStructureList: StructurePresentation[] = [
-      {
-        address: '12 rue des Acacias, 69002 Lyon',
-        name: 'Association des centres sociaux et culturels de Lyon',
-        type: ''
-      },
-      {
-        address: '31 Avenue de la mer, 13003 Marseille',
-        name: 'Médiathèque de la mer',
-        type: ''
-      }
-    ];
-
-    const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
-      LIST_CNFS_POSITION_USE_CASE,
-      {} as ListCnfsByRegionUseCase,
-      {} as GeocodeAddressUseCase,
-      {} as ClusterService
-    );
-
-    const structuresList: StructurePresentation[] = await firstValueFrom(cartographyPresenter.structuresList$());
-
-    expect(structuresList).toStrictEqual(expectedStructureList);
+      expect(structuresList).toStrictEqual(expectedStructureList);
+    });
   });
 });
