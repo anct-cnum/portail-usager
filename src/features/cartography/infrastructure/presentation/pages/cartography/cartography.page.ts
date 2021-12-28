@@ -1,20 +1,14 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import {
-  CenterView,
-  emptyFeatureCollection,
-  MarkerEvent, MarkerProperties,
-  MarkersPresentation,
-  StructurePresentation
-} from "../../models";
+import { CenterView, MarkerEvent, MarkersPresentation, StructurePresentation } from '../../models';
 import { CartographyPresenter, coordinatesToCenterView, markerEventToCenterView } from './cartography.presenter';
-import { BehaviorSubject, combineLatest, merge, Observable, of, Subject, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, merge, Observable, Subject, tap } from 'rxjs';
 import { Coordinates } from '../../../../core';
 import { ViewBox, ViewReset } from '../../directives/leaflet-map-state-change';
 import { CartographyConfiguration, CARTOGRAPHY_TOKEN } from '../../../configuration';
 import { map } from 'rxjs/operators';
-import { markersPresentationToStructurePresentationArray } from '../../models/structure/structure.presentation-mapper';
-import { PermanenceNumeriqueGeoJsonProperties } from '../../../../../../environments/environment.model';
+import { CnfsMapProperties } from '../../../../../../environments/environment.model';
 import { FeatureCollection, Point } from 'geojson';
+import { mapPositionsToMarkers } from '../../models/markers/markers.presentation-mapper';
 
 // TODO Inject though configuration token
 const DEFAULT_VIEW_BOX: ViewBox = {
@@ -50,39 +44,25 @@ export class CartographyPage {
     })
   );
 
-  public readonly visibleCnfsPermanenceMarkers$: Observable<MarkersPresentation> =
-    of(emptyFeatureCollection<MarkerProperties>());
-  /*
-   *Public readonly visibleCnfsPermanenceMarkers$: Observable<MarkersPresentation> = combineLatest([
-   *this.presenter.listCnfsByRegionPositions$(),
-   *this.presenter.listCnfsPositions$(this._viewBox$),
-   *this._viewBox$ as Observable<ViewBox>
-   *]).pipe(
-   *map(
-   *  ([byRegionPosition, allCnfsPosition, viewBox]: [
-   *    MarkersPresentation,
-   *    MarkersPresentation,
-   *    ViewBox
-   *  ]): MarkersPresentation => (viewBox.zoomLevel < SPLIT_REGION_ZOOM ? byRegionPosition : allCnfsPosition)
-   *)
-   *);
-   */
+  public readonly visibleMapPositions$: Observable<FeatureCollection<Point, CnfsMapProperties>> = combineLatest([
+    this.presenter.listCnfsByRegionPositions$(),
+    this.presenter.listCnfsPositions$(this._viewBox$),
+    this._viewBox$ as Observable<ViewBox>
+  ]).pipe(
+    map(
+      ([byRegionPosition, allCnfsPosition, viewBox]: [
+        FeatureCollection<Point, CnfsMapProperties>,
+        FeatureCollection<Point, CnfsMapProperties>,
+        ViewBox
+      ]): FeatureCollection<Point, CnfsMapProperties> =>
+        viewBox.zoomLevel < SPLIT_REGION_ZOOM ? byRegionPosition : allCnfsPosition
+    )
+  );
 
-  public readonly visibleCnfsPermanencesPositions$: Observable<FeatureCollection<Point, PermanenceNumeriqueGeoJsonProperties>> =
-    combineLatest([
-      this.presenter.listCnfsByRegionPositions$(),
-      this.presenter.listCnfsPositions$(this._viewBox$),
-      this._viewBox$ as Observable<ViewBox>
-    ]).pipe(
-      map(
-        ([byRegionPosition, allCnfsPosition, viewBox]: [
-          FeatureCollection<Point, PermanenceNumeriqueGeoJsonProperties>,
-          FeatureCollection<Point, PermanenceNumeriqueGeoJsonProperties>,
-          ViewBox
-        ]): FeatureCollection<Point, PermanenceNumeriqueGeoJsonProperties> =>
-          viewBox.zoomLevel < SPLIT_REGION_ZOOM ? byRegionPosition : allCnfsPosition
-      )
-    );
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  public readonly visibleCnfsPermanenceMarkers$: Observable<MarkersPresentation> = this.visibleMapPositions$.pipe(
+    map(mapPositionsToMarkers)
+  );
 
   /*
    *Public visibleStructuresList$: Observable<StructurePresentation[]> = this.visibleCnfsPermanenceMarkers$.pipe(

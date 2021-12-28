@@ -6,16 +6,18 @@ import { firstValueFrom, Observable, of } from 'rxjs';
 import { FeatureCollection, Point } from 'geojson';
 import { Cnfs, CnfsByRegion, Coordinates } from '../../../../core';
 import { CenterView, MarkerEvent, StructurePresentation } from '../../models';
-import { CnfsByRegionGeoJsonProperties } from '../../../../../../environments/environment.model';
+import { CnfsByRegionProperties } from '../../../../../../environments/environment.model';
 
 const LIST_CNFS_BY_REGION_USE_CASE: ListCnfsByRegionUseCase = {
   execute$(): Observable<CnfsByRegion[]> {
     return of([
       new CnfsByRegion(new Coordinates(43.955, 6.053333), {
+        boundingZoom: 8,
         count: 2,
         region: "Provence-Alpes-Côte d'Azur"
       }),
       new CnfsByRegion(new Coordinates(49.966111, 2.775278), {
+        boundingZoom: 8,
         count: 7,
         region: 'Hauts-de-France'
       })
@@ -56,7 +58,7 @@ const LIST_CNFS_POSITION_USE_CASE: ListCnfsPositionUseCase = {
 
 describe('cartography presenter', (): void => {
   it('should present list of cnfs by region positions', async (): Promise<void> => {
-    const expectedCnfsByRegionPositions: FeatureCollection<Point, CnfsByRegionGeoJsonProperties> = {
+    const expectedCnfsByRegionPositions: FeatureCollection<Point, CnfsByRegionProperties> = {
       features: [
         {
           geometry: {
@@ -64,6 +66,7 @@ describe('cartography presenter', (): void => {
             type: 'Point'
           },
           properties: {
+            boundingZoom: 8,
             count: 2,
             region: "Provence-Alpes-Côte d'Azur"
           },
@@ -75,6 +78,7 @@ describe('cartography presenter', (): void => {
             type: 'Point'
           },
           properties: {
+            boundingZoom: 8,
             count: 7,
             region: 'Hauts-de-France'
           },
@@ -91,7 +95,7 @@ describe('cartography presenter', (): void => {
       {} as ClusterService
     );
 
-    const cnfsByRegionPositions: FeatureCollection<Point, CnfsByRegionGeoJsonProperties> = await firstValueFrom(
+    const cnfsByRegionPositions: FeatureCollection<Point, CnfsByRegionProperties> = await firstValueFrom(
       cartographyPresenter.listCnfsByRegionPositions$()
     );
 

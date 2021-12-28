@@ -12,6 +12,7 @@ const CNFS_BY_REGION_TRANSFER: CnfsByRegionTransfer = {
         type: 'Point'
       },
       properties: {
+        boundingZoom: 8,
         count: 2,
         region: "Provence-Alpes-Côte d'Azur"
       },
@@ -23,6 +24,7 @@ const CNFS_BY_REGION_TRANSFER: CnfsByRegionTransfer = {
         type: 'Point'
       },
       properties: {
+        boundingZoom: 8,
         count: 7,
         region: 'Hauts-de-France'
       },
@@ -42,10 +44,12 @@ describe('cnfs rest repository', (): void => {
   it('should list cnfs by region', async (): Promise<void> => {
     const expectedCnfsByRegion: CnfsByRegion[] = [
       new CnfsByRegion(new Coordinates(43.955, 6.053333), {
+        boundingZoom: 8,
         count: 2,
         region: "Provence-Alpes-Côte d'Azur"
       }),
       new CnfsByRegion(new Coordinates(49.966111, 2.775278), {
+        boundingZoom: 8,
         count: 7,
         region: 'Hauts-de-France'
       })

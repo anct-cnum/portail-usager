@@ -2,11 +2,9 @@ import { Injectable } from '@angular/core';
 import Supercluster, { PointFeature } from 'supercluster';
 
 import { Marker } from '../../configuration';
-import { AnyGeoJsonProperty, CnfsGeoJsonProperties } from '../../../../../environments/environment.model';
+import { AnyGeoJsonProperty, CnfsPermanenceProperties } from '../../../../../environments/environment.model';
 import { ViewBox } from '../directives/leaflet-map-state-change';
 import { Feature, FeatureCollection, Point } from 'geojson';
-import { EMPTY_FEATURE_COLLECTION, MarkerProperties } from '../models';
-import { setMarkerIcon } from '../pipes/marker-icon-helper';
 
 const CLUSTER_MAX_ZOOM_DISPLAY: number = 12;
 const CLUSTER_RADIUS: number = 40;
@@ -44,17 +42,22 @@ export class ClusterService {
     this._isReady = true;
   }
 
+  // TODO Problem: visible markers can be single cnfs or cluster
   public onlyVisibleMarkers(
-    cnfsFeatureCollection: FeatureCollection<Point, CnfsGeoJsonProperties>,
+    cnfsFeatureCollection: FeatureCollection<Point, CnfsPermanenceProperties>,
     viewBox: ViewBox
-  ): Feature<Point, CnfsGeoJsonProperties>[] {
+  ): Feature<Point, CnfsPermanenceProperties>[] {
     return [];
     //if (!this._isReady) this.load(cnfsFeatureCollection.features);
     //return this.viewCulling(viewBox).features; /*.map(setMarkerIcon(Marker.Cnfs))*/
   }
 
   public viewCulling(viewBox?: ViewBox | null): FeatureCollection<Point, AnyGeoJsonProperty> {
-    if (viewBox == null || !this._isReady) return EMPTY_FEATURE_COLLECTION;
+    if (viewBox == null || !this._isReady)
+      return {
+        features: [],
+        type: 'FeatureCollection'
+      };
 
     return {
       features: this.viewCullingGetFinalFeatures(viewBox),

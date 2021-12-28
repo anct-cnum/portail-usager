@@ -27,29 +27,28 @@ export interface CnfsProperties {
   name: string;
 }
 
-export interface StructureGeoJsonProperties {
+export interface StructureProperties {
   address: string;
   isLabeledFranceServices: boolean;
   name: string;
   phone: string;
 }
 
-export interface CnfsGeoJsonProperties {
-  conseiller: CnfsProperties;
-  structure: StructureGeoJsonProperties;
+export interface CnfsPermanenceProperties {
+  cnfs: CnfsProperties;
+  structure: StructureProperties;
 }
 
-export interface CnfsByRegionGeoJsonProperties {
+export interface CnfsByRegionProperties {
+  boundingZoom: number;
   count: number;
   region: string;
 }
 
-export interface CnfsByDepartmentGeoJsonProperties {
+export interface CnfsByDepartmentProperties {
+  boundingZoom: number;
   count: number;
   department: string;
 }
 
-export type PermanenceNumeriqueGeoJsonProperties =
-  | CnfsByDepartmentGeoJsonProperties
-  | CnfsByRegionGeoJsonProperties
-  | CnfsGeoJsonProperties;
+export type CnfsMapProperties = CnfsByDepartmentProperties | CnfsByRegionProperties | CnfsPermanenceProperties;

@@ -1,9 +1,12 @@
-import { FeatureCollection, GeoJsonProperties, Point } from 'geojson';
+import { FeatureCollection, Point } from 'geojson';
 import { Marker } from '../../../configuration';
 import { AnyGeoJsonProperty } from '../../../../../../environments/environment.model';
 import { Coordinates } from '../../../../core';
 
-export type MarkerProperties = GeoJsonProperties & { markerIconConfiguration: Marker };
+export type MarkerProperties = AnyGeoJsonProperty & {
+  markerIconConfiguration: Marker;
+  zIndexOffset?: number;
+};
 
 export interface CenterView {
   coordinates: Coordinates;
@@ -17,11 +20,6 @@ export interface MarkerEvent {
 }
 
 export type MarkersPresentation = FeatureCollection<Point, MarkerProperties>;
-
-export const EMPTY_FEATURE_COLLECTION: FeatureCollection<Point, AnyGeoJsonProperty> = {
-  features: [],
-  type: 'FeatureCollection'
-};
 
 export const emptyFeatureCollection = <T>(): FeatureCollection<Point, T> => ({
   features: [],
