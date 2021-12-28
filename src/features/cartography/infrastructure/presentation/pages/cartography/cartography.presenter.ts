@@ -13,7 +13,12 @@ import { ListCnfsByRegionUseCase, ListCnfsPositionUseCase } from '../../../../us
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
 import { FeatureCollection, Point } from 'geojson';
 import { ClusterService } from '../../services/cluster.service';
-import { AnyGeoJsonProperty } from '../../../../../../environments/environment.model';
+import {
+  AnyGeoJsonProperty,
+  CnfsByRegionGeoJsonProperties,
+  CnfsGeoJsonProperties,
+  PermanenceNumeriqueGeoJsonProperties
+} from '../../../../../../environments/environment.model';
 import { combineLatestWith } from 'rxjs/operators';
 import { ViewBox } from '../../directives/leaflet-map-state-change';
 
@@ -39,13 +44,13 @@ export class CartographyPresenter {
   ) {}
 
   private onlyVisibleMarkers(): ([cnfsFeatureCollection, viewBox]: [
-    FeatureCollection<Point, AnyGeoJsonProperty>,
+    FeatureCollection<Point, CnfsGeoJsonProperties>,
     ViewBox
-  ]) => MarkersPresentation {
-    return ([cnfsFeatureCollection, viewBox]: [
-      FeatureCollection<Point, AnyGeoJsonProperty>,
-      ViewBox
-    ]): MarkersPresentation => ({
+  ]) => FeatureCollection<Point, CnfsGeoJsonProperties> {
+    return ([cnfsFeatureCollection, viewBox]: [FeatureCollection<Point, CnfsGeoJsonProperties>, ViewBox]): FeatureCollection<
+      Point,
+      CnfsGeoJsonProperties
+    > => ({
       features: this.clusterService.onlyVisibleMarkers(cnfsFeatureCollection, viewBox),
       type: 'FeatureCollection'
     });
@@ -57,11 +62,11 @@ export class CartographyPresenter {
     );
   }
 
-  public listCnfsByRegionPositions$(): Observable<MarkersPresentation> {
+  public listCnfsByRegionPositions$(): Observable<FeatureCollection<Point, CnfsByRegionGeoJsonProperties>> {
     return this.listCnfsByRegionUseCase.execute$().pipe(map(listCnfsByRegionToPresentation));
   }
 
-  public listCnfsPositions$(viewBox$: Observable<ViewBox>): Observable<MarkersPresentation> {
+  public listCnfsPositions$(viewBox$: Observable<ViewBox>): Observable<FeatureCollection<Point, CnfsGeoJsonProperties>> {
     return this.listCnfsPositionUseCase
       .execute$()
       .pipe(map(cnfsCoreToPresentation), combineLatestWith(viewBox$), map(this.onlyVisibleMarkers()));

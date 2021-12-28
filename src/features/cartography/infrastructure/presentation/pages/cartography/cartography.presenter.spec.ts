@@ -5,8 +5,8 @@ import { ClusterService } from '../../services/cluster.service';
 import { firstValueFrom, Observable, of } from 'rxjs';
 import { FeatureCollection, Point } from 'geojson';
 import { Cnfs, CnfsByRegion, Coordinates } from '../../../../core';
-import { CenterView, MarkerEvent, MarkerProperties, StructurePresentation } from '../../models';
-import { Marker } from '../../../configuration';
+import { CenterView, MarkerEvent, StructurePresentation } from '../../models';
+import { CnfsByRegionGeoJsonProperties } from '../../../../../../environments/environment.model';
 
 const LIST_CNFS_BY_REGION_USE_CASE: ListCnfsByRegionUseCase = {
   execute$(): Observable<CnfsByRegion[]> {
@@ -56,7 +56,7 @@ const LIST_CNFS_POSITION_USE_CASE: ListCnfsPositionUseCase = {
 
 describe('cartography presenter', (): void => {
   it('should present list of cnfs by region positions', async (): Promise<void> => {
-    const expectedCnfsByRegionPositions: FeatureCollection<Point, MarkerProperties> = {
+    const expectedCnfsByRegionPositions: FeatureCollection<Point, CnfsByRegionGeoJsonProperties> = {
       features: [
         {
           geometry: {
@@ -65,7 +65,6 @@ describe('cartography presenter', (): void => {
           },
           properties: {
             count: 2,
-            markerIconConfiguration: Marker.CnfsByRegion,
             region: "Provence-Alpes-Côte d'Azur"
           },
           type: 'Feature'
@@ -77,7 +76,6 @@ describe('cartography presenter', (): void => {
           },
           properties: {
             count: 7,
-            markerIconConfiguration: Marker.CnfsByRegion,
             region: 'Hauts-de-France'
           },
           type: 'Feature'
@@ -93,7 +91,7 @@ describe('cartography presenter', (): void => {
       {} as ClusterService
     );
 
-    const cnfsByRegionPositions: FeatureCollection<Point, MarkerProperties> = await firstValueFrom(
+    const cnfsByRegionPositions: FeatureCollection<Point, CnfsByRegionGeoJsonProperties> = await firstValueFrom(
       cartographyPresenter.listCnfsByRegionPositions$()
     );
 

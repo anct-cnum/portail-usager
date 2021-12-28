@@ -27,7 +27,7 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import { CenterView, EMPTY_FEATURE_COLLECTION, MarkerEvent, MarkerProperties, MarkersPresentation } from '../../models';
+import { CenterView, emptyFeatureCollection, MarkerEvent, MarkerProperties, MarkersPresentation } from '../../models';
 import { MarkersConfiguration, MARKERS_TOKEN } from '../../../configuration';
 import { Feature, Point } from 'geojson';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
@@ -77,7 +77,7 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
 
   @Output() public readonly markerChange: EventEmitter<MarkerEvent> = new EventEmitter<MarkerEvent>();
 
-  @Input() public markers: MarkersPresentation = EMPTY_FEATURE_COLLECTION;
+  @Input() public markers: MarkersPresentation = emptyFeatureCollection<MarkerProperties>();
 
   public get map(): LeafletMap {
     return this._map;

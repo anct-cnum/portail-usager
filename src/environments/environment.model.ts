@@ -21,3 +21,35 @@ export interface EnvironmentModel {
  * GeoJsonProperty from geojson package is GeoJsonProperty = { [name: string]: any } | null;
  */
 export type AnyGeoJsonProperty = Record<string, unknown>;
+
+export interface CnfsProperties {
+  email: string;
+  name: string;
+}
+
+export interface StructureGeoJsonProperties {
+  address: string;
+  isLabeledFranceServices: boolean;
+  name: string;
+  phone: string;
+}
+
+export interface CnfsGeoJsonProperties {
+  conseiller: CnfsProperties;
+  structure: StructureGeoJsonProperties;
+}
+
+export interface CnfsByRegionGeoJsonProperties {
+  count: number;
+  region: string;
+}
+
+export interface CnfsByDepartmentGeoJsonProperties {
+  count: number;
+  department: string;
+}
+
+export type PermanenceNumeriqueGeoJsonProperties =
+  | CnfsByDepartmentGeoJsonProperties
+  | CnfsByRegionGeoJsonProperties
+  | CnfsGeoJsonProperties;

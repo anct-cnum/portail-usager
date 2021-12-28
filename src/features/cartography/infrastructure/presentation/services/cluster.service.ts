@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import Supercluster, { PointFeature } from 'supercluster';
 
 import { Marker } from '../../configuration';
-import { AnyGeoJsonProperty } from '../../../../../environments/environment.model';
+import { AnyGeoJsonProperty, CnfsGeoJsonProperties } from '../../../../../environments/environment.model';
 import { ViewBox } from '../directives/leaflet-map-state-change';
 import { Feature, FeatureCollection, Point } from 'geojson';
 import { EMPTY_FEATURE_COLLECTION, MarkerProperties } from '../models';
@@ -45,11 +45,12 @@ export class ClusterService {
   }
 
   public onlyVisibleMarkers(
-    cnfsFeatureCollection: FeatureCollection<Point, AnyGeoJsonProperty>,
+    cnfsFeatureCollection: FeatureCollection<Point, CnfsGeoJsonProperties>,
     viewBox: ViewBox
-  ): Feature<Point, MarkerProperties>[] {
-    if (!this._isReady) this.load(cnfsFeatureCollection.features);
-    return this.viewCulling(viewBox).features.map(setMarkerIcon(Marker.Cnfs));
+  ): Feature<Point, CnfsGeoJsonProperties>[] {
+    return [];
+    //if (!this._isReady) this.load(cnfsFeatureCollection.features);
+    //return this.viewCulling(viewBox).features; /*.map(setMarkerIcon(Marker.Cnfs))*/
   }
 
   public viewCulling(viewBox?: ViewBox | null): FeatureCollection<Point, AnyGeoJsonProperty> {

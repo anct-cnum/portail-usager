@@ -5,13 +5,14 @@
       (addressToGeocode)="geocodeUsagerRequest($event)"></address-geolocation>
     <ng-container *ngIf="structuresList$ | async as structuresList">
       <small class="fr-px-3w fr-background-contrast--blue-cumulus" *ngIf="structuresList.length > 0">
-        Nombre de marqueurs présents visibles&nbsp;: {{ structuresList.length }}
+        Nombre de marqueurs présents visibles&nbsp;: {{ (visibleCnfsPermanenceMarkers$ | async)?.features?.length ?? 0 }}
+        Nombre de structures visibles&nbsp;: {{ structuresList.length }}
       </small>
       <cnfs-list class="fr-px-3w fr-overflow--auto" [listStructures]="structuresList"></cnfs-list>
     </ng-container>
   </div>
   <div class="fr-col-xl-8 fr-col-lg-7">
-    <ng-container *ngIf="visibleMarkers$ | async as visibleMarkers">
+    <ng-container *ngIf="visibleCnfsPermanenceMarkers$ | async as visibleMarkers">
       <leaflet-map
         [centerView]="centerView"
         [markers]="visibleMarkers | addUsagerMarker:(usagerCoordinates$ | async)"
