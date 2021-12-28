@@ -3,7 +3,6 @@ import Supercluster from 'supercluster';
 import { CnfsPermanenceProperties, CnfsProperties } from '../../../../../environments/environment.model';
 import { ViewBox } from '../directives/leaflet-map-state-change';
 import { Feature, FeatureCollection, Point } from 'geojson';
-import { SPLIT_REGION_ZOOM } from '../pages';
 
 const CLUSTER_RADIUS: number = 1;
 

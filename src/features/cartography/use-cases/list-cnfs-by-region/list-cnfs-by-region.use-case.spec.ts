@@ -9,6 +9,7 @@ const CNFS_BY_REGION: CnfsByRegion[] = [
       longitude: 6.053333
     },
     properties: {
+      boundingZoom: 8,
       count: 2,
       region: "Provence-Alpes-Côte d'Azur"
     }
@@ -19,6 +20,7 @@ const CNFS_BY_REGION: CnfsByRegion[] = [
       longitude: 2.775278
     },
     properties: {
+      boundingZoom: 8,
       count: 7,
       region: 'Hauts-de-France'
     }

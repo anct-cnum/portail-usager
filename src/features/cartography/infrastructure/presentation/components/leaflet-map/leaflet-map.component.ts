@@ -102,7 +102,7 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
     iconMarker: DivIcon | Icon
   ): LeafletMarker {
     return (
-      marker(position, { icon: iconMarker, zIndexOffset: (feature.properties['zIndexOffset'] ?? 0) as number })
+      marker(position, { icon: iconMarker, zIndexOffset: feature.properties.zIndexOffset ?? 0 })
         // WARNING : Typing 'event' will cause a error in leaflet.
         // eslint-disable-next-line @typescript-eslint/typedef
         .on('click', (markerEvent): void => {

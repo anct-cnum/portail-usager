@@ -33,8 +33,6 @@ export class CartographyPage {
 
   public centerView: CenterView = this.cartographyConfiguration;
 
-  public structuresList$: Observable<StructurePresentation[]> = this.presenter.structuresList$();
-
   public readonly usagerCoordinates$: Observable<Coordinates> = merge(
     this.presenter.geocodeAddress$(this._addressToGeocode$),
     this._usagerCoordinates$
@@ -44,6 +42,7 @@ export class CartographyPage {
     })
   );
 
+  // TODO  viewBox.zoomLevel < SPLIT_REGION_ZOOM is present multiple times in the code... Refactor ?
   public readonly visibleMapPositions$: Observable<FeatureCollection<Point, CnfsMapProperties>> = combineLatest([
     this.presenter.listCnfsByRegionPositions$(),
     this.presenter.listCnfsPositions$(this._viewBox$),
@@ -60,15 +59,15 @@ export class CartographyPage {
   );
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
+  public structuresList$: Observable<StructurePresentation[]> = this.presenter.structuresList$(
+    this._viewBox$,
+    this.visibleMapPositions$
+  );
+
+  // eslint-disable-next-line @typescript-eslint/member-ordering
   public readonly visibleCnfsPermanenceMarkers$: Observable<MarkersPresentation> = this.visibleMapPositions$.pipe(
     map(mapPositionsToMarkers)
   );
-
-  /*
-   *Public visibleStructuresList$: Observable<StructurePresentation[]> = this.visibleCnfsPermanenceMarkers$.pipe(
-   *map(markersPresentationToStructurePresentationArray)
-   *);
-   */
 
   public constructor(
     private readonly presenter: CartographyPresenter,

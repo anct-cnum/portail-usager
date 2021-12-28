@@ -13,10 +13,15 @@ import { ListCnfsByRegionUseCase, ListCnfsPositionUseCase } from '../../../../us
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
 import { FeatureCollection, Point } from 'geojson';
 import { MapViewCullingService } from '../../services/map-view-culling.service';
-import { CnfsByRegionProperties, CnfsPermanenceProperties } from '../../../../../../environments/environment.model';
+import {
+  CnfsByRegionProperties,
+  CnfsMapProperties,
+  CnfsPermanenceProperties
+} from '../../../../../../environments/environment.model';
 import { combineLatestWith, mergeMap } from 'rxjs/operators';
 import { ViewBox } from '../../directives/leaflet-map-state-change';
 import { SPLIT_REGION_ZOOM } from './cartography.page';
+import { mapPositionsToStructurePresentationArray } from '../../models/structure/structure.presentation-mapper';
 
 const CITY_ZOOM_LEVEL: number = 12;
 
@@ -77,18 +82,22 @@ export class CartographyPresenter {
     );
   }
 
-  public structuresList$(): Observable<StructurePresentation[]> {
-    return of([
-      {
-        address: '12 rue des Acacias, 69002 Lyon',
-        name: 'Association des centres sociaux et culturels de Lyon',
-        type: ''
-      },
-      {
-        address: '31 Avenue de la mer, 13003 Marseille',
-        name: 'Médiathèque de la mer',
-        type: ''
-      }
-    ]);
+  public structuresList$(
+    viewBox$: Observable<ViewBox>,
+    visibleMapPositions$: Observable<FeatureCollection<Point, CnfsMapProperties>>
+  ): Observable<StructurePresentation[]> {
+    const onlyVisiblePositions$: Observable<StructurePresentation[]> = visibleMapPositions$.pipe(
+      map(mapPositionsToStructurePresentationArray)
+    );
+
+    const emptyPositions$: Observable<StructurePresentation[]> = of([]);
+
+    // TODO Remplacer par SPLIT_DEPARTEMENT_ZOOM quand la feature aura été mergée
+    return viewBox$.pipe(
+      mergeMap(
+        (viewBox: ViewBox): Observable<StructurePresentation[]> =>
+          iif((): boolean => viewBox.zoomLevel < SPLIT_REGION_ZOOM, emptyPositions$, onlyVisiblePositions$)
+      )
+    );
   }
 }

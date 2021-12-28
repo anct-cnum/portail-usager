@@ -23,10 +23,8 @@ export interface EnvironmentModel {
 export type AnyGeoJsonProperty = Record<string, unknown>;
 
 export interface CnfsProperties {
-  [key: string]: any;
-  // email: string;
-  // name: string;
-  // horaires: string;
+  email: string;
+  name: string;
 }
 
 export interface StructureProperties {
@@ -34,6 +32,7 @@ export interface StructureProperties {
   isLabeledFranceServices: boolean;
   name: string;
   phone: string;
+  type: string;
 }
 
 export interface CnfsPermanenceProperties {

@@ -38,6 +38,10 @@ class CartographyPresenterStub {
   public structuresList$(): Observable<null> {
     return of(null);
   }
+
+  public structuresListV2$(): Observable<null> {
+    return of(null);
+  }
 }
 
 // eslint-disable-next-line max-lines-per-function
