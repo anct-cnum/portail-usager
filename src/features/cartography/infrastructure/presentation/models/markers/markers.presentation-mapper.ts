@@ -3,7 +3,7 @@ import { CnfsMapProperties, CnfsProperties } from '../../../../../../environment
 import { Feature, FeatureCollection, Point } from 'geojson';
 import { Marker } from '../../../configuration';
 
-const inferMarkerByProperties = ({
+const inferMarkerTypeByProperties = ({
   cnfs,
   department,
   region
@@ -21,36 +21,18 @@ const inferMarkerByProperties = ({
   return Marker.Usager;
 };
 
-export const setMarkerIconByTypeInference = (
+export const setMarkerIconByInference = (
   positionFeature: Feature<Point, CnfsMapProperties>
 ): Feature<Point, MarkerProperties> => ({
   geometry: { ...positionFeature.geometry },
   properties: {
     ...positionFeature.properties,
-    markerIconConfiguration: inferMarkerByProperties(positionFeature.properties)
+    markerIconConfiguration: inferMarkerTypeByProperties(positionFeature.properties)
   },
   type: 'Feature'
 });
 
 export const mapPositionsToMarkers = (visiblePositions: FeatureCollection<Point, CnfsMapProperties>): MarkersPresentation => ({
-  features: visiblePositions.features.map(setMarkerIconByTypeInference),
+  features: visiblePositions.features.map(setMarkerIconByInference),
   type: 'FeatureCollection'
 });
-
-/*
- *
- *Export const mergeProperties = (
- *  properties: AnyGeoJsonProperty,
- *  marker: Marker
- *): AnyGeoJsonProperty & { markerIconConfiguration: Marker } => ({
- *  ...properties,
- *  ...{ markerIconConfiguration: properties['cluster'] === true ? marker : Marker.Cnfs }
- *});
- *
- *export const setMarkerIcon =
- *  (marker: Marker): ((feature: Feature<Point, AnyGeoJsonProperty>) => Feature<Point, MarkerProperties>) =>
- *    (feature: Feature<Point, AnyGeoJsonProperty>): Feature<Point, MarkerProperties> => ({
- *      ...feature,
- *      ...{ properties: mergeProperties(feature.properties, marker) }
- *    });
- */

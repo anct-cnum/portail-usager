@@ -17,7 +17,7 @@ const DEFAULT_VIEW_BOX: ViewBox = {
   zoomLevel: 6
 };
 
-const SPLIT_REGION_ZOOM: number = 8;
+export const SPLIT_REGION_ZOOM: number = 8;
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

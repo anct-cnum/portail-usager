@@ -8,7 +8,7 @@ import {
   StructureProperties
 } from '../../../../../../environments/environment.model';
 import { Feature, FeatureCollection, Point } from 'geojson';
-import { mapPositionsToMarkers, setMarkerIconByTypeInference } from './markers.presentation-mapper';
+import { mapPositionsToMarkers, setMarkerIconByInference } from './markers.presentation-mapper';
 
 describe('markers presentation mapper', (): void => {
   it('should affect the right markers icons according to the permanence numerique type', (): void => {
@@ -105,7 +105,7 @@ describe('markers presentation helpers', (): void => {
       type: 'Feature'
     };
 
-    expect(setMarkerIconByTypeInference(permanenceNumeriquePosition)).toStrictEqual(expectedPermanenceNumeriqueMarker);
+    expect(setMarkerIconByInference(permanenceNumeriquePosition)).toStrictEqual(expectedPermanenceNumeriqueMarker);
   });
 
   it('should add markerIconProperty: Marker.CnfsByRegion to the feature properties', (): void => {
@@ -136,6 +136,6 @@ describe('markers presentation helpers', (): void => {
       type: 'Feature'
     };
 
-    expect(setMarkerIconByTypeInference(permanenceNumeriquePosition)).toStrictEqual(expectedPermanenceNumeriqueMarker);
+    expect(setMarkerIconByInference(permanenceNumeriquePosition)).toStrictEqual(expectedPermanenceNumeriqueMarker);
   });
 });

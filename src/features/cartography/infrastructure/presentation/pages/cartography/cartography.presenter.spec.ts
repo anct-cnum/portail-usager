@@ -1,12 +1,14 @@
 import { CartographyPresenter, coordinatesToCenterView, markerEventToCenterView } from './cartography.presenter';
 import { ListCnfsPositionUseCase, ListCnfsByRegionUseCase } from '../../../../use-cases';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
-import { ClusterService } from '../../services/cluster.service';
+import { MapViewCullingService } from '../../services/map-view-culling.service';
 import { firstValueFrom, Observable, of } from 'rxjs';
-import { FeatureCollection, Point } from 'geojson';
+import { BBox, Feature, FeatureCollection, Point } from 'geojson';
 import { Cnfs, CnfsByRegion, Coordinates } from '../../../../core';
-import { CenterView, MarkerEvent, StructurePresentation } from '../../models';
-import { CnfsByRegionProperties } from '../../../../../../environments/environment.model';
+import { CenterView, emptyFeatureCollection, MarkerEvent, StructurePresentation } from '../../models';
+import { CnfsByRegionProperties, CnfsPermanenceProperties } from '../../../../../../environments/environment.model';
+import { ViewBox } from '../../directives/leaflet-map-state-change';
+import { SPLIT_REGION_ZOOM } from './cartography.page';
 
 const LIST_CNFS_BY_REGION_USE_CASE: ListCnfsByRegionUseCase = {
   execute$(): Observable<CnfsByRegion[]> {
@@ -57,6 +59,30 @@ const LIST_CNFS_POSITION_USE_CASE: ListCnfsPositionUseCase = {
 } as ListCnfsPositionUseCase;
 
 describe('cartography presenter', (): void => {
+  describe('list cnfs position', (): void => {
+    it('should be empty if zoom is inferior to split zoom level', async (): Promise<void> => {
+      const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+        LIST_CNFS_POSITION_USE_CASE,
+        {} as ListCnfsByRegionUseCase,
+        {} as GeocodeAddressUseCase,
+        {
+          cull: (): Feature<Point, CnfsPermanenceProperties>[] => []
+        } as unknown as MapViewCullingService
+      );
+
+      const viewBox$: Observable<ViewBox> = of({
+        boundingBox: {} as BBox,
+        zoomLevel: SPLIT_REGION_ZOOM - 1
+      });
+
+      const cnfsPositions: FeatureCollection<Point, CnfsPermanenceProperties> = await firstValueFrom(
+        cartographyPresenter.listCnfsPositions$(viewBox$)
+      );
+
+      expect(cnfsPositions).toStrictEqual(emptyFeatureCollection<CnfsPermanenceProperties>());
+    });
+  });
+
   it('should present list of cnfs by region positions', async (): Promise<void> => {
     const expectedCnfsByRegionPositions: FeatureCollection<Point, CnfsByRegionProperties> = {
       features: [
@@ -92,7 +118,7 @@ describe('cartography presenter', (): void => {
       {} as ListCnfsPositionUseCase,
       LIST_CNFS_BY_REGION_USE_CASE,
       {} as GeocodeAddressUseCase,
-      {} as ClusterService
+      {} as MapViewCullingService
     );
 
     const cnfsByRegionPositions: FeatureCollection<Point, CnfsByRegionProperties> = await firstValueFrom(
@@ -150,7 +176,7 @@ describe('cartography presenter', (): void => {
       LIST_CNFS_POSITION_USE_CASE,
       {} as ListCnfsByRegionUseCase,
       {} as GeocodeAddressUseCase,
-      {} as ClusterService
+      {} as MapViewCullingService
     );
 
     const structuresList: StructurePresentation[] = await firstValueFrom(cartographyPresenter.structuresList$());

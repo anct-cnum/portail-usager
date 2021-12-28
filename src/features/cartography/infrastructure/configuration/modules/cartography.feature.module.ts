@@ -11,13 +11,13 @@ import { CnfsRest } from '../../data/rest';
 import { CoordinatesRest } from '../../data/rest/coordinates';
 import { GeocodeAddressUseCase } from '../../../use-cases/geocode-address/geocode-address.use-case';
 import { LeafletMapStateChangeDirective } from '../../presentation/directives/leaflet-map-state-change';
-import { ClusterService } from '../../presentation/services/cluster.service';
+import { MapViewCullingService } from '../../presentation/services/map-view-culling.service';
 import { AddressGeolocationComponent } from '../../presentation/components/address-geolocation/address-geolocation.component';
 import { AddUsagerMarker } from '../../presentation/pipes/add-usager-marker.pipe';
 import { CnfsListComponent } from '../../presentation/components/cnfs-list/cnfs-list.component';
 
-const DEFAULT_LONGITUDE: number = 4.468874066180609;
-const DEFAULT_LATITUDE: number = 46.28146057911664;
+const METROPOLITAN_FRANCE_CENTER_LONGITUDE: number = 4.468874066180609;
+const METROPOLITAN_FRANCE_CENTER_LATITUDE: number = 46.28146057911664;
 
 @NgModule({
   declarations: [
@@ -37,15 +37,15 @@ const DEFAULT_LATITUDE: number = 46.28146057911664;
     {
       provide: CARTOGRAPHY_TOKEN,
       useValue: {
-        coordinates: new Coordinates(DEFAULT_LATITUDE, DEFAULT_LONGITUDE),
+        coordinates: new Coordinates(METROPOLITAN_FRANCE_CENTER_LATITUDE, METROPOLITAN_FRANCE_CENTER_LONGITUDE),
         zoomLevel: 6
       }
     },
     CnfsRest,
     CoordinatesRest,
     {
-      provide: ClusterService,
-      useClass: ClusterService
+      provide: MapViewCullingService,
+      useClass: MapViewCullingService
     },
     {
       deps: [CnfsRest],
