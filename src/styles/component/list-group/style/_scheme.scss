@@ -1,0 +1,19 @@
+////
+/// List group Module
+/// @group list-group
+////
+
+$list-group-title-color: #494949;
+$list-group-border-color: #e5e5e5;
+
+@mixin _list-group-scheme($legacy: false) {
+  #{ns-group(list)} {
+    &__item {
+      border-color: $list-group-border-color;
+
+      &__title {
+        color: $list-group-title-color;
+      }
+    }
+  }
+}

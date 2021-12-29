@@ -1,0 +1,39 @@
+////
+/// list-group Module
+/// @group list-group
+////
+
+$list-group-border-width: 1px;
+
+#{ns-group(list)} {
+  @include disable-list-style;
+
+  display: flex;
+  flex-direction: column;
+
+  &--flush {
+    > #{ns-group(list) + __item} {
+      border-width: 0 0 1px;
+
+      &:last-child {
+        border-bottom-width: 0;
+      }
+    }
+  }
+
+  &__item {
+    position: relative;
+    display: block;
+    border-width: 1px;
+    border-style: solid;
+    @include padding('2v');
+
+    & + & {
+      border-top-width: 0;
+    }
+
+    &__title {
+      font-size: 16px;
+    }
+  }
+}
