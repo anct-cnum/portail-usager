@@ -1,6 +1,6 @@
-<ng-container *ngIf="listStructures.length > 0; else empty_conseillersList">
+<ng-container *ngIf="structuresList.length > 0; else empty_conseillersList">
   <ul class="fr-list-group fr-list-group--flush">
-    <li *ngFor="let structure of listStructures; index as i; trackBy: trackByStructureAddress" class="fr-list-group__item">
+    <li *ngFor="let structure of structuresList; index as i; trackBy: trackByStructureAddress" class="fr-list-group__item">
       <div class="fr-display--flex fr-justify-content--space-between fr-column-gap-3v">
         <h4 class="fr-list-group__item__title">{{ structure.name }}</h4>
         <p class="fr-text-mention--grey fr-white-space--nowrap">{{ structure.type }}</p>

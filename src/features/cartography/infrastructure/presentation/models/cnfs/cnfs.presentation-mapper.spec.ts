@@ -1,7 +1,7 @@
 import { Cnfs, Coordinates } from '../../../../core';
-import { CnfsPermanenceProperties } from '../../../../../../environments/environment.model';
 import { FeatureCollection, Point } from 'geojson';
 import { cnfsCoreToPresentation } from './cnfs.presentation-mapper';
+import { CnfsPermanenceProperties } from './cnfs.presentation';
 
 describe('cnfs presentation mapper', (): void => {
   it('should map core model array to presentation model feature collection', (): void => {

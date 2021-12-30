@@ -1,11 +1,12 @@
 import { StructurePresentation } from './structure.presentation';
-import { CnfsMapProperties } from '../../../../../../environments/environment.model';
 import { FeatureCollection, Point } from 'geojson';
 import { mapPositionsToStructurePresentationArray } from './structure.presentation-mapper';
+import { CnfsByRegionProperties } from '../../../../core';
+import { CnfsPermanenceProperties } from '../cnfs';
 
 describe('structure presentation mapper', (): void => {
-  it('should map a MarkersPresentation to a StructurePresentation[]', (): void => {
-    const visibleMarkers: FeatureCollection<Point, CnfsMapProperties> = {
+  it('should map a map position to a StructurePresentation[]', (): void => {
+    const visibleMarkers: FeatureCollection<Point, CnfsByRegionProperties | CnfsPermanenceProperties> = {
       features: [
         {
           geometry: {

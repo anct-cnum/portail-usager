@@ -1,9 +1,13 @@
 import { FeatureCollection, Point } from 'geojson';
 import { Marker } from '../../../configuration';
-import { AnyGeoJsonProperty } from '../../../../../../environments/environment.model';
-import { Coordinates } from '../../../../core';
+import { Coordinates, CnfsProperties, StructureProperties, CnfsByRegionProperties } from '../../../../core';
 
-export type MarkerProperties = AnyGeoJsonProperty & {
+export interface CnfsPermanenceProperties {
+  cnfs: CnfsProperties[];
+  structure: StructureProperties;
+}
+
+export type MarkerProperties<T extends CnfsByRegionProperties | CnfsPermanenceProperties> = T & {
   markerIconConfiguration: Marker;
   zIndexOffset?: number;
 };
@@ -13,13 +17,11 @@ export interface CenterView {
   zoomLevel: number;
 }
 
-export interface MarkerEvent {
+export interface MarkerEvent<T extends CnfsByRegionProperties | CnfsPermanenceProperties> {
   eventType: string;
-  markerProperties: AnyGeoJsonProperty;
+  markerProperties: T;
   markerPosition: Coordinates;
 }
-
-export type MarkersPresentation = FeatureCollection<Point, MarkerProperties>;
 
 export const emptyFeatureCollection = <T>(): FeatureCollection<Point, T> => ({
   features: [],

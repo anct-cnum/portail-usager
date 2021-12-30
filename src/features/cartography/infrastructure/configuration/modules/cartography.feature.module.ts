@@ -13,7 +13,6 @@ import { GeocodeAddressUseCase } from '../../../use-cases/geocode-address/geocod
 import { LeafletMapStateChangeDirective } from '../../presentation/directives/leaflet-map-state-change';
 import { MapViewCullingService } from '../../presentation/services/map-view-culling.service';
 import { AddressGeolocationComponent } from '../../presentation/components/address-geolocation/address-geolocation.component';
-import { AddUsagerMarker } from '../../presentation/pipes/add-usager-marker.pipe';
 import { CnfsListComponent } from '../../presentation/components/cnfs-list/cnfs-list.component';
 
 const METROPOLITAN_FRANCE_CENTER_LONGITUDE: number = 4.468874066180609;
@@ -22,7 +21,6 @@ const METROPOLITAN_FRANCE_CENTER_LATITUDE: number = 46.28146057911664;
 @NgModule({
   declarations: [
     AddressGeolocationComponent,
-    AddUsagerMarker,
     CartographyPage,
     CnfsListComponent,
     LeafletMapComponent,

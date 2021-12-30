@@ -7,14 +7,14 @@
       <small class="fr-px-3w fr-background-contrast--blue-cumulus" *ngIf="structuresList.length > 0">
         Nombre de structures visibles&nbsp;: {{ structuresList.length }}
       </small>
-      <cnfs-list class="fr-px-3w fr-overflow--auto" [listStructures]="structuresList"></cnfs-list>
+      <cnfs-list class="fr-px-3w fr-overflow--auto" [structuresList]="structuresList"></cnfs-list>
     </ng-container>
   </div>
   <div class="fr-col-xl-8 fr-col-lg-7">
-    <ng-container *ngIf="visibleCnfsPermanenceMarkers$ | async as visibleMarkers">
+    <ng-container *ngIf="visibleMarkers$ | async as markers">
       <leaflet-map
         [centerView]="centerView"
-        [markers]="visibleMarkers | addUsagerMarker:(usagerCoordinates$ | async)"
+        [markers]="markers"
         (markerChange)="onMarkerChanged($event)"
         (stateChange)="mapViewChanged($event)"></leaflet-map>
     </ng-container>

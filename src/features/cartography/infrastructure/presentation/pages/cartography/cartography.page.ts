@@ -1,11 +1,16 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { CenterView, MarkerEvent, MarkersPresentation, StructurePresentation } from '../../models';
-import { CartographyPresenter, coordinatesToCenterView, markerEventToCenterView } from './cartography.presenter';
+import { CenterView, CnfsPermanenceProperties, MarkerEvent, MarkerProperties, StructurePresentation } from '../../models';
+import {
+  CartographyPresenter,
+  coordinatesToCenterView,
+  isCnfsPermanence,
+  permanenceMarkerEventToCenterView,
+  regionMarkerEventToCenterView
+} from './cartography.presenter';
 import { BehaviorSubject, combineLatest, merge, Observable, of, Subject, tap } from 'rxjs';
-import { Coordinates } from '../../../../core';
+import { CnfsByRegionProperties, Coordinates } from '../../../../core';
 import { ViewBox, ViewReset } from '../../directives/leaflet-map-state-change';
 import { CartographyConfiguration, CARTOGRAPHY_TOKEN } from '../../../configuration';
-import { CnfsMapProperties } from '../../../../../../environments/environment.model';
 import { FeatureCollection, Point } from 'geojson';
 import { mapPositionsToMarkers } from '../../models/markers/markers.presentation-mapper';
 import { catchError, map } from 'rxjs/operators';
@@ -31,6 +36,23 @@ export class CartographyPage {
 
   private readonly _viewBox$: Subject<ViewBox> = new BehaviorSubject<ViewBox>(DEFAULT_VIEW_BOX);
 
+  private readonly _visibleMapPositions$: Observable<
+    FeatureCollection<Point, CnfsByRegionProperties | CnfsPermanenceProperties>
+  > = combineLatest([
+    this.presenter.listCnfsByRegionPositions$(),
+    this.presenter.listCnfsPositions$(this._viewBox$),
+    this._viewBox$ as Observable<ViewBox>
+  ]).pipe(
+    map(
+      ([byRegionPosition, allCnfsPosition, viewBox]: [
+        FeatureCollection<Point, CnfsByRegionProperties>,
+        FeatureCollection<Point, CnfsPermanenceProperties>,
+        ViewBox
+      ]): FeatureCollection<Point, CnfsByRegionProperties | CnfsPermanenceProperties> =>
+        viewBox.zoomLevel < SPLIT_REGION_ZOOM ? byRegionPosition : allCnfsPosition
+    )
+  );
+
   public centerView: CenterView = this.cartographyConfiguration;
 
   public hasAddressError: boolean = false;
@@ -48,32 +70,16 @@ export class CartographyPage {
     })
   );
 
-  // TODO  viewBox.zoomLevel < SPLIT_REGION_ZOOM is present multiple times in the code... Refactor ?
-  public readonly visibleMapPositions$: Observable<FeatureCollection<Point, CnfsMapProperties>> = combineLatest([
-    this.presenter.listCnfsByRegionPositions$(),
-    this.presenter.listCnfsPositions$(this._viewBox$),
-    this._viewBox$ as Observable<ViewBox>
-  ]).pipe(
-    map(
-      ([byRegionPosition, allCnfsPosition, viewBox]: [
-        FeatureCollection<Point, CnfsMapProperties>,
-        FeatureCollection<Point, CnfsMapProperties>,
-        ViewBox
-      ]): FeatureCollection<Point, CnfsMapProperties> =>
-        viewBox.zoomLevel < SPLIT_REGION_ZOOM ? byRegionPosition : allCnfsPosition
-    )
-  );
-
   // eslint-disable-next-line @typescript-eslint/member-ordering
   public structuresList$: Observable<StructurePresentation[]> = this.presenter.structuresList$(
     this._viewBox$,
-    this.visibleMapPositions$
+    this._visibleMapPositions$
   );
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  public readonly visibleCnfsPermanenceMarkers$: Observable<MarkersPresentation> = this.visibleMapPositions$.pipe(
-    map(mapPositionsToMarkers)
-  );
+  public readonly visibleMarkers$: Observable<
+    FeatureCollection<Point, MarkerProperties<CnfsByRegionProperties | CnfsPermanenceProperties>>
+  > = this._visibleMapPositions$.pipe(map(mapPositionsToMarkers));
 
   public constructor(
     private readonly presenter: CartographyPresenter,
@@ -92,11 +98,9 @@ export class CartographyPage {
     this._viewBox$.next({ boundingBox: $event.boundingBox, zoomLevel: $event.zoomLevel });
   }
 
-  public onMarkerChanged(markerEvent: MarkerEvent): void {
-    this.centerView = markerEventToCenterView(markerEvent);
-
-    // TODO Remove after details page feature is up and running.
-    // eslint-disable-next-line no-console
-    console.log(markerEvent.markerProperties);
+  public onMarkerChanged(markerEvent: MarkerEvent<CnfsByRegionProperties | CnfsPermanenceProperties>): void {
+    this.centerView = isCnfsPermanence(markerEvent.markerProperties)
+      ? permanenceMarkerEventToCenterView(markerEvent as MarkerEvent<CnfsPermanenceProperties>)
+      : regionMarkerEventToCenterView(markerEvent as MarkerEvent<CnfsByRegionProperties>);
   }
 }

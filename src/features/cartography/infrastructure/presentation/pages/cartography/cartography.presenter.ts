@@ -2,33 +2,33 @@ import { Inject, Injectable } from '@angular/core';
 import {
   CenterView,
   cnfsCoreToPresentation,
+  CnfsPermanenceProperties,
   emptyFeatureCollection,
   listCnfsByRegionToPresentation,
   MarkerEvent,
   StructurePresentation
 } from '../../models';
-import { Coordinates } from '../../../../core';
+import { CnfsByRegionProperties, Coordinates, StructureProperties } from '../../../../core';
 import { iif, map, Observable, of, switchMap } from 'rxjs';
 import { ListCnfsByRegionUseCase, ListCnfsPositionUseCase } from '../../../../use-cases';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
 import { FeatureCollection, Point } from 'geojson';
 import { MapViewCullingService } from '../../services/map-view-culling.service';
-import {
-  CnfsByRegionProperties,
-  CnfsMapProperties,
-  CnfsPermanenceProperties,
-  StructureProperties
-} from '../../../../../../environments/environment.model';
-import { combineLatestWith, filter, mergeMap, tap } from 'rxjs/operators';
+import { combineLatestWith, filter, mergeMap } from 'rxjs/operators';
 import { ViewBox } from '../../directives/leaflet-map-state-change';
 import { SPLIT_REGION_ZOOM } from './cartography.page';
 import { mapPositionsToStructurePresentationArray } from '../../models/structure/structure.presentation-mapper';
 
 const CITY_ZOOM_LEVEL: number = 12;
 
-export const markerEventToCenterView = (markerEvent: MarkerEvent): CenterView => ({
+export const regionMarkerEventToCenterView = (markerEvent: MarkerEvent<CnfsByRegionProperties>): CenterView => ({
   coordinates: markerEvent.markerPosition,
-  zoomLevel: markerEvent.markerProperties['boundingZoom'] as number
+  zoomLevel: markerEvent.markerProperties.boundingZoom
+});
+
+export const permanenceMarkerEventToCenterView = (markerEvent: MarkerEvent<CnfsPermanenceProperties>): CenterView => ({
+  coordinates: markerEvent.markerPosition,
+  zoomLevel: CITY_ZOOM_LEVEL
 });
 
 export const coordinatesToCenterView = (coordinates: Coordinates): CenterView => ({
@@ -36,16 +36,12 @@ export const coordinatesToCenterView = (coordinates: Coordinates): CenterView =>
   zoomLevel: CITY_ZOOM_LEVEL
 });
 
-const inferByFirstFeatureProperties = ({
-  structure
-}: {
-  region?: string;
-  department?: string;
-  structure?: StructureProperties;
-}): boolean => structure != null;
+export const isCnfsPermanence = ({ structure }: { region?: string; structure?: StructureProperties }): boolean =>
+  structure != null;
 
-const isCnfsPermanenceFeatureCollection = (featureCollection: FeatureCollection<Point, CnfsMapProperties>): boolean =>
-  inferByFirstFeatureProperties(featureCollection.features[0]?.properties ?? {});
+const isCnfsPermanenceFeatureCollection = (
+  featureCollection: FeatureCollection<Point, CnfsByRegionProperties | CnfsPermanenceProperties>
+): boolean => isCnfsPermanence(featureCollection.features[0]?.properties ?? {});
 
 @Injectable()
 export class CartographyPresenter {
@@ -85,7 +81,6 @@ export class CartographyPresenter {
       emptyFeatureCollection<CnfsPermanenceProperties>()
     );
 
-    // TODO Remplacer par SPLIT_DEPARTEMENT_ZOOM quand la feature aura été mergée
     return viewBox$.pipe(
       mergeMap(
         (viewBox: ViewBox): Observable<FeatureCollection<Point, CnfsPermanenceProperties>> =>
@@ -96,20 +91,19 @@ export class CartographyPresenter {
 
   public structuresList$(
     viewBox$: Observable<ViewBox>,
-    visibleMapPositions$: Observable<FeatureCollection<Point, CnfsMapProperties>>
+    visibleMapPositions$: Observable<FeatureCollection<Point, CnfsByRegionProperties | CnfsPermanenceProperties>>
   ): Observable<StructurePresentation[]> {
-    const onlyVisiblePositions$: Observable<StructurePresentation[]> = visibleMapPositions$.pipe(
+    const structureList$: Observable<StructurePresentation[]> = visibleMapPositions$.pipe(
       filter(isCnfsPermanenceFeatureCollection),
       map(mapPositionsToStructurePresentationArray)
     );
 
-    const emptyPositions$: Observable<StructurePresentation[]> = of([]);
+    const emptyStructureList$: Observable<StructurePresentation[]> = of([]);
 
-    // TODO Remplacer par SPLIT_DEPARTEMENT_ZOOM quand la feature aura été mergée
     return viewBox$.pipe(
       mergeMap(
         (viewBox: ViewBox): Observable<StructurePresentation[]> =>
-          iif((): boolean => viewBox.zoomLevel < SPLIT_REGION_ZOOM, emptyPositions$, onlyVisiblePositions$)
+          iif((): boolean => viewBox.zoomLevel < SPLIT_REGION_ZOOM, emptyStructureList$, structureList$)
       )
     );
   }

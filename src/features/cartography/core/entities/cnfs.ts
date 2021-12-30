@@ -1,5 +1,17 @@
 import { Coordinates } from '../value-objects';
-import { CnfsProperties, StructureProperties } from '../../../../environments/environment.model';
+
+export interface CnfsProperties {
+  email: string;
+  name: string;
+}
+
+export interface StructureProperties {
+  address: string;
+  isLabeledFranceServices: boolean;
+  name: string;
+  phone: string;
+  type: string;
+}
 
 export class Cnfs {
   public constructor(

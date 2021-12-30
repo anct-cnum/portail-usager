@@ -27,12 +27,11 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import { CenterView, emptyFeatureCollection, MarkerEvent, MarkerProperties, MarkersPresentation } from '../../models';
+import { CenterView, CnfsPermanenceProperties, emptyFeatureCollection, MarkerEvent, MarkerProperties } from '../../models';
 import { MarkersConfiguration, MARKERS_TOKEN } from '../../../configuration';
-import { Feature, Point } from 'geojson';
+import { Feature, FeatureCollection, Point } from 'geojson';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
-import { AnyGeoJsonProperty } from '../../../../../../environments/environment.model';
-import { Coordinates } from '../../../../core';
+import { CnfsByRegionProperties, Coordinates } from '../../../../core';
 
 // TODO Convert configuration to injected token for default options then remove
 const ANIMATION_DURATION_IN_SECONDS: number = 0.5;
@@ -75,9 +74,11 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
     zoomLevel: DEFAULT_ZOOM_LEVEL
   };
 
-  @Output() public readonly markerChange: EventEmitter<MarkerEvent> = new EventEmitter<MarkerEvent>();
+  @Output() public readonly markerChange: EventEmitter<MarkerEvent<CnfsByRegionProperties | CnfsPermanenceProperties>> =
+    new EventEmitter<MarkerEvent<CnfsByRegionProperties | CnfsPermanenceProperties>>();
 
-  @Input() public markers: MarkersPresentation = emptyFeatureCollection<MarkerProperties>();
+  @Input() public markers: FeatureCollection<Point, MarkerProperties<CnfsByRegionProperties | CnfsPermanenceProperties>> =
+    emptyFeatureCollection<MarkerProperties<CnfsByRegionProperties | CnfsPermanenceProperties>>();
 
   public get map(): LeafletMap {
     return this._map;
@@ -98,7 +99,7 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
   // eslint-disable-next-line max-lines-per-function
   private createEventedMarker(
     position: LatLng,
-    feature: Feature<Point, MarkerProperties>,
+    feature: Feature<Point, MarkerProperties<CnfsByRegionProperties | CnfsPermanenceProperties>>,
     iconMarker: DivIcon | Icon
   ): LeafletMarker {
     return (
@@ -106,23 +107,28 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
         // WARNING : Typing 'event' will cause a error in leaflet.
         // eslint-disable-next-line @typescript-eslint/typedef
         .on('click', (markerEvent): void => {
-          const payload: MarkerEvent = {
+          const payload: MarkerEvent<CnfsByRegionProperties | CnfsPermanenceProperties> = {
             eventType: markerEvent.type,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
             markerPosition: new Coordinates(markerEvent.target._latlng.lat, markerEvent.target._latlng.lng),
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            markerProperties: markerEvent.target?.feature?.properties as AnyGeoJsonProperty
+            markerProperties: markerEvent.target?.feature?.properties as CnfsByRegionProperties | CnfsPermanenceProperties
           };
           this.markerChange.emit(payload);
         })
     );
   }
 
-  private readonly featureToMarker = (feature: Feature<Point, MarkerProperties>, position: LatLng): Layer =>
+  private readonly featureToMarker = (
+    feature: Feature<Point, MarkerProperties<CnfsByRegionProperties | CnfsPermanenceProperties>>,
+    position: LatLng
+  ): Layer =>
     this.createEventedMarker(
       position,
       feature,
-      this.markersConfigurations[feature.properties.markerIconConfiguration](feature)
+      this.markersConfigurations[feature.properties.markerIconConfiguration](
+        feature as Feature<Point, MarkerProperties<CnfsByRegionProperties>>
+      )
     );
 
   private setView(centerView: CenterView): void {

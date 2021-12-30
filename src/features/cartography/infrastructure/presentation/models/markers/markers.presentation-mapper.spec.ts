@@ -1,17 +1,12 @@
-import { MarkerProperties, MarkersPresentation } from '../cnfs';
+import { CnfsPermanenceProperties, MarkerProperties } from '../cnfs';
 import { Marker } from '../../../configuration';
-import {
-  CnfsByRegionProperties,
-  CnfsPermanenceProperties,
-  CnfsMapProperties,
-  StructureProperties
-} from '../../../../../../environments/environment.model';
 import { Feature, FeatureCollection, Point } from 'geojson';
 import { mapPositionsToMarkers, setMarkerIconByInference } from './markers.presentation-mapper';
+import { CnfsByRegionProperties, StructureProperties } from '../../../../core';
 
 describe('markers presentation mapper', (): void => {
   it('should affect the right markers icons according to the permanence numerique type', (): void => {
-    const permanencesNumeriquesByRegion: FeatureCollection<Point, CnfsMapProperties> = {
+    const permanencesNumeriquesByRegion: FeatureCollection<Point, CnfsByRegionProperties> = {
       features: [
         {
           geometry: {
@@ -41,7 +36,10 @@ describe('markers presentation mapper', (): void => {
       type: 'FeatureCollection'
     };
 
-    const expectedVisibleMarkers: MarkersPresentation = {
+    const expectedVisibleMarkers: FeatureCollection<
+      Point,
+      MarkerProperties<CnfsByRegionProperties | CnfsPermanenceProperties>
+    > = {
       features: [
         {
           geometry: {
@@ -91,7 +89,10 @@ describe('markers presentation helpers', (): void => {
       type: 'Feature'
     };
 
-    const expectedPermanenceNumeriqueMarker: Feature<Point, MarkerProperties> = {
+    const expectedPermanenceNumeriqueMarker: Feature<
+      Point,
+      MarkerProperties<CnfsByRegionProperties | CnfsPermanenceProperties>
+    > = {
       geometry: {
         coordinates: [0, 0],
         type: 'Point'
@@ -121,7 +122,10 @@ describe('markers presentation helpers', (): void => {
       type: 'Feature'
     };
 
-    const expectedPermanenceNumeriqueMarker: Feature<Point, MarkerProperties> = {
+    const expectedPermanenceNumeriqueMarker: Feature<
+      Point,
+      MarkerProperties<CnfsByRegionProperties | CnfsPermanenceProperties>
+    > = {
       geometry: {
         coordinates: [-53.125782, 3.933889],
         type: 'Point'

@@ -7,7 +7,7 @@ import { StructurePresentation } from '../../models';
   templateUrl: './cnfs-list.component.html'
 })
 export class CnfsListComponent {
-  @Input() public listStructures: StructurePresentation[] = [];
+  @Input() public structuresList: StructurePresentation[] = [];
 
   public trackByStructureAddress(_: number, structurePresentation: StructurePresentation): string {
     return structurePresentation.address;

@@ -1,6 +1,5 @@
 import { Feature, FeatureCollection, Point } from 'geojson';
-import { CnfsByRegion } from '../../../../core';
-import { CnfsByRegionProperties } from '../../../../../../environments/environment.model';
+import { CnfsByRegion, CnfsByRegionProperties } from '../../../../core';
 
 const listCnfsByRegionToGeoJsonFeatures = (listCnfsByRegion: CnfsByRegion[]): Feature<Point, CnfsByRegionProperties>[] =>
   listCnfsByRegion.map(

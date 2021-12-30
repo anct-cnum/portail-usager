@@ -1,12 +1,16 @@
-import { CartographyPresenter, coordinatesToCenterView, markerEventToCenterView } from './cartography.presenter';
+import {
+  CartographyPresenter,
+  coordinatesToCenterView,
+  permanenceMarkerEventToCenterView,
+  regionMarkerEventToCenterView
+} from './cartography.presenter';
 import { ListCnfsPositionUseCase, ListCnfsByRegionUseCase } from '../../../../use-cases';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
 import { MapViewCullingService } from '../../services/map-view-culling.service';
 import { firstValueFrom, Observable, of } from 'rxjs';
 import { BBox, Feature, FeatureCollection, Point } from 'geojson';
-import { Cnfs, CnfsByRegion, Coordinates } from '../../../../core';
-import { CenterView, emptyFeatureCollection, MarkerEvent, StructurePresentation } from '../../models';
-import { CnfsByRegionProperties, CnfsPermanenceProperties } from '../../../../../../environments/environment.model';
+import { Cnfs, CnfsByRegion, CnfsByRegionProperties, Coordinates } from '../../../../core';
+import { CenterView, CnfsPermanenceProperties, emptyFeatureCollection, MarkerEvent, StructurePresentation } from '../../models';
 import { ViewBox } from '../../directives/leaflet-map-state-change';
 import { SPLIT_REGION_ZOOM } from './cartography.page';
 
@@ -205,14 +209,16 @@ describe('cartography presenter', (): void => {
   });
 
   describe('center view', (): void => {
-    it('should map a markerEvent to a CenterView', (): void => {
+    it('should map a markerEvent for a cnfs by region to a CenterView', (): void => {
       const palaisDeLElyseeCoordinates: Coordinates = new Coordinates(48.87063, 2.316934);
 
-      const markerEvent: MarkerEvent = {
+      const markerEvent: MarkerEvent<CnfsByRegionProperties> = {
         eventType: 'click',
         markerPosition: palaisDeLElyseeCoordinates,
         markerProperties: {
-          boundingZoom: 8
+          boundingZoom: 8,
+          count: 6,
+          region: 'Auvergne'
         }
       };
 
@@ -221,7 +227,33 @@ describe('cartography presenter', (): void => {
         zoomLevel: 8
       };
 
-      expect(markerEventToCenterView(markerEvent)).toStrictEqual(expectedCenterView);
+      expect(regionMarkerEventToCenterView(markerEvent)).toStrictEqual(expectedCenterView);
+    });
+
+    it('should map a markerEvent for a cnfs permanence to a CenterView', (): void => {
+      const palaisDeLElyseeCoordinates: Coordinates = new Coordinates(48.87063, 2.316934);
+
+      const markerEvent: MarkerEvent<CnfsPermanenceProperties> = {
+        eventType: 'click',
+        markerPosition: palaisDeLElyseeCoordinates,
+        markerProperties: {
+          cnfs: [],
+          structure: {
+            address: '12 rue des Acacias, 69002 Lyon',
+            isLabeledFranceServices: false,
+            name: 'Association des centres sociaux et culturels de Lyon',
+            phone: '0456789012',
+            type: 'association'
+          }
+        }
+      };
+
+      const expectedCenterView: CenterView = {
+        coordinates: palaisDeLElyseeCoordinates,
+        zoomLevel: 12
+      };
+
+      expect(permanenceMarkerEventToCenterView(markerEvent)).toStrictEqual(expectedCenterView);
     });
 
     it('should create a CenterView from map coordinates', (): void => {

@@ -1,5 +1,10 @@
 import { Coordinates } from '../value-objects';
-import { CnfsByRegionProperties } from '../../../../environments/environment.model';
+
+export interface CnfsByRegionProperties {
+  boundingZoom: number;
+  count: number;
+  region: string;
+}
 
 export class CnfsByRegion {
   public constructor(public readonly position: Coordinates, public readonly properties: CnfsByRegionProperties) {}
