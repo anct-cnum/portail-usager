@@ -1,8 +1,7 @@
-/* eslint-disable max-lines */
 import { DivIcon, icon, Icon, Point as LeafletPoint } from 'leaflet';
-import { CnfsPermanenceProperties, MarkerProperties } from '../../../presentation/models';
+import { CnfsMapDataProperties, MarkerProperties } from '../../../presentation/models';
 import { Feature, Point } from 'geojson';
-import { CnfsByRegionProperties } from '../../../../core';
+import { CnfsByDepartementProperties, CnfsByRegionProperties } from '../../../../core';
 
 const HALF: number = 0.5;
 const ROUND_FALSE: boolean = false;
@@ -40,9 +39,7 @@ const USAGER_MARKER_DIMENSIONS: LeafletPoint = new LeafletPoint(
 );
 
 export type IconMarkerFactory = () => Icon;
-export type DivIconMarkerFactory<T extends CnfsByRegionProperties | CnfsPermanenceProperties> = (
-  feature: Feature<Point, MarkerProperties<T>>
-) => DivIcon;
+export type DivIconMarkerFactory<T extends CnfsMapDataProperties> = (feature: Feature<Point, MarkerProperties<T>>) => DivIcon;
 
 export const cnfsMarkerFactory: IconMarkerFactory = (): Icon =>
   icon({
@@ -95,7 +92,9 @@ export const cnfsByRegionMarkerFactory: DivIconMarkerFactory<CnfsByRegionPropert
   });
 
 // eslint-disable-next-line max-lines-per-function
-export const cnfsByDepartementMarkerFactory: DivIconMarkerFactory = (feature: Feature<Point, MarkerProperties>): DivIcon =>
+export const cnfsByDepartementMarkerFactory: DivIconMarkerFactory<CnfsByDepartementProperties> = (
+  feature: Feature<Point, MarkerProperties<CnfsByDepartementProperties>>
+): DivIcon =>
   new DivIcon({
     className: '',
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -122,7 +121,7 @@ export const cnfsByDepartementMarkerFactory: DivIconMarkerFactory = (feature: Fe
                font-size: 16px;
                text-rendering: auto;
               line-height: 24px">
-             ${feature.properties['count'] as number}</div>
+             ${feature.properties.count}</div>
            </div>`,
     iconAnchor: new LeafletPoint(
       CNFS_MARKER_CNFS_BY_DEPARTEMENT_DIMENSIONS.x * HALF,

@@ -1,7 +1,8 @@
-import { CnfsPermanenceProperties, MarkerProperties } from '../cnfs';
+import { CnfsPermanenceProperties } from '../cnfs-permanence';
 import { Feature, FeatureCollection, Point } from 'geojson';
 import { Marker } from '../../../configuration';
 import { CnfsByRegionProperties, CnfsProperties } from '../../../../core';
+import { MarkerProperties } from './markers.presentation';
 
 const inferMarkerTypeByProperties = ({
   cnfs,

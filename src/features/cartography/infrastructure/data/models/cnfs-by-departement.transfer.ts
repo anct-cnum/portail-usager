@@ -1,6 +1,12 @@
 import { Feature, FeatureCollection, Point } from 'geojson';
-import { CnfsByDepartementProperties } from '../../../core';
+
+export interface CnfsByDepartementTransferProperties {
+  boundingZoom: number;
+  count: number;
+  codeDepartement: string;
+  nomDepartement: string;
+}
 
 export interface CnfsByDepartementTransfer extends FeatureCollection {
-  features: Feature<Point, CnfsByDepartementProperties>[];
+  features: Feature<Point, CnfsByDepartementTransferProperties>[];
 }

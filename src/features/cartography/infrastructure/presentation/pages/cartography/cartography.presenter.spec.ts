@@ -2,17 +2,25 @@ import {
   CartographyPresenter,
   coordinatesToCenterView,
   permanenceMarkerEventToCenterView,
-  regionMarkerEventToCenterView
+  departmentOrRegionMarkerEventToCenterView
 } from './cartography.presenter';
-import { ListCnfsPositionUseCase, ListCnfsByRegionUseCase, ListCnfsByDepartementUseCase } from "../../../../use-cases";
+import { ListCnfsPositionUseCase, ListCnfsByRegionUseCase, ListCnfsByDepartementUseCase } from '../../../../use-cases';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
 import { MapViewCullingService } from '../../services/map-view-culling.service';
 import { firstValueFrom, Observable, of } from 'rxjs';
 import { BBox, Feature, FeatureCollection, Point } from 'geojson';
-import { Cnfs, CnfsByDepartement, CnfsByRegion, CnfsByRegionProperties, Coordinates } from "../../../../core";
-import { CenterView, CnfsPermanenceProperties, emptyFeatureCollection, MarkerEvent, StructurePresentation } from '../../models';
+import {
+  Cnfs,
+  CnfsByDepartement,
+  CnfsByDepartementProperties,
+  CnfsByRegion,
+  CnfsByRegionProperties,
+  Coordinates
+} from '../../../../core';
+import { CenterView, CnfsPermanenceProperties, MarkerEvent, StructurePresentation } from '../../models';
 import { ViewBox } from '../../directives/leaflet-map-state-change';
 import { SPLIT_REGION_ZOOM } from './cartography.page';
+import { emptyFeatureCollection } from '../../helpers';
 
 const LIST_CNFS_BY_REGION_USE_CASE: ListCnfsByRegionUseCase = {
   execute$(): Observable<CnfsByRegion[]> {
@@ -33,19 +41,20 @@ const LIST_CNFS_BY_REGION_USE_CASE: ListCnfsByRegionUseCase = {
 
 const LIST_CNFS_BY_DEPARTEMENT_USE_CASE: ListCnfsByDepartementUseCase = {
   execute$(): Observable<CnfsByDepartement[]> {
-    return of(
-      [
-        new CnfsByDepartement(new Coordinates(46.099798450280282, 5.348666025399395), {
-          codeDepartement: '01',
-          count: 12,
-          nomDepartement: "Ain"
-        }),
-        new CnfsByDepartement(new Coordinates(-12.820655090736881, 45.147364453253317), {
-          codeDepartement: '976',
-          count: 27,
-          nomDepartement: 'Mayotte'
-        })
-      ]);
+    return of([
+      new CnfsByDepartement(new Coordinates(46.099798450280282, 5.348666025399395), {
+        boundingZoom: 10,
+        code: '01',
+        count: 12,
+        departement: 'Ain'
+      }),
+      new CnfsByDepartement(new Coordinates(-12.820655090736881, 45.147364453253317), {
+        boundingZoom: 10,
+        code: '976',
+        count: 27,
+        departement: 'Mayotte'
+      })
+    ]);
   }
 } as ListCnfsByDepartementUseCase;
 
@@ -227,6 +236,55 @@ describe('cartography presenter', (): void => {
       expect(cnfsByRegionPositions).toStrictEqual(expectedCnfsByRegionPositions);
     });
   });
+  describe('cnsf by departement', (): void => {
+    it('should present list of cnfs by departement positions', async (): Promise<void> => {
+      const expectedCnfsByDepartementPositions: FeatureCollection<Point, CnfsByDepartementProperties> = {
+        features: [
+          {
+            geometry: {
+              coordinates: [5.348666025399395, 46.09979845028028],
+              type: 'Point'
+            },
+            properties: {
+              boundingZoom: 10,
+              code: '01',
+              count: 12,
+              departement: 'Ain'
+            },
+            type: 'Feature'
+          },
+          {
+            geometry: {
+              coordinates: [45.14736445325332, -12.820655090736881],
+              type: 'Point'
+            },
+            properties: {
+              boundingZoom: 10,
+              code: '976',
+              count: 27,
+              departement: 'Mayotte'
+            },
+            type: 'Feature'
+          }
+        ],
+        type: 'FeatureCollection'
+      };
+
+      const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+        {} as ListCnfsPositionUseCase,
+        {} as ListCnfsByRegionUseCase,
+        LIST_CNFS_BY_DEPARTEMENT_USE_CASE,
+        {} as GeocodeAddressUseCase,
+        {} as MapViewCullingService
+      );
+
+      const cnfsByDepartementPositions: FeatureCollection<Point, CnfsByDepartementProperties> = await firstValueFrom(
+        cartographyPresenter.listCnfsByDepartementPositions$()
+      );
+
+      expect(cnfsByDepartementPositions).toStrictEqual(expectedCnfsByDepartementPositions);
+    });
+  });
 
   describe('center view', (): void => {
     it('should map a markerEvent for a cnfs by region to a CenterView', (): void => {
@@ -247,7 +305,7 @@ describe('cartography presenter', (): void => {
         zoomLevel: 8
       };
 
-      expect(regionMarkerEventToCenterView(markerEvent)).toStrictEqual(expectedCenterView);
+      expect(departmentOrRegionMarkerEventToCenterView(markerEvent)).toStrictEqual(expectedCenterView);
     });
 
     it('should map a markerEvent for a cnfs permanence to a CenterView', (): void => {

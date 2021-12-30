@@ -1,16 +1,17 @@
 import { Inject, Injectable } from '@angular/core';
 import {
   CenterView,
-  cnfsCoreToPresentation,
+  cnfsCoreToCnfsPermanenceFeatureCollection,
+  CnfsGroupedByProperties,
   CnfsPermanenceProperties,
-  emptyFeatureCollection,
+  cnfsByDepartementToPresentation,
   listCnfsByRegionToPresentation,
   MarkerEvent,
   StructurePresentation
 } from '../../models';
-import { CnfsByRegionProperties, Coordinates, StructureProperties } from '../../../../core';
+import { CnfsByDepartementProperties, CnfsByRegionProperties, Coordinates, StructureProperties } from '../../../../core';
 import { iif, map, Observable, of, switchMap } from 'rxjs';
-import { ListCnfsByRegionUseCase, ListCnfsPositionUseCase } from '../../../../use-cases';
+import { ListCnfsByDepartementUseCase, ListCnfsByRegionUseCase, ListCnfsPositionUseCase } from '../../../../use-cases';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
 import { FeatureCollection, Point } from 'geojson';
 import { MapViewCullingService } from '../../services/map-view-culling.service';
@@ -18,10 +19,11 @@ import { combineLatestWith, filter, mergeMap } from 'rxjs/operators';
 import { ViewBox } from '../../directives/leaflet-map-state-change';
 import { SPLIT_REGION_ZOOM } from './cartography.page';
 import { mapPositionsToStructurePresentationArray } from '../../models/structure/structure.presentation-mapper';
+import { emptyFeatureCollection } from '../../helpers';
 
 const CITY_ZOOM_LEVEL: number = 12;
 
-export const regionMarkerEventToCenterView = (markerEvent: MarkerEvent<CnfsByRegionProperties>): CenterView => ({
+export const departmentOrRegionMarkerEventToCenterView = (markerEvent: MarkerEvent<CnfsGroupedByProperties>): CenterView => ({
   coordinates: markerEvent.markerPosition,
   zoomLevel: markerEvent.markerProperties.boundingZoom
 });
@@ -36,8 +38,13 @@ export const coordinatesToCenterView = (coordinates: Coordinates): CenterView =>
   zoomLevel: CITY_ZOOM_LEVEL
 });
 
-export const isCnfsPermanence = ({ structure }: { region?: string; structure?: StructureProperties }): boolean =>
-  structure != null;
+export const isCnfsPermanence = ({
+  structure
+}: {
+  departement?: string;
+  region?: string;
+  structure?: StructureProperties;
+}): boolean => structure != null;
 
 const isCnfsPermanenceFeatureCollection = (
   featureCollection: FeatureCollection<Point, CnfsByRegionProperties | CnfsPermanenceProperties>
@@ -69,8 +76,8 @@ export class CartographyPresenter {
     );
   }
 
-  public listCnfsByDepartementPositions$(): Observable<FeatureCollection<Point, CnfsByRegionProperties>> {
-    return this.listCnfsByDepartementUseCase.execute$().pipe(map(listCnfsByDepartementToPresentation));
+  public listCnfsByDepartementPositions$(): Observable<FeatureCollection<Point, CnfsByDepartementProperties>> {
+    return this.listCnfsByDepartementUseCase.execute$().pipe(map(cnfsByDepartementToPresentation));
   }
 
   public listCnfsByRegionPositions$(): Observable<FeatureCollection<Point, CnfsByRegionProperties>> {
@@ -80,7 +87,7 @@ export class CartographyPresenter {
   public listCnfsPositions$(viewBox$: Observable<ViewBox>): Observable<FeatureCollection<Point, CnfsPermanenceProperties>> {
     const onlyVisiblePositions$: Observable<FeatureCollection<Point, CnfsPermanenceProperties>> = this.listCnfsPositionUseCase
       .execute$()
-      .pipe(map(cnfsCoreToPresentation), combineLatestWith(viewBox$), map(this.onlyVisiblePositions()));
+      .pipe(map(cnfsCoreToCnfsPermanenceFeatureCollection), combineLatestWith(viewBox$), map(this.onlyVisiblePositions()));
 
     const emptyPositions$: Observable<FeatureCollection<Point, CnfsPermanenceProperties>> = of(
       emptyFeatureCollection<CnfsPermanenceProperties>()

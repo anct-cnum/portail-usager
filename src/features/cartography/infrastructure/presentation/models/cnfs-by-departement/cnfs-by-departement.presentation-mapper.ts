@@ -1,26 +1,24 @@
 import { Feature, FeatureCollection, Point } from 'geojson';
-import { CnfsByDepartement } from '../../../../core';
-import { MarkerProperties } from '../cnfs';
-import { Marker } from '../../../configuration';
+import { CnfsByDepartement, CnfsByDepartementProperties } from '../../../../core';
 
-const listCnfsByDepartementToGeoJsonFeatures = (listCnfsByDepartement: CnfsByDepartement[]): Feature<Point, MarkerProperties>[] =>
+// eslint-disable-next-line max-lines-per-function
+const cnfsByDepartementToFeatures = (
+  listCnfsByDepartement: CnfsByDepartement[]
+): Feature<Point, CnfsByDepartementProperties>[] =>
   listCnfsByDepartement.map(
-    (cnfsByDepartement: CnfsByDepartement): Feature<Point, MarkerProperties> => ({
+    (cnfsByDepartement: CnfsByDepartement): Feature<Point, CnfsByDepartementProperties> => ({
       geometry: {
         coordinates: [cnfsByDepartement.position.longitude, cnfsByDepartement.position.latitude],
         type: 'Point'
       },
-      properties: {
-        markerIconConfiguration: Marker.CnfsByDepartement,
-        ...cnfsByDepartement.properties
-      },
+      properties: cnfsByDepartement.properties,
       type: 'Feature'
     })
   );
 
-export const listCnfsByDepartementToPresentation = (
-  listCnfsByDepartement: CnfsByDepartement[]
-): FeatureCollection<Point, MarkerProperties> => ({
-  features: listCnfsByDepartementToGeoJsonFeatures(listCnfsByDepartement),
+export const cnfsByDepartementToPresentation = (
+  cnfsByDepartements: CnfsByDepartement[]
+): FeatureCollection<Point, CnfsByDepartementProperties> => ({
+  features: cnfsByDepartementToFeatures(cnfsByDepartements),
   type: 'FeatureCollection'
 });

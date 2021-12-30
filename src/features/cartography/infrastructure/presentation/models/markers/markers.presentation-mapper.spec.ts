@@ -1,8 +1,9 @@
-import { CnfsPermanenceProperties, MarkerProperties } from '../cnfs';
+import { CnfsPermanenceProperties } from '../cnfs-permanence';
 import { Marker } from '../../../configuration';
 import { Feature, FeatureCollection, Point } from 'geojson';
 import { mapPositionsToMarkers, setMarkerIconByInference } from './markers.presentation-mapper';
 import { CnfsByRegionProperties, StructureProperties } from '../../../../core';
+import { MarkerProperties } from './markers.presentation';
 
 describe('markers presentation mapper', (): void => {
   it('should affect the right markers icons according to the permanence numerique type', (): void => {

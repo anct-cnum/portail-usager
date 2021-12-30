@@ -1,8 +1,8 @@
 import { Feature, FeatureCollection, Point } from 'geojson';
 import { CnfsByRegion, CnfsByRegionProperties } from '../../../../core';
 
-const listCnfsByRegionToGeoJsonFeatures = (listCnfsByRegion: CnfsByRegion[]): Feature<Point, CnfsByRegionProperties>[] =>
-  listCnfsByRegion.map(
+const listCnfsByRegionToGeoJsonFeatures = (cnfsByRegions: CnfsByRegion[]): Feature<Point, CnfsByRegionProperties>[] =>
+  cnfsByRegions.map(
     (cnfsByRegion: CnfsByRegion): Feature<Point, CnfsByRegionProperties> => ({
       geometry: {
         coordinates: [cnfsByRegion.position.longitude, cnfsByRegion.position.latitude],
@@ -18,8 +18,8 @@ const listCnfsByRegionToGeoJsonFeatures = (listCnfsByRegion: CnfsByRegion[]): Fe
   );
 
 export const listCnfsByRegionToPresentation = (
-  listCnfsByRegion: CnfsByRegion[]
+  cnfsByRegions: CnfsByRegion[]
 ): FeatureCollection<Point, CnfsByRegionProperties> => ({
-  features: listCnfsByRegionToGeoJsonFeatures(listCnfsByRegion),
+  features: listCnfsByRegionToGeoJsonFeatures(cnfsByRegions),
   type: 'FeatureCollection'
 });

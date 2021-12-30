@@ -1,8 +1,9 @@
 import { reduceCnfsProperties, MapViewCullingService } from './map-view-culling.service';
 import { Feature, FeatureCollection, Point } from 'geojson';
 import { ViewBox } from '../directives/leaflet-map-state-change';
-import { CnfsPermanenceProperties, emptyFeatureCollection } from '../models';
+import { CnfsPermanenceProperties } from '../models';
 import { StructureProperties } from '../../../core';
+import { emptyFeatureCollection } from '../helpers';
 
 const FRANCE_VIEW_BOX: ViewBox = {
   // eslint-disable-next-line @typescript-eslint/no-magic-numbers

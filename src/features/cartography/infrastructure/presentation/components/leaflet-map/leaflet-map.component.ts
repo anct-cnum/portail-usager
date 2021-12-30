@@ -27,11 +27,12 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import { CenterView, CnfsPermanenceProperties, emptyFeatureCollection, MarkerEvent, MarkerProperties } from '../../models';
+import { CenterView, CnfsMapDataProperties, MarkerEvent, MarkerProperties } from '../../models';
 import { MarkersConfiguration, MARKERS_TOKEN } from '../../../configuration';
 import { Feature, FeatureCollection, Point } from 'geojson';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
-import { CnfsByRegionProperties, Coordinates } from '../../../../core';
+import { CnfsByDepartementProperties, CnfsByRegionProperties, Coordinates } from "../../../../core";
+import { emptyFeatureCollection } from '../../helpers';
 
 // TODO Convert configuration to injected token for default options then remove
 const ANIMATION_DURATION_IN_SECONDS: number = 0.5;
@@ -74,11 +75,12 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
     zoomLevel: DEFAULT_ZOOM_LEVEL
   };
 
-  @Output() public readonly markerChange: EventEmitter<MarkerEvent<CnfsByRegionProperties | CnfsPermanenceProperties>> =
-    new EventEmitter<MarkerEvent<CnfsByRegionProperties | CnfsPermanenceProperties>>();
+  @Output() public readonly markerChange: EventEmitter<MarkerEvent<CnfsMapDataProperties>> = new EventEmitter<
+    MarkerEvent<CnfsMapDataProperties>
+  >();
 
-  @Input() public markers: FeatureCollection<Point, MarkerProperties<CnfsByRegionProperties | CnfsPermanenceProperties>> =
-    emptyFeatureCollection<MarkerProperties<CnfsByRegionProperties | CnfsPermanenceProperties>>();
+  @Input() public markers: FeatureCollection<Point, MarkerProperties<CnfsMapDataProperties>> =
+    emptyFeatureCollection<MarkerProperties<CnfsMapDataProperties>>();
 
   public get map(): LeafletMap {
     return this._map;
@@ -99,7 +101,7 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
   // eslint-disable-next-line max-lines-per-function
   private createEventedMarker(
     position: LatLng,
-    feature: Feature<Point, MarkerProperties<CnfsByRegionProperties | CnfsPermanenceProperties>>,
+    feature: Feature<Point, MarkerProperties<CnfsMapDataProperties>>,
     iconMarker: DivIcon | Icon
   ): LeafletMarker {
     return (
@@ -107,12 +109,12 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
         // WARNING : Typing 'event' will cause a error in leaflet.
         // eslint-disable-next-line @typescript-eslint/typedef
         .on('click', (markerEvent): void => {
-          const payload: MarkerEvent<CnfsByRegionProperties | CnfsPermanenceProperties> = {
+          const payload: MarkerEvent<CnfsMapDataProperties> = {
             eventType: markerEvent.type,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
             markerPosition: new Coordinates(markerEvent.target._latlng.lat, markerEvent.target._latlng.lng),
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            markerProperties: markerEvent.target?.feature?.properties as CnfsByRegionProperties | CnfsPermanenceProperties
+            markerProperties: markerEvent.target?.feature?.properties as CnfsMapDataProperties
           };
           this.markerChange.emit(payload);
         })
@@ -120,14 +122,14 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
   }
 
   private readonly featureToMarker = (
-    feature: Feature<Point, MarkerProperties<CnfsByRegionProperties | CnfsPermanenceProperties>>,
+    feature: Feature<Point, MarkerProperties<CnfsMapDataProperties>>,
     position: LatLng
   ): Layer =>
     this.createEventedMarker(
       position,
       feature,
       this.markersConfigurations[feature.properties.markerIconConfiguration](
-        feature as Feature<Point, MarkerProperties<CnfsByRegionProperties>>
+        feature as unknown as Feature<Point, MarkerProperties<CnfsByDepartementProperties & CnfsByRegionProperties>>
       )
     );
 

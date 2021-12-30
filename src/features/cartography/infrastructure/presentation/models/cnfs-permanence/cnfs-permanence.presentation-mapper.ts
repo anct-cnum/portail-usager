@@ -1,6 +1,6 @@
 import { Cnfs } from '../../../../core';
 import { Feature, FeatureCollection, Point } from 'geojson';
-import { CnfsPermanenceProperties } from './cnfs.presentation';
+import { CnfsPermanenceProperties } from './cnfs-permanence.presentation';
 
 const cnfsArrayToGeoJsonFeatures = (cnfsArray: Cnfs[]): Feature<Point, CnfsPermanenceProperties>[] =>
   cnfsArray.map(
@@ -17,7 +17,9 @@ const cnfsArrayToGeoJsonFeatures = (cnfsArray: Cnfs[]): Feature<Point, CnfsPerma
     })
   );
 
-export const cnfsCoreToPresentation = (cnfs: Cnfs[]): FeatureCollection<Point, CnfsPermanenceProperties> => ({
+export const cnfsCoreToCnfsPermanenceFeatureCollection = (
+  cnfs: Cnfs[]
+): FeatureCollection<Point, CnfsPermanenceProperties> => ({
   features: cnfsArrayToGeoJsonFeatures(cnfs),
   type: 'FeatureCollection'
 });

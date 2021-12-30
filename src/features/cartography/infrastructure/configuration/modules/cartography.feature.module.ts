@@ -52,6 +52,12 @@ const METROPOLITAN_FRANCE_CENTER_LATITUDE: number = 46.28146057911664;
     },
     {
       deps: [CnfsRest],
+      provide: ListCnfsByDepartementUseCase,
+      useFactory: (cnfsRepository: CnfsRepository): ListCnfsByDepartementUseCase =>
+        new ListCnfsByDepartementUseCase(cnfsRepository)
+    },
+    {
+      deps: [CnfsRest],
       provide: ListCnfsByRegionUseCase,
       useFactory: (cnfsRepository: CnfsRepository): ListCnfsByRegionUseCase => new ListCnfsByRegionUseCase(cnfsRepository)
     },
@@ -60,11 +66,6 @@ const METROPOLITAN_FRANCE_CENTER_LATITUDE: number = 46.28146057911664;
       provide: GeocodeAddressUseCase,
       useFactory: (coordinatesRepository: CoordinatesRepository): GeocodeAddressUseCase =>
         new GeocodeAddressUseCase(coordinatesRepository)
-    },
-    {
-      deps: [CnfsRest],
-      provide: ListCnfsByDepartementUseCase,
-      useFactory: (cnfsRepository: CnfsRepository): ListCnfsByDepartementUseCase => new ListCnfsByDepartementUseCase(cnfsRepository)
     }
   ]
 })

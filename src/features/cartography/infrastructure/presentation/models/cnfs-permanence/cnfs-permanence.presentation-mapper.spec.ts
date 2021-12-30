@@ -1,7 +1,7 @@
 import { Cnfs, Coordinates } from '../../../../core';
 import { FeatureCollection, Point } from 'geojson';
-import { cnfsCoreToPresentation } from './cnfs.presentation-mapper';
-import { CnfsPermanenceProperties } from './cnfs.presentation';
+import { cnfsCoreToCnfsPermanenceFeatureCollection } from './cnfs-permanence.presentation-mapper';
+import { CnfsPermanenceProperties } from './cnfs-permanence.presentation';
 
 describe('cnfs presentation mapper', (): void => {
   it('should map core model array to presentation model feature collection', (): void => {
@@ -84,6 +84,6 @@ describe('cnfs presentation mapper', (): void => {
       type: 'FeatureCollection'
     };
 
-    expect(cnfsCoreToPresentation(coreModels)).toStrictEqual(expectedPresentationModels);
+    expect(cnfsCoreToCnfsPermanenceFeatureCollection(coreModels)).toStrictEqual(expectedPresentationModels);
   });
 });

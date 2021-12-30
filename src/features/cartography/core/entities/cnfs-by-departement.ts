@@ -1,9 +1,10 @@
 import { Coordinates } from '../value-objects';
 
 export interface CnfsByDepartementProperties {
+  boundingZoom: number;
   count: number;
-  codeDepartement: string;
-  nomDepartement: string;
+  code: string;
+  departement: string;
 }
 
 export class CnfsByDepartement {

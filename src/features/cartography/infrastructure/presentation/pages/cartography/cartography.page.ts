@@ -1,11 +1,19 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { CenterView, CnfsPermanenceProperties, MarkerEvent, MarkerProperties, StructurePresentation } from '../../models';
+import {
+  CenterView,
+  CnfsGroupedByProperties,
+  CnfsMapDataProperties,
+  CnfsPermanenceProperties,
+  MarkerEvent,
+  MarkerProperties,
+  StructurePresentation
+} from '../../models';
 import {
   CartographyPresenter,
   coordinatesToCenterView,
   isCnfsPermanence,
   permanenceMarkerEventToCenterView,
-  regionMarkerEventToCenterView
+  departmentOrRegionMarkerEventToCenterView
 } from './cartography.presenter';
 import { BehaviorSubject, combineLatest, merge, Observable, of, Subject, tap } from 'rxjs';
 import { CnfsByRegionProperties, Coordinates } from '../../../../core';
@@ -23,6 +31,8 @@ const DEFAULT_VIEW_BOX: ViewBox = {
 };
 
 export const SPLIT_REGION_ZOOM: number = 8;
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SPLIT_DEPARTEMENT_ZOOM: number = 10;
 
 @Component({
@@ -41,14 +51,13 @@ export class CartographyPage {
     FeatureCollection<Point, CnfsByRegionProperties | CnfsPermanenceProperties>
   > = combineLatest([
     this.presenter.listCnfsByRegionPositions$(),
-    this.presenter.listCnfsByDepartementPositions$(),
+    // This.presenter.listCnfsByDepartementPositions$(), //TODO Finish here
     this.presenter.listCnfsPositions$(this._viewBox$),
     this._viewBox$ as Observable<ViewBox>
   ]).pipe(
     map(
-      ([byRegionPosition, byDepartementPosition, allCnfsPosition, viewBox]: [
+      ([byRegionPosition, allCnfsPosition, viewBox]: [
         FeatureCollection<Point, CnfsByRegionProperties>,
-        FeatureCollection<Point, CnfsByDepartementProperties>,
         FeatureCollection<Point, CnfsPermanenceProperties>,
         ViewBox
       ]): FeatureCollection<Point, CnfsByRegionProperties | CnfsPermanenceProperties> =>
@@ -101,9 +110,9 @@ export class CartographyPage {
     this._viewBox$.next({ boundingBox: $event.boundingBox, zoomLevel: $event.zoomLevel });
   }
 
-  public onMarkerChanged(markerEvent: MarkerEvent<CnfsByRegionProperties | CnfsPermanenceProperties>): void {
+  public onMarkerChanged(markerEvent: MarkerEvent<CnfsMapDataProperties>): void {
     this.centerView = isCnfsPermanence(markerEvent.markerProperties)
       ? permanenceMarkerEventToCenterView(markerEvent as MarkerEvent<CnfsPermanenceProperties>)
-      : regionMarkerEventToCenterView(markerEvent as MarkerEvent<CnfsByRegionProperties>);
+      : departmentOrRegionMarkerEventToCenterView(markerEvent as MarkerEvent<CnfsGroupedByProperties>);
   }
 }

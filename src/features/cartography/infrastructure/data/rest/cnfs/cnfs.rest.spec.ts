@@ -1,5 +1,3 @@
-// eslint-disable-next-line no-inline-comments
-import '@angular/compiler'; // TO DELETE
 import { CnfsRest } from './cnfs.rest';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Observable, of } from 'rxjs';
@@ -44,9 +42,10 @@ const CNFS_BY_DEPARTEMENT_TRANSFER: CnfsByDepartementTransfer = {
         type: 'Point'
       },
       properties: {
+        boundingZoom: 10,
         codeDepartement: '01',
         count: 12,
-        nomDepartement: 'Ain',
+        nomDepartement: 'Ain'
       },
       type: 'Feature'
     },
@@ -56,6 +55,7 @@ const CNFS_BY_DEPARTEMENT_TRANSFER: CnfsByDepartementTransfer = {
         type: 'Point'
       },
       properties: {
+        boundingZoom: 10,
         codeDepartement: '976',
         count: 27,
         nomDepartement: 'Mayotte'
@@ -65,7 +65,6 @@ const CNFS_BY_DEPARTEMENT_TRANSFER: CnfsByDepartementTransfer = {
   ],
   type: 'FeatureCollection'
 };
-
 
 describe('cnfs rest repository', (): void => {
   const httpClient: HttpClient = {
@@ -103,14 +102,16 @@ describe('cnfs rest repository', (): void => {
   it('should list cnfs by departement', async (): Promise<void> => {
     const expectedCnfsByDepartement: CnfsByDepartement[] = [
       new CnfsByDepartement(new Coordinates(46.099798450280282, 5.348666025399395), {
-        codeDepartement: '01',
+        boundingZoom: 10,
+        code: '01',
         count: 12,
-        nomDepartement: "Ain"
+        departement: 'Ain'
       }),
       new CnfsByDepartement(new Coordinates(-12.820655090736881, 45.147364453253317), {
-        codeDepartement: '976',
+        boundingZoom: 10,
+        code: '976',
         count: 27,
-        nomDepartement: 'Mayotte'
+        departement: 'Mayotte'
       })
     ];
     const cnfsRestRepository: CnfsRest = new CnfsRest(httpClientDepartement);

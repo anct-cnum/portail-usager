@@ -1,7 +1,7 @@
 import { StructurePresentation } from './structure.presentation';
 import { Feature, FeatureCollection, Point } from 'geojson';
 import { CnfsByRegionProperties, StructureProperties } from '../../../../core';
-import { CnfsPermanenceProperties } from '../cnfs';
+import { CnfsPermanenceProperties } from '../cnfs-permanence';
 
 export const mapPositionsToStructurePresentationArray = (
   visiblePositions: FeatureCollection<Point, CnfsByRegionProperties | CnfsPermanenceProperties>

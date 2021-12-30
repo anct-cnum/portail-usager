@@ -9,9 +9,10 @@ const CNFS_BY_DEPARTEMENT: CnfsByDepartement[] = [
       longitude: 46.099798450280282
     },
     properties: {
-      codeDepartement: '01',
+      boundingZoom: 10,
+      code: '01',
       count: 12,
-      nomDepartement: 'Ain',
+      departement: 'Ain'
     }
   },
   {
@@ -20,9 +21,10 @@ const CNFS_BY_DEPARTEMENT: CnfsByDepartement[] = [
       longitude: -12.820655090736881
     },
     properties: {
-      codeDepartement: '976',
+      boundingZoom: 10,
+      code: '976',
       count: 27,
-      nomDepartement: 'Mayotte'
+      departement: 'Mayotte'
     }
   }
 ];

@@ -2,7 +2,7 @@ import { StructurePresentation } from './structure.presentation';
 import { FeatureCollection, Point } from 'geojson';
 import { mapPositionsToStructurePresentationArray } from './structure.presentation-mapper';
 import { CnfsByRegionProperties } from '../../../../core';
-import { CnfsPermanenceProperties } from '../cnfs';
+import { CnfsPermanenceProperties } from '../cnfs-permanence';
 
 describe('structure presentation mapper', (): void => {
   it('should map a map position to a StructurePresentation[]', (): void => {
