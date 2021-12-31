@@ -1,7 +1,9 @@
 import { Cnfs, Coordinates } from '../../../../core';
-import { FeatureCollection, Point } from 'geojson';
-import { cnfsCoreToCnfsPermanenceFeatureCollection } from './cnfs-permanence.presentation-mapper';
+import { Feature, Point } from 'geojson';
+import { cnfsCoreToCnfsPermanenceFeatures } from './cnfs-permanence.presentation-mapper';
 import { CnfsPermanenceProperties } from './cnfs-permanence.presentation';
+import { MarkerProperties } from '../markers';
+import { Marker } from '../../../configuration';
 
 describe('cnfs presentation mapper', (): void => {
   it('should map core model array to presentation model feature collection', (): void => {
@@ -34,56 +36,55 @@ describe('cnfs presentation mapper', (): void => {
       })
     ];
 
-    const expectedPresentationModels: FeatureCollection<Point, CnfsPermanenceProperties> = {
-      features: [
-        {
-          geometry: {
-            coordinates: [-1.012996, 46.869512],
-            type: 'Point'
-          },
-          properties: {
-            cnfs: [
-              {
-                email: 'john.doe@conseiller-numerique.fr',
-                name: 'John Doe'
-              }
-            ],
-            structure: {
-              address: '6 RUE DU TOURNIQUET, MAIRIE, 85500 LES HERBIERS',
-              isLabeledFranceServices: false,
-              name: 'CCAS des HERBIERS',
-              phone: '0251912975',
-              type: ''
-            }
-          },
-          type: 'Feature'
+    const expectedPresentationModels: Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[] = [
+      {
+        geometry: {
+          coordinates: [-1.012996, 46.869512],
+          type: 'Point'
         },
-        {
-          geometry: {
-            coordinates: [-0.64312, 45.741535],
-            type: 'Point'
-          },
-          properties: {
-            cnfs: [
-              {
-                email: 'jane.smith@conseiller-numerique.fr',
-                name: 'Jane Smith'
-              }
-            ],
-            structure: {
-              address: '2 RUE DES ROCHERS, 17100 SAINTES',
-              isLabeledFranceServices: false,
-              name: 'SOLURIS  (SOLUTIONS NUMERIQUES TERRITORIALES INNOVANTES)',
-              phone: '',
-              type: ''
+        properties: {
+          cnfs: [
+            {
+              email: 'john.doe@conseiller-numerique.fr',
+              name: 'John Doe'
             }
-          },
-          type: 'Feature'
-        }
-      ],
-      type: 'FeatureCollection'
-    };
+          ],
+          markerType: Marker.CnfsPermanence,
+          structure: {
+            address: '6 RUE DU TOURNIQUET, MAIRIE, 85500 LES HERBIERS',
+            isLabeledFranceServices: false,
+            name: 'CCAS des HERBIERS',
+            phone: '0251912975',
+            type: ''
+          }
+        },
+        type: 'Feature'
+      },
+      {
+        geometry: {
+          coordinates: [-0.64312, 45.741535],
+          type: 'Point'
+        },
+        properties: {
+          cnfs: [
+            {
+              email: 'jane.smith@conseiller-numerique.fr',
+              name: 'Jane Smith'
+            }
+          ],
+          markerType: Marker.CnfsPermanence,
+          structure: {
+            address: '2 RUE DES ROCHERS, 17100 SAINTES',
+            isLabeledFranceServices: false,
+            name: 'SOLURIS  (SOLUTIONS NUMERIQUES TERRITORIALES INNOVANTES)',
+            phone: '',
+            type: ''
+          }
+        },
+        type: 'Feature'
+      }
+    ];
 
-    expect(cnfsCoreToCnfsPermanenceFeatureCollection(coreModels)).toStrictEqual(expectedPresentationModels);
+    expect(cnfsCoreToCnfsPermanenceFeatures(coreModels)).toStrictEqual(expectedPresentationModels);
   });
 });

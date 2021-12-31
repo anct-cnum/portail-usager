@@ -1,8 +1,8 @@
 import { CnfsRest } from './cnfs.rest';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Observable, of } from 'rxjs';
-import { CnfsByRegion, CnfsByDepartement, Coordinates } from '../../../../core';
-import { CnfsByRegionTransfer, CnfsByDepartementTransfer } from '../../models';
+import { CnfsByRegion, CnfsByDepartment, Coordinates } from '../../../../core';
+import { CnfsByRegionTransfer, CnfsByDepartmentTransfer } from '../../models';
 
 const CNFS_BY_REGION_TRANSFER: CnfsByRegionTransfer = {
   features: [
@@ -34,7 +34,7 @@ const CNFS_BY_REGION_TRANSFER: CnfsByRegionTransfer = {
   type: 'FeatureCollection'
 };
 
-const CNFS_BY_DEPARTEMENT_TRANSFER: CnfsByDepartementTransfer = {
+const CNFS_BY_DEPARTMENT_TRANSFER: CnfsByDepartmentTransfer = {
   features: [
     {
       geometry: {
@@ -73,9 +73,9 @@ describe('cnfs rest repository', (): void => {
     }
   } as unknown as HttpClient;
 
-  const httpClientDepartement: HttpClient = {
-    get(): Observable<CnfsByDepartementTransfer> {
-      return of(CNFS_BY_DEPARTEMENT_TRANSFER);
+  const httpClientDepartment: HttpClient = {
+    get(): Observable<CnfsByDepartmentTransfer> {
+      return of(CNFS_BY_DEPARTMENT_TRANSFER);
     }
   } as unknown as HttpClient;
 
@@ -99,25 +99,25 @@ describe('cnfs rest repository', (): void => {
     expect(response).toStrictEqual(expectedCnfsByRegion);
   });
 
-  it('should list cnfs by departement', async (): Promise<void> => {
-    const expectedCnfsByDepartement: CnfsByDepartement[] = [
-      new CnfsByDepartement(new Coordinates(46.099798450280282, 5.348666025399395), {
+  it('should list cnfs by department', async (): Promise<void> => {
+    const expectedCnfsByDepartment: CnfsByDepartment[] = [
+      new CnfsByDepartment(new Coordinates(46.099798450280282, 5.348666025399395), {
         boundingZoom: 10,
         code: '01',
         count: 12,
-        departement: 'Ain'
+        department: 'Ain'
       }),
-      new CnfsByDepartement(new Coordinates(-12.820655090736881, 45.147364453253317), {
+      new CnfsByDepartment(new Coordinates(-12.820655090736881, 45.147364453253317), {
         boundingZoom: 10,
         code: '976',
         count: 27,
-        departement: 'Mayotte'
+        department: 'Mayotte'
       })
     ];
-    const cnfsRestRepository: CnfsRest = new CnfsRest(httpClientDepartement);
+    const cnfsRestRepository: CnfsRest = new CnfsRest(httpClientDepartment);
 
-    const response: CnfsByDepartement[] = await firstValueFrom(cnfsRestRepository.listCnfsByDepartement$());
+    const response: CnfsByDepartment[] = await firstValueFrom(cnfsRestRepository.listCnfsByDepartment$());
 
-    expect(response).toStrictEqual(expectedCnfsByDepartement);
+    expect(response).toStrictEqual(expectedCnfsByDepartment);
   });
 });

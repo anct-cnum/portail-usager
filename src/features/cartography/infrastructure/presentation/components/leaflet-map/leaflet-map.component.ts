@@ -1,3 +1,5 @@
+// TODO Remove !!!
+/* eslint-disable max-lines */
 import {
   control,
   geoJSON,
@@ -27,11 +29,18 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import { CenterView, CnfsMapDataProperties, MarkerEvent, MarkerProperties } from '../../models';
+import {
+  CenterView,
+  CnfsMapDataProperties,
+  MarkerEvent,
+  MarkerProperties,
+  PointOfInterestMarkers,
+  TypedMarker
+} from '../../models';
 import { MarkersConfiguration, MARKERS_TOKEN } from '../../../configuration';
 import { Feature, FeatureCollection, Point } from 'geojson';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
-import { CnfsByDepartementProperties, CnfsByRegionProperties, Coordinates } from "../../../../core";
+import { CnfsByDepartmentProperties, CnfsByRegionProperties, Coordinates } from '../../../../core';
 import { emptyFeatureCollection } from '../../helpers';
 
 // TODO Convert configuration to injected token for default options then remove
@@ -75,11 +84,11 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
     zoomLevel: DEFAULT_ZOOM_LEVEL
   };
 
-  @Output() public readonly markerChange: EventEmitter<MarkerEvent<CnfsMapDataProperties>> = new EventEmitter<
-    MarkerEvent<CnfsMapDataProperties>
+  @Output() public readonly markerChange: EventEmitter<MarkerEvent<MarkerProperties<CnfsMapDataProperties>>> = new EventEmitter<
+    MarkerEvent<MarkerProperties<CnfsMapDataProperties>>
   >();
 
-  @Input() public markers: FeatureCollection<Point, MarkerProperties<CnfsMapDataProperties>> =
+  @Input() public markers: FeatureCollection<Point, PointOfInterestMarkers | TypedMarker> =
     emptyFeatureCollection<MarkerProperties<CnfsMapDataProperties>>();
 
   public get map(): LeafletMap {
@@ -109,12 +118,12 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
         // WARNING : Typing 'event' will cause a error in leaflet.
         // eslint-disable-next-line @typescript-eslint/typedef
         .on('click', (markerEvent): void => {
-          const payload: MarkerEvent<CnfsMapDataProperties> = {
+          const payload: MarkerEvent<MarkerProperties<CnfsMapDataProperties>> = {
             eventType: markerEvent.type,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
             markerPosition: new Coordinates(markerEvent.target._latlng.lat, markerEvent.target._latlng.lng),
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            markerProperties: markerEvent.target?.feature?.properties as CnfsMapDataProperties
+            markerProperties: markerEvent.target?.feature?.properties as MarkerProperties<CnfsMapDataProperties>
           };
           this.markerChange.emit(payload);
         })
@@ -128,8 +137,8 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
     this.createEventedMarker(
       position,
       feature,
-      this.markersConfigurations[feature.properties.markerIconConfiguration](
-        feature as unknown as Feature<Point, MarkerProperties<CnfsByDepartementProperties & CnfsByRegionProperties>>
+      this.markersConfigurations[feature.properties.markerType](
+        feature as unknown as Feature<Point, MarkerProperties<CnfsByDepartmentProperties & CnfsByRegionProperties>>
       )
     );
 

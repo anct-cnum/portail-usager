@@ -1,4 +1,4 @@
-import { FeatureCollection, Point } from "geojson";
+import { FeatureCollection, Point } from 'geojson';
 
 export const emptyFeatureCollection = <T>(): FeatureCollection<Point, T> => ({
   features: [],

@@ -1,39 +1,33 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import {
   CenterView,
-  CnfsGroupedByProperties,
-  CnfsMapDataProperties,
   CnfsPermanenceProperties,
   MarkerEvent,
   MarkerProperties,
-  StructurePresentation
+  PointOfInterestMarkers,
+  StructurePresentation,
+  TypedMarker
 } from '../../models';
 import {
   CartographyPresenter,
   coordinatesToCenterView,
-  isCnfsPermanence,
+  departmentMarkerEventToCenterView,
   permanenceMarkerEventToCenterView,
-  departmentOrRegionMarkerEventToCenterView
+  regionMarkerEventToCenterView
 } from './cartography.presenter';
 import { BehaviorSubject, combineLatest, merge, Observable, of, Subject, tap } from 'rxjs';
-import { CnfsByRegionProperties, Coordinates } from '../../../../core';
-import { ViewBox, ViewReset } from '../../directives/leaflet-map-state-change';
-import { CartographyConfiguration, CARTOGRAPHY_TOKEN } from '../../../configuration';
-import { FeatureCollection, Point } from 'geojson';
-import { mapPositionsToMarkers } from '../../models/markers/markers.presentation-mapper';
+import { CnfsByDepartmentProperties, CnfsByRegionProperties, Coordinates } from '../../../../core';
+import { ViewportAndZoom, ViewReset } from '../../directives/leaflet-map-state-change';
+import { CartographyConfiguration, CARTOGRAPHY_TOKEN, Marker } from '../../../configuration';
+import { Feature, FeatureCollection, Point } from 'geojson';
 import { catchError, map } from 'rxjs/operators';
 
 // TODO Inject though configuration token
-const DEFAULT_VIEW_BOX: ViewBox = {
+const DEFAULT_MAP_VIEWPORT_AND_ZOOM: ViewportAndZoom = {
   // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-  boundingBox: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
+  viewport: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
   zoomLevel: 6
 };
-
-export const SPLIT_REGION_ZOOM: number = 8;
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const SPLIT_DEPARTEMENT_ZOOM: number = 10;
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,28 +36,13 @@ const SPLIT_DEPARTEMENT_ZOOM: number = 10;
 })
 export class CartographyPage {
   private readonly _addressToGeocode$: Subject<string> = new Subject<string>();
-
+  private readonly _mapViewportAndZoom$: Subject<ViewportAndZoom> = new BehaviorSubject<ViewportAndZoom>(
+    DEFAULT_MAP_VIEWPORT_AND_ZOOM
+  );
   private readonly _usagerCoordinates$: Subject<Coordinates> = new Subject<Coordinates>();
 
-  private readonly _viewBox$: Subject<ViewBox> = new BehaviorSubject<ViewBox>(DEFAULT_VIEW_BOX);
-
-  private readonly _visibleMapPositions$: Observable<
-    FeatureCollection<Point, CnfsByRegionProperties | CnfsPermanenceProperties>
-  > = combineLatest([
-    this.presenter.listCnfsByRegionPositions$(),
-    // This.presenter.listCnfsByDepartementPositions$(), //TODO Finish here
-    this.presenter.listCnfsPositions$(this._viewBox$),
-    this._viewBox$ as Observable<ViewBox>
-  ]).pipe(
-    map(
-      ([byRegionPosition, allCnfsPosition, viewBox]: [
-        FeatureCollection<Point, CnfsByRegionProperties>,
-        FeatureCollection<Point, CnfsPermanenceProperties>,
-        ViewBox
-      ]): FeatureCollection<Point, CnfsByRegionProperties | CnfsPermanenceProperties> =>
-        viewBox.zoomLevel < SPLIT_REGION_ZOOM ? byRegionPosition : allCnfsPosition
-    )
-  );
+  private readonly _visibleMapPointsOfInterest$: Observable<Feature<Point, PointOfInterestMarkers>[]> =
+    this.presenter.visibleMapPointsOfInterestThroughViewportAtZoomLevel$(this._mapViewportAndZoom$);
 
   public centerView: CenterView = this.cartographyConfiguration;
 
@@ -83,20 +62,44 @@ export class CartographyPage {
   );
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  public structuresList$: Observable<StructurePresentation[]> = this.presenter.structuresList$(
-    this._viewBox$,
-    this._visibleMapPositions$
-  );
+  public readonly visibleMarkersWithUsager$: Observable<FeatureCollection<Point, PointOfInterestMarkers | TypedMarker>> =
+    combineLatest([this._visibleMapPointsOfInterest$, this.usagerCoordinates$]).pipe(
+      map(
+        // TODO Create and concat usager feature here
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        ([visibleMapPointsOfInterest, usagerCoordinates]: [
+          Feature<Point, PointOfInterestMarkers>[],
+          Coordinates | null
+        ]): FeatureCollection<Point, PointOfInterestMarkers | TypedMarker> => ({
+          features: visibleMapPointsOfInterest,
+          type: 'FeatureCollection'
+        })
+      )
+    );
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  public readonly visibleMarkers$: Observable<
-    FeatureCollection<Point, MarkerProperties<CnfsByRegionProperties | CnfsPermanenceProperties>>
-  > = this._visibleMapPositions$.pipe(map(mapPositionsToMarkers));
+  public structuresList$: Observable<StructurePresentation[]> = this.presenter.structuresList$(
+    this._visibleMapPointsOfInterest$
+  );
 
   public constructor(
     private readonly presenter: CartographyPresenter,
     @Inject(CARTOGRAPHY_TOKEN) private readonly cartographyConfiguration: CartographyConfiguration
   ) {}
+
+  private handleCnfsByDepartmentMarkerEvents(markerEvent: MarkerEvent<PointOfInterestMarkers>): void {
+    this.centerView = departmentMarkerEventToCenterView(
+      markerEvent as MarkerEvent<MarkerProperties<CnfsByDepartmentProperties>>
+    );
+  }
+
+  private handleCnfsByRegionMarkerEvents(markerEvent: MarkerEvent<PointOfInterestMarkers>): void {
+    this.centerView = regionMarkerEventToCenterView(markerEvent as MarkerEvent<MarkerProperties<CnfsByRegionProperties>>);
+  }
+
+  private handleCnfsPermanenceMarkerEvents(markerEvent: MarkerEvent<PointOfInterestMarkers>): void {
+    this.centerView = permanenceMarkerEventToCenterView(markerEvent as MarkerEvent<MarkerProperties<CnfsPermanenceProperties>>);
+  }
 
   public autoLocateUsagerRequest(coordinates: Coordinates): void {
     this._usagerCoordinates$.next(coordinates);
@@ -107,12 +110,22 @@ export class CartographyPage {
   }
 
   public mapViewChanged($event: ViewReset): void {
-    this._viewBox$.next({ boundingBox: $event.boundingBox, zoomLevel: $event.zoomLevel });
+    this._mapViewportAndZoom$.next({ viewport: $event.viewport, zoomLevel: $event.zoomLevel });
   }
 
-  public onMarkerChanged(markerEvent: MarkerEvent<CnfsMapDataProperties>): void {
-    this.centerView = isCnfsPermanence(markerEvent.markerProperties)
-      ? permanenceMarkerEventToCenterView(markerEvent as MarkerEvent<CnfsPermanenceProperties>)
-      : departmentOrRegionMarkerEventToCenterView(markerEvent as MarkerEvent<CnfsGroupedByProperties>);
+  public onMarkerChanged(markerEvent: MarkerEvent<PointOfInterestMarkers>): void {
+    switch (markerEvent.markerProperties.markerType) {
+      case Marker.CnfsPermanence:
+        this.handleCnfsPermanenceMarkerEvents(markerEvent);
+        break;
+      case Marker.CnfsByRegion:
+        this.handleCnfsByRegionMarkerEvents(markerEvent);
+        break;
+      case Marker.CnfsByDepartment:
+        this.handleCnfsByDepartmentMarkerEvents(markerEvent);
+        break;
+      case Marker.Usager:
+        break;
+    }
   }
 }

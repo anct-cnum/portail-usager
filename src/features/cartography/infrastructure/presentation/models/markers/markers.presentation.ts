@@ -1,21 +1,23 @@
-import { CnfsByDepartementProperties, CnfsByRegionProperties, Coordinates } from '../../../../core';
+import { CnfsByDepartmentProperties, CnfsByRegionProperties, Coordinates } from '../../../../core';
 import { Marker } from '../../../configuration';
 import { CnfsPermanenceProperties } from '../cnfs-permanence';
 
-export type CnfsMapDataProperties = CnfsByDepartementProperties | CnfsByRegionProperties | CnfsPermanenceProperties;
+export type CnfsMapDataProperties = CnfsByDepartmentProperties | CnfsByRegionProperties | CnfsPermanenceProperties;
 
-export type CnfsGroupedByProperties = {
-  [K in keyof CnfsByDepartementProperties & keyof CnfsByRegionProperties]:
-    | CnfsByDepartementProperties[K]
-    | CnfsByRegionProperties[K];
-};
+export type PointOfInterestMarkers =
+  | MarkerProperties<CnfsByDepartmentProperties>
+  | MarkerProperties<CnfsByRegionProperties>
+  | MarkerProperties<CnfsPermanenceProperties>;
 
-export type MarkerProperties<T extends CnfsMapDataProperties> = T & {
-  markerIconConfiguration: Marker;
+export interface TypedMarker {
+  markerType: Marker;
   zIndexOffset?: number;
-};
+}
 
-export interface MarkerEvent<T extends CnfsGroupedByProperties | CnfsMapDataProperties> {
+export type MarkerProperties<T extends CnfsByDepartmentProperties | CnfsByRegionProperties | CnfsPermanenceProperties> = T &
+  TypedMarker;
+
+export interface MarkerEvent<T extends MarkerProperties<CnfsMapDataProperties>> {
   eventType: string;
   markerProperties: T;
   markerPosition: Coordinates;

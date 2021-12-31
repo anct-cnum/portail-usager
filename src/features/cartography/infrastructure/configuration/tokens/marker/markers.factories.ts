@@ -1,7 +1,7 @@
 import { DivIcon, icon, Icon, Point as LeafletPoint } from 'leaflet';
 import { CnfsMapDataProperties, MarkerProperties } from '../../../presentation/models';
 import { Feature, Point } from 'geojson';
-import { CnfsByDepartementProperties, CnfsByRegionProperties } from '../../../../core';
+import { CnfsByDepartmentProperties, CnfsByRegionProperties } from '../../../../core';
 
 const HALF: number = 0.5;
 const ROUND_FALSE: boolean = false;
@@ -22,11 +22,11 @@ const CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS: LeafletPoint = new LeafletPoint(
   ROUND_FALSE
 );
 
-const CNFS_MARKER_CNFS_BY_DEPARTEMENT_WIDTH_IN_PIXEL: number = 72;
-const CNFS_MARKER_CNFS_BY_DEPARTEMENT_HEIGTH_IN_PIXEL: number = 72;
-const CNFS_MARKER_CNFS_BY_DEPARTEMENT_DIMENSIONS: LeafletPoint = new LeafletPoint(
-  CNFS_MARKER_CNFS_BY_DEPARTEMENT_WIDTH_IN_PIXEL,
-  CNFS_MARKER_CNFS_BY_DEPARTEMENT_HEIGTH_IN_PIXEL,
+const CNFS_MARKER_CNFS_BY_DEPARTMENT_WIDTH_IN_PIXEL: number = 72;
+const CNFS_MARKER_CNFS_BY_DEPARTMENT_HEIGTH_IN_PIXEL: number = 72;
+const CNFS_MARKER_CNFS_BY_DEPARTMENT_DIMENSIONS: LeafletPoint = new LeafletPoint(
+  CNFS_MARKER_CNFS_BY_DEPARTMENT_WIDTH_IN_PIXEL,
+  CNFS_MARKER_CNFS_BY_DEPARTMENT_HEIGTH_IN_PIXEL,
   ROUND_FALSE
 );
 
@@ -92,18 +92,18 @@ export const cnfsByRegionMarkerFactory: DivIconMarkerFactory<CnfsByRegionPropert
   });
 
 // eslint-disable-next-line max-lines-per-function
-export const cnfsByDepartementMarkerFactory: DivIconMarkerFactory<CnfsByDepartementProperties> = (
-  feature: Feature<Point, MarkerProperties<CnfsByDepartementProperties>>
+export const cnfsByDepartmentMarkerFactory: DivIconMarkerFactory<CnfsByDepartmentProperties> = (
+  feature: Feature<Point, MarkerProperties<CnfsByDepartmentProperties>>
 ): DivIcon =>
   new DivIcon({
     className: '',
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     html: `<div
           style="
-            width: ${CNFS_MARKER_CNFS_BY_DEPARTEMENT_DIMENSIONS.x}px;
-            height: ${CNFS_MARKER_CNFS_BY_DEPARTEMENT_DIMENSIONS.y}px;
+            width: ${CNFS_MARKER_CNFS_BY_DEPARTMENT_DIMENSIONS.x}px;
+            height: ${CNFS_MARKER_CNFS_BY_DEPARTMENT_DIMENSIONS.y}px;
             padding: 8px;
-            background-image: url('./assets/map/pin-cnfs-by-departement.svg');
+            background-image: url('./assets/map/pin-cnfs-by-department.svg');
             background-repeat: no-repeat;
             background-position: center;
             background-size: contain;
@@ -124,8 +124,8 @@ export const cnfsByDepartementMarkerFactory: DivIconMarkerFactory<CnfsByDepartem
              ${feature.properties.count}</div>
            </div>`,
     iconAnchor: new LeafletPoint(
-      CNFS_MARKER_CNFS_BY_DEPARTEMENT_DIMENSIONS.x * HALF,
-      CNFS_MARKER_CNFS_BY_DEPARTEMENT_DIMENSIONS.y
+      CNFS_MARKER_CNFS_BY_DEPARTMENT_DIMENSIONS.x * HALF,
+      CNFS_MARKER_CNFS_BY_DEPARTMENT_DIMENSIONS.y
     ),
-    iconSize: CNFS_MARKER_CNFS_BY_DEPARTEMENT_DIMENSIONS
+    iconSize: CNFS_MARKER_CNFS_BY_DEPARTMENT_DIMENSIONS
   });

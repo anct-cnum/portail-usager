@@ -2,8 +2,15 @@ import { Observable } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
-import { Cnfs, CnfsByDepartement, CnfsByRegion, CnfsRepository } from '../../../../core';
-import { CnfsByRegionTransfer, cnfsByRegionTransferToCore, CnfsByDepartementTransfer, cnfsByDepartementTransferToCore, CnfsTransfer, cnfsTransferToCore } from '../../models';
+import { Cnfs, CnfsByDepartment, CnfsByRegion, CnfsRepository } from '../../../../core';
+import {
+  CnfsByRegionTransfer,
+  cnfsByRegionTransferToCore,
+  CnfsByDepartmentTransfer,
+  cnfsByDepartmentTransferToCore,
+  CnfsTransfer,
+  cnfsTransferToCore
+} from '../../models';
 import { Api } from '../../../../../../environments/environment.model';
 
 @Injectable()
@@ -18,10 +25,10 @@ export class CnfsRest extends CnfsRepository {
       .pipe(map(cnfsTransferToCore));
   }
 
-  public listCnfsByDepartement$(): Observable<CnfsByDepartement[]> {
+  public listCnfsByDepartment$(): Observable<CnfsByDepartment[]> {
     return this.httpClient
-      .get<CnfsByDepartementTransfer>(`${Api.ConseillerNumerique}/conseillers/geolocalisation/par-departement`)
-      .pipe(map(cnfsByDepartementTransferToCore));
+      .get<CnfsByDepartmentTransfer>(`${Api.ConseillerNumerique}/conseillers/geolocalisation/par-departement`)
+      .pipe(map(cnfsByDepartmentTransferToCore));
   }
 
   public listCnfsByRegion$(): Observable<CnfsByRegion[]> {

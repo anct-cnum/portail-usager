@@ -1,7 +1,7 @@
 import { CnfsPermanenceProperties } from '../cnfs-permanence';
 import { Marker } from '../../../configuration';
 import { Feature, FeatureCollection, Point } from 'geojson';
-import { mapPositionsToMarkers, setMarkerIconByInference } from './markers.presentation-mapper';
+import { mapPointsOfInterestToTypedMarkers, setmarkerTypeByInference } from './markers.presentation-mapper';
 import { CnfsByRegionProperties, StructureProperties } from '../../../../core';
 import { MarkerProperties } from './markers.presentation';
 
@@ -50,7 +50,7 @@ describe('markers presentation mapper', (): void => {
           properties: {
             boundingZoom: 8,
             count: 22,
-            markerIconConfiguration: Marker.CnfsByRegion,
+            markerType: Marker.CnfsByRegion,
             region: 'Guyane'
           },
           type: 'Feature'
@@ -63,7 +63,7 @@ describe('markers presentation mapper', (): void => {
           properties: {
             boundingZoom: 9,
             count: 17,
-            markerIconConfiguration: Marker.CnfsByRegion,
+            markerType: Marker.CnfsByRegion,
             region: 'Corse'
           },
           type: 'Feature'
@@ -72,12 +72,12 @@ describe('markers presentation mapper', (): void => {
       type: 'FeatureCollection'
     };
 
-    expect(mapPositionsToMarkers(permanencesNumeriquesByRegion)).toStrictEqual(expectedVisibleMarkers);
+    expect(mapPointsOfInterestToTypedMarkers(permanencesNumeriquesByRegion)).toStrictEqual(expectedVisibleMarkers);
   });
 });
 
 describe('markers presentation helpers', (): void => {
-  it('should add markerIconProperty: Marker.Cnfs to the feature properties', (): void => {
+  it('should add markerTypeProperty: Marker.Cnfs to the feature properties', (): void => {
     const permanenceNumeriquePosition: Feature<Point, CnfsPermanenceProperties> = {
       geometry: {
         coordinates: [0, 0],
@@ -100,16 +100,16 @@ describe('markers presentation helpers', (): void => {
       },
       properties: {
         cnfs: [],
-        markerIconConfiguration: Marker.Cnfs,
+        markerType: Marker.CnfsPermanence,
         structure: {} as StructureProperties
       },
       type: 'Feature'
     };
 
-    expect(setMarkerIconByInference(permanenceNumeriquePosition)).toStrictEqual(expectedPermanenceNumeriqueMarker);
+    expect(setmarkerTypeByInference(permanenceNumeriquePosition)).toStrictEqual(expectedPermanenceNumeriqueMarker);
   });
 
-  it('should add markerIconProperty: Marker.CnfsByRegion to the feature properties', (): void => {
+  it('should add markerTypeProperty: Marker.CnfsByRegion to the feature properties', (): void => {
     const permanenceNumeriquePosition: Feature<Point, CnfsByRegionProperties> = {
       geometry: {
         coordinates: [-53.125782, 3.933889],
@@ -134,12 +134,12 @@ describe('markers presentation helpers', (): void => {
       properties: {
         boundingZoom: 8,
         count: 22,
-        markerIconConfiguration: Marker.CnfsByRegion,
+        markerType: Marker.CnfsByRegion,
         region: 'Guyane'
       },
       type: 'Feature'
     };
 
-    expect(setMarkerIconByInference(permanenceNumeriquePosition)).toStrictEqual(expectedPermanenceNumeriqueMarker);
+    expect(setmarkerTypeByInference(permanenceNumeriquePosition)).toStrictEqual(expectedPermanenceNumeriqueMarker);
   });
 });

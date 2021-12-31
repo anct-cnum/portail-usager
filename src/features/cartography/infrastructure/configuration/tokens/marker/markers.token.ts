@@ -1,7 +1,7 @@
 import { InjectionToken } from '@angular/core';
 import {
   cnfsByRegionMarkerFactory,
-  cnfsByDepartementMarkerFactory,
+  cnfsByDepartmentMarkerFactory,
   cnfsMarkerFactory,
   usagerMarkerFactory
 } from './markers.factories';
@@ -12,15 +12,15 @@ export const MARKERS_TOKEN: InjectionToken<MarkersConfiguration> = new Injection
 );
 
 export enum Marker {
-  Cnfs = 'cnfs',
+  CnfsPermanence = 'cnfsPermanence',
   CnfsByRegion = 'cnfsByRegion',
-  CnfsByDepartement = 'cnfsByDepartement',
+  CnfsByDepartment = 'cnfsByDepartment',
   Usager = 'usager'
 }
 
 export const MARKERS: MarkersConfiguration = {
-  [Marker.Cnfs]: cnfsMarkerFactory,
+  [Marker.CnfsPermanence]: cnfsMarkerFactory,
   [Marker.CnfsByRegion]: cnfsByRegionMarkerFactory,
-  [Marker.CnfsByDepartement]: cnfsByDepartementMarkerFactory,
+  [Marker.CnfsByDepartment]: cnfsByDepartmentMarkerFactory,
   [Marker.Usager]: usagerMarkerFactory
 };

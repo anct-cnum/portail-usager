@@ -1,38 +1,38 @@
-import { CnfsPermanenceProperties } from '../cnfs-permanence';
 import { Feature, FeatureCollection, Point } from 'geojson';
 import { Marker } from '../../../configuration';
-import { CnfsByRegionProperties, CnfsProperties } from '../../../../core';
-import { MarkerProperties } from './markers.presentation';
+import { CnfsProperties } from '../../../../core';
+import { CnfsMapDataProperties, MarkerProperties } from './markers.presentation';
 
 const inferMarkerTypeByProperties = ({
   cnfs,
+  department,
   region
 }: {
   region?: string;
   department?: string;
   cnfs?: CnfsProperties[];
 }): Marker => {
-  if (cnfs != null) return Marker.Cnfs;
-
+  if (cnfs != null) return Marker.CnfsPermanence;
+  if (department != null) return Marker.CnfsByDepartment;
   if (region != null) return Marker.CnfsByRegion;
 
   return Marker.Usager;
 };
 
-export const setMarkerIconByInference = (
-  positionFeature: Feature<Point, CnfsByRegionProperties | CnfsPermanenceProperties>
-): Feature<Point, MarkerProperties<CnfsByRegionProperties | CnfsPermanenceProperties>> => ({
+export const setmarkerTypeByInference = (
+  positionFeature: Feature<Point, CnfsMapDataProperties>
+): Feature<Point, MarkerProperties<CnfsMapDataProperties>> => ({
   geometry: { ...positionFeature.geometry },
   properties: {
     ...positionFeature.properties,
-    markerIconConfiguration: inferMarkerTypeByProperties(positionFeature.properties)
+    markerType: inferMarkerTypeByProperties(positionFeature.properties)
   },
   type: 'Feature'
 });
 
-export const mapPositionsToMarkers = (
-  visiblePositions: FeatureCollection<Point, CnfsByRegionProperties | CnfsPermanenceProperties>
-): FeatureCollection<Point, MarkerProperties<CnfsByRegionProperties | CnfsPermanenceProperties>> => ({
-  features: visiblePositions.features.map(setMarkerIconByInference),
+export const mapPointsOfInterestToTypedMarkers = (
+  visiblePointsOfInterest: FeatureCollection<Point, CnfsMapDataProperties>
+): FeatureCollection<Point, MarkerProperties<CnfsMapDataProperties>> => ({
+  features: visiblePointsOfInterest.features.map(setmarkerTypeByInference),
   type: 'FeatureCollection'
 });

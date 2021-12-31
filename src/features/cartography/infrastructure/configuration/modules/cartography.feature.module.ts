@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CartographyFeatureRoutingModule } from './cartography.feature-routing.module';
-import { ListCnfsByRegionUseCase, ListCnfsByDepartementUseCase, ListCnfsPositionUseCase } from '../../../use-cases';
+import { ListCnfsByRegionUseCase, ListCnfsByDepartmentUseCase, ListCnfsUseCase } from '../../../use-cases';
 import { CnfsRepository, Coordinates, CoordinatesRepository } from '../../../core';
 import { CARTOGRAPHY_TOKEN, MARKERS, MARKERS_TOKEN } from '../tokens';
 import { CartographyPage } from '../../presentation/pages';
@@ -47,14 +47,14 @@ const METROPOLITAN_FRANCE_CENTER_LATITUDE: number = 46.28146057911664;
     },
     {
       deps: [CnfsRest],
-      provide: ListCnfsPositionUseCase,
-      useFactory: (cnfsRepository: CnfsRepository): ListCnfsPositionUseCase => new ListCnfsPositionUseCase(cnfsRepository)
+      provide: ListCnfsUseCase,
+      useFactory: (cnfsRepository: CnfsRepository): ListCnfsUseCase => new ListCnfsUseCase(cnfsRepository)
     },
     {
       deps: [CnfsRest],
-      provide: ListCnfsByDepartementUseCase,
-      useFactory: (cnfsRepository: CnfsRepository): ListCnfsByDepartementUseCase =>
-        new ListCnfsByDepartementUseCase(cnfsRepository)
+      provide: ListCnfsByDepartmentUseCase,
+      useFactory: (cnfsRepository: CnfsRepository): ListCnfsByDepartmentUseCase =>
+        new ListCnfsByDepartmentUseCase(cnfsRepository)
     },
     {
       deps: [CnfsRest],

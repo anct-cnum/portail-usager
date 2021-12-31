@@ -1,4 +1,4 @@
-import { Cnfs, CnfsByDepartement, CnfsByRegion, CnfsRepository } from "../../core";
+import { Cnfs, CnfsByDepartment, CnfsByRegion, CnfsRepository } from '../../core';
 import { Observable, of } from 'rxjs';
 import { CnfsTransfer, cnfsTransferToCore } from '../../infrastructure/data/models';
 import { cnfsDataCluster } from './data/cnfs-data-cluster';
@@ -9,7 +9,7 @@ export class CnfsRestTestDouble extends CnfsRepository {
     return of(cnfsTransferToCore(cnfsGeoJson));
   }
 
-  public listCnfsByDepartement$(): Observable<CnfsByDepartement[]> {
+  public listCnfsByDepartment$(): Observable<CnfsByDepartment[]> {
     return of([]);
   }
 

@@ -11,7 +11,7 @@
     </ng-container>
   </div>
   <div class="fr-col-xl-8 fr-col-lg-7">
-    <ng-container *ngIf="visibleMarkers$ | async as markers">
+    <ng-container *ngIf="visibleMarkersWithUsager$ | async as markers">
       <leaflet-map
         [centerView]="centerView"
         [markers]="markers"
