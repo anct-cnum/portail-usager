@@ -51,6 +51,8 @@ export class CartographyPage {
 
   public centerView: CenterView = this.cartographyConfiguration;
 
+  public displayDetails: boolean = false;
+
   public displayMap: boolean = false;
 
   public hasAddressError: boolean = false;

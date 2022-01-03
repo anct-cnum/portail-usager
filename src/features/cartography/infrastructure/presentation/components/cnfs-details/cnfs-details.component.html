@@ -1,0 +1,49 @@
+<button (click)="backToList.emit()" class="fr-link fr-fi-arrow-left-line fr-link--icon-left fr-my-2w" href="#">Revenir à la liste</button>
+
+<h1 class="fr-h3">{{ cnfsDetails.structureName }}</h1>
+
+<div class="fr-grid-row fr-mb-3w">
+  <div class="fr-col-xl-6 fr-col-lg-12 fr-col-md-6 fr-col-12">
+    <h2 class="fr-sr-only">Adresse</h2>
+    <p class="fr-text--bold">
+      <span class="fr-fi-app fr-fi-map-pin-line" aria-hidden="true"></span>
+      {{ cnfsDetails.address }}
+    </p>
+  </div>
+  <div class="fr-col-xl-6 fr-col-lg-12 fr-col-md-6 fr-col-12">
+    <h2 class="fr-sr-only">Conseillers</h2>
+    <div class="fr-display--flex">
+      <img width="35" class="fr-px-1v" src="/assets/map/pin-cnfs.svg" alt="">
+      <div>
+        <div class="fr-text--bold fr-ml-3v">{{ cnfsDetails.cnfsNumber }} conseillers numériques</div>
+        <a class="fr-link" href="/" target="_blank">Que peuvent-ils faire pour moi ?</a>
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+<div class="fr-grid-row fr-mb-3w">
+  <div class="fr-col-xl-6 fr-col-lg-12 fr-col-md-6 fr-col-12">
+    <h2 class="fr-text--md">
+      <span class="fr-fi-app fr-fi-time-line" aria-hidden="true"></span>
+      Horaires
+    </h2>
+    <table class="fr-full-container--width fr-mb-2w" *ngIf="cnfsDetails.opening.length > 0; else: noOpeningHours">
+      <tr *ngFor="let opening of cnfsDetails.opening; index as i; trackBy: trackByOpeningDay">
+        <td>{{ opening.day }}</td>
+        <td>{{ opening.hours }}</td>
+      </tr>
+    </table>
+    <ng-template #noOpeningHours>
+      <p>Pas d'horaires disponible pour cette structure</p>
+    </ng-template>
+  </div>
+  <div class="fr-col-xl-6 fr-col-lg-12 fr-col-md-6 fr-col-12">
+    <h2 class="fr-sr-only">Informations de contact</h2>
+    <a class="fr-link fr-fi-app fr-fi-phone-line fr-link--icon-left" [href]="'tel://' + cnfsDetails.phone">{{ cnfsDetails.phone }}</a>
+    <br>
+    <a class="fr-link fr-fi-mail-line fr-link--icon-left" [href]="'mailto:' + cnfsDetails.email">Courriel</a>
+    <br>
+    <a class="fr-link fr-fi-app fr-fi-global-line fr-link--icon-left" [href]="cnfsDetails.website" target="_blank">Site internet</a>
+  </div>
+</div>

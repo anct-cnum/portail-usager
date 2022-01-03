@@ -1,26 +1,32 @@
 <div class="fr-grid-row fr-flex-wrap--nowrap fr-full-container--height fr-overflow--hidden">
-  <div
-    class="fr-col-xl-4 fr-col-lg-5 fr-display--flex fr-flex-direction--column fr-index--over fr-shadow--right"
-    [ngClass]="displayMap ? 'fr-displayed-lg': 'fr-col-12'">
-    <address-geolocation
-      (usagerAutolocate)="onAutoLocateUsagerRequest($event)"
-      (addressToGeocode)="onGeocodeUsagerRequest($event)"></address-geolocation>
-    <ng-container *ngIf="structuresList$ | async as structuresList">
-      <small class="fr-px-3w fr-background-contrast--blue-cumulus" *ngIf="structuresList.length > 0">
-        Nombre de structures visibles&nbsp;: {{ structuresList.length }}
-      </small>
-      <cnfs-list class="fr-px-3w fr-overflow--auto" [structuresList]="structuresList"></cnfs-list>
-    </ng-container>
+  <div [ngClass]="{
+    'fr-col-xl-8 fr-col-lg-7 fr-overflow--auto': displayDetails,
+    'fr-col-xl-4 fr-col-lg-5': !displayDetails,
+    'fr-displayed-lg': displayMap,
+    'fr-col-12': !displayMap
+  }" class="fr-display--flex fr-flex-direction--column fr-index--over fr-shadow--right fr-full-container--width">
+    <cnfs-details class="fr-px-3w" *ngIf="displayDetails; else: displayCnfsList"  (backToList)="displayDetails = false"></cnfs-details>
+    <ng-template #displayCnfsList>
+      <address-geolocation
+        (usagerAutolocate)="onAutoLocateUsagerRequest($event)"
+        (addressToGeocode)="onGeocodeUsagerRequest($event)"></address-geolocation>
+      <ng-container *ngIf="structuresList$ | async as structuresList">
+        <small class="fr-px-3w fr-background-contrast--blue-cumulus" *ngIf="structuresList.length > 0">
+          Nombre de structures visibles&nbsp;: {{ structuresList.length }}
+        </small>
+        <cnfs-list class="fr-px-3w fr-overflow--auto" [structuresList]="structuresList" (displayDetails)="displayDetails = true"></cnfs-list>
+      </ng-container>
+    </ng-template>
   </div>
-  <div class="fr-col-xl-8 fr-col-lg-7 fr-col-12">
+  <div [ngClass]="displayDetails ? 'fr-col-xl-4 fr-col-lg-5' : 'fr-col-xl-8 fr-col-lg-7'">
     <ng-container *ngIf="visibleMarkersWithUsager$ | async as markers">
-      <leaflet-map
-        [centerView]="centerView"
-        [markers]="markers"
-        (markerChange)="onMarkerChanged($event)"
-        (stateChange)="onMapViewChanged($event)"
-        (zoomOut)="onZoomOut()"></leaflet-map>
+    <leaflet-map
+      [centerView]="centerView"
+      [markers]="markers"
+      (markerChange)="onMarkerChanged($event)"
+      (stateChange)="onMapViewChanged($event)"
+      (zoomOut)="onZoomOut()"></leaflet-map>
     </ng-container>
   </div>
 </div>
-<display-map (displayMap)="this.displayMap = $event"></display-map>
+<display-map (displayMap)="displayMap = $event"></display-map>
