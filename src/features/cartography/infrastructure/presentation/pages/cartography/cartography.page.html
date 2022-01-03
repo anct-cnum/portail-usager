@@ -12,11 +12,13 @@
   </div>
   <div class="fr-col-xl-8 fr-col-lg-7">
     <ng-container *ngIf="visibleMarkersWithUsager$ | async as markers">
-      <leaflet-map
-        [centerView]="centerView"
-        [markers]="markers"
-        (markerChange)="onMarkerChanged($event)"
-        (stateChange)="mapViewChanged($event)"></leaflet-map>
-    </ng-container>
+      <!--<ng-container *ngIf="centerView$ | async as centerView">-->
+        <leaflet-map
+          [centerView]="centerView"
+          [markers]="markers"
+          (markerChange)="onMarkerChanged($event)"
+          (stateChange)="mapViewChanged($event)"></leaflet-map>
+      </ng-container>
+  <!--  </ng-container>-->
   </div>
 </div>
