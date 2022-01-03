@@ -1,5 +1,3 @@
-// TODO Remove !!!
-/* eslint-disable max-lines */
 import { Inject, Injectable } from '@angular/core';
 import {
   CenterView,
@@ -110,23 +108,16 @@ export class CartographyPresenter {
   }
 
   private mergeResults$(viewBoxWithZoomLevel: ViewportAndZoom): Observable<Feature<Point, PointOfInterestMarkers>[]> {
+    const markerTypeToDisplay: Marker = markerTypeToDisplayAtZoomLevel(viewBoxWithZoomLevel.zoomLevel);
     return merge(
-      iif(
-        (): boolean => markerTypeToDisplayAtZoomLevel(viewBoxWithZoomLevel.zoomLevel) === Marker.CnfsByRegion,
-        this.listCnfsByRegionPositions$(),
-        EMPTY
-      ),
-      iif(
-        (): boolean => markerTypeToDisplayAtZoomLevel(viewBoxWithZoomLevel.zoomLevel) === Marker.CnfsByDepartment,
-        this.listCnfsByDepartmentPositions$(),
-        EMPTY
-      ),
-      iif(
-        (): boolean => markerTypeToDisplayAtZoomLevel(viewBoxWithZoomLevel.zoomLevel) === Marker.CnfsPermanence,
-        this.listCnfsPermanences$(viewBoxWithZoomLevel),
-        EMPTY
-      )
+      this.cnfsByRegionOrEmpty$(markerTypeToDisplay),
+      iif((): boolean => markerTypeToDisplay === Marker.CnfsByDepartment, this.listCnfsByDepartmentPositions$(), EMPTY),
+      iif((): boolean => markerTypeToDisplay === Marker.CnfsPermanence, this.listCnfsPermanences$(viewBoxWithZoomLevel), EMPTY)
     );
+  }
+
+  private cnfsByRegionOrEmpty$(markerTypeToDisplay: Marker) {
+    return iif((): boolean => markerTypeToDisplay === Marker.CnfsByRegion, this.listCnfsByRegionPositions$(), EMPTY);
   }
 
   public geocodeAddress$(addressToGeocode$: Observable<string>): Observable<Coordinates> {
@@ -141,7 +132,6 @@ export class CartographyPresenter {
     return visibleCnfsPermanenceMarkers$.pipe(mergeMap(structuresOrEmpty(visibleCnfsPermanenceMarkers$)));
   }
 
-  // TODO Optimize to call the use-cases only once
   // eslint-disable-next-line max-lines-per-function
   public visibleMapPointsOfInterestThroughViewportAtZoomLevel$(
     viewBoxWithZoomLevel$: Observable<ViewportAndZoom>
