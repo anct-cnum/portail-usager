@@ -13,7 +13,7 @@ import {
   StructurePresentation
 } from '../../models';
 import { Cnfs, CnfsByDepartmentProperties, CnfsByRegionProperties, Coordinates } from '../../../../core';
-import { iif, map, Observable, of, switchMap, zip } from 'rxjs';
+import { EMPTY, iif, map, merge, Observable, of, switchMap, zip } from 'rxjs';
 import { ListCnfsByDepartmentUseCase, ListCnfsByRegionUseCase, ListCnfsUseCase } from '../../../../use-cases';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
 import { Feature, Point } from 'geojson';
@@ -109,6 +109,26 @@ export class CartographyPresenter {
       );
   }
 
+  private mergeResults$(viewBoxWithZoomLevel: ViewportAndZoom): Observable<Feature<Point, PointOfInterestMarkers>[]> {
+    return merge(
+      iif(
+        (): boolean => markerTypeToDisplayAtZoomLevel(viewBoxWithZoomLevel.zoomLevel) === Marker.CnfsByRegion,
+        this.listCnfsByRegionPositions$(),
+        EMPTY
+      ),
+      iif(
+        (): boolean => markerTypeToDisplayAtZoomLevel(viewBoxWithZoomLevel.zoomLevel) === Marker.CnfsByDepartment,
+        this.listCnfsByDepartmentPositions$(),
+        EMPTY
+      ),
+      iif(
+        (): boolean => markerTypeToDisplayAtZoomLevel(viewBoxWithZoomLevel.zoomLevel) === Marker.CnfsPermanence,
+        this.listCnfsPermanences$(viewBoxWithZoomLevel),
+        EMPTY
+      )
+    );
+  }
+
   public geocodeAddress$(addressToGeocode$: Observable<string>): Observable<Coordinates> {
     return addressToGeocode$.pipe(
       switchMap((address: string): Observable<Coordinates> => this.geocodeAddressUseCase.execute$(address))
@@ -130,41 +150,7 @@ export class CartographyPresenter {
       mergeMap(
         // eslint-disable-next-line max-lines-per-function
         (viewBoxWithZoomLevel: ViewportAndZoom): Observable<Feature<Point, PointOfInterestMarkers>[]> =>
-          this.zipResults$(viewBoxWithZoomLevel)
-      )
-    );
-  }
-
-  // TODO OPTIMIZE !!!
-  // eslint-disable-next-line @typescript-eslint/member-ordering,max-lines-per-function
-  private zipResults$(viewBoxWithZoomLevel: ViewportAndZoom): Observable<Feature<Point, PointOfInterestMarkers>[]> {
-    return zip(
-      iif(
-        (): boolean => markerTypeToDisplayAtZoomLevel(viewBoxWithZoomLevel.zoomLevel) === Marker.CnfsByRegion,
-        this.listCnfsByRegionPositions$(),
-        of([])
-      ),
-      iif(
-        (): boolean => markerTypeToDisplayAtZoomLevel(viewBoxWithZoomLevel.zoomLevel) === Marker.CnfsByDepartment,
-        this.listCnfsByDepartmentPositions$(),
-        of([])
-      ),
-      iif(
-        (): boolean => markerTypeToDisplayAtZoomLevel(viewBoxWithZoomLevel.zoomLevel) === Marker.CnfsPermanence,
-        this.listCnfsPermanences$(viewBoxWithZoomLevel),
-        of([])
-      )
-    ).pipe(
-      map(
-        ([byRegion, byDepartement, permanence]: [
-          Feature<Point, PointOfInterestMarkers>[],
-          Feature<Point, PointOfInterestMarkers>[],
-          Feature<Point, PointOfInterestMarkers>[]
-        ]): Feature<Point, PointOfInterestMarkers>[] => {
-          const res: Feature<Point, PointOfInterestMarkers>[] = [];
-          res.push(...byRegion, ...byDepartement, ...permanence);
-          return res;
-        }
+          this.mergeResults$(viewBoxWithZoomLevel)
       )
     );
   }

@@ -173,7 +173,7 @@ const CNFS_PERMANENCE_MARKERS_FEATURES: Feature<Point, MarkerProperties<CnfsPerm
 
 describe('cartography presenter', (): void => {
   describe('visible point of interest markers', (): void => {
-    it('should be cnfs by region if zoomlevel is up to REGION_ZOOM_LEVEL', async (): Promise<void> => {
+    it('should display the cnfs grouped by region markers at the region zoom level', async (): Promise<void> => {
       const expectedCnfsByRegionFeatures: Feature<Point, MarkerProperties<CnfsByRegionProperties>>[] = [
         {
           geometry: {
@@ -224,7 +224,7 @@ describe('cartography presenter', (): void => {
       expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsByRegionFeatures);
     });
 
-    it('should be cnfs by department if DEPARTMENT_ZOOM_LEVEL >= zoomlevel > REGION_ZOOM_LEVEL', async (): Promise<void> => {
+    it('should be cnfs by department at the department zoom level', async (): Promise<void> => {
       const expectedCnfsByDepartmentFeatures: Feature<Point, MarkerProperties<CnfsByDepartmentProperties>>[] = [
         {
           geometry: {
@@ -277,7 +277,7 @@ describe('cartography presenter', (): void => {
       expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsByDepartmentFeatures);
     });
 
-    it('should be cnfs permanence if zoomlevel > DEPARTMENT_ZOOM_LEVEL', async (): Promise<void> => {
+    it('should display all cnfs permanences if zoomed more than the department level', async (): Promise<void> => {
       const viewCullingService: MapViewCullingService = new MapViewCullingService();
       const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
         LIST_CNFS_BY_REGION_USE_CASE,
