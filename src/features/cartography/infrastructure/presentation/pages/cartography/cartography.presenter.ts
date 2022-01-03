@@ -13,12 +13,12 @@ import {
   StructurePresentation
 } from '../../models';
 import { CnfsByDepartmentProperties, CnfsByRegionProperties, Coordinates } from '../../../../core';
-import { EMPTY, iif, map, merge, Observable, of, switchMap } from 'rxjs';
+import { AsyncSubject, EMPTY, iif, map, merge, Observable, of, switchMap } from 'rxjs';
 import { ListCnfsByDepartmentUseCase, ListCnfsByRegionUseCase, ListCnfsUseCase } from '../../../../use-cases';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
 import { Feature, Point } from 'geojson';
 import { MapViewCullingService } from '../../services/map-view-culling.service';
-import { mergeMap, share } from 'rxjs/operators';
+import { mergeMap, share, tap } from 'rxjs/operators';
 import { ViewportAndZoom } from '../../directives/leaflet-map-state-change';
 import { cnfsPermanencesToStructurePresentations } from '../../models/structure/structure.presentation-mapper';
 import { Marker } from '../../../configuration';
@@ -79,14 +79,55 @@ const structuresOrEmpty =
       of([])
     );
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const cache: Record<string, AsyncSubject<Feature<Point, PointOfInterestMarkers>[]>> = {};
+
+const requestOrCache$ = <T extends PointOfInterestMarkers>(
+  cacheKey: string,
+  observable$: Observable<Feature<Point, PointOfInterestMarkers>[]>
+): Observable<Feature<Point, T>[]> => {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (cache[cacheKey] != null) {
+    // Console.log('returned cache', cache[cacheKey]);
+    return cache[cacheKey].asObservable() as Observable<Feature<Point, T>[]>;
+  }
+
+  return observable$ as Observable<Feature<Point, T>[]>;
+};
+
 @Injectable()
 export class CartographyPresenter {
-  private readonly _listCnfsByDepartmentPositions$: Observable<Feature<Point, MarkerProperties<CnfsByDepartmentProperties>>[]> =
-    this.listCnfsByDepartmentUseCase.execute$().pipe(map(cnfsByDepartmentToPresentation), share());
+  private readonly _listCnfsByDepartment$: Observable<Feature<Point, MarkerProperties<CnfsByDepartmentProperties>>[]> =
+    this.listCnfsByDepartmentUseCase.execute$().pipe(
+      map(cnfsByDepartmentToPresentation),
+      tap((listCnfsByDepartmentPositions: Feature<Point, MarkerProperties<CnfsByDepartmentProperties>>[]): void => {
+        cache['listCnfsByDepartment'] = new AsyncSubject<Feature<Point, MarkerProperties<PointOfInterestMarkers>>[]>();
+        cache['listCnfsByDepartment'].next(listCnfsByDepartmentPositions);
+        cache['listCnfsByDepartment'].complete();
+      }),
+      share()
+    );
+
   private readonly _listCnfsByRegionPositions$: Observable<Feature<Point, MarkerProperties<CnfsByRegionProperties>>[]> =
-    this.listCnfsByRegionUseCase.execute$().pipe(map(listCnfsByRegionToPresentation), share());
+    this.listCnfsByRegionUseCase.execute$().pipe(
+      map(listCnfsByRegionToPresentation),
+      tap((listCnfsByRegion: Feature<Point, MarkerProperties<CnfsByRegionProperties>>[]): void => {
+        cache['listCnfsByRegion'] = new AsyncSubject<Feature<Point, MarkerProperties<PointOfInterestMarkers>>[]>();
+        cache['listCnfsByRegion'].next(listCnfsByRegion);
+        cache['listCnfsByRegion'].complete();
+      }),
+      share()
+    );
   private readonly _listCnfsPermanences$: Observable<Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[]> =
-    this.listCnfsPositionUseCase.execute$().pipe(map(cnfsCoreToCnfsPermanenceFeatures), share());
+    this.listCnfsPositionUseCase.execute$().pipe(
+      map(cnfsCoreToCnfsPermanenceFeatures),
+      tap((listCnfsPermanences: Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[]): void => {
+        cache['listCnfsPermanences'] = new AsyncSubject<Feature<Point, MarkerProperties<PointOfInterestMarkers>>[]>();
+        cache['listCnfsPermanences'].next(listCnfsPermanences);
+        cache['listCnfsPermanences'].complete();
+      }),
+      share()
+    );
 
   public constructor(
     @Inject(ListCnfsByRegionUseCase) private readonly listCnfsByRegionUseCase: ListCnfsByRegionUseCase,
@@ -97,11 +138,19 @@ export class CartographyPresenter {
   ) {}
 
   private cnfsByDepartmentOrEmpty$(markerTypeToDisplay: Marker): Observable<Feature<Point, PointOfInterestMarkers>[]> {
-    return iif((): boolean => markerTypeToDisplay === Marker.CnfsByDepartment, this._listCnfsByDepartmentPositions$, EMPTY);
+    return iif(
+      (): boolean => markerTypeToDisplay === Marker.CnfsByDepartment,
+      requestOrCache$('listCnfsByDepartment', this._listCnfsByDepartment$),
+      EMPTY
+    );
   }
 
   private cnfsByRegionOrEmpty$(markerTypeToDisplay: Marker): Observable<Feature<Point, PointOfInterestMarkers>[]> {
-    return iif((): boolean => markerTypeToDisplay === Marker.CnfsByRegion, this._listCnfsByRegionPositions$, EMPTY);
+    return iif(
+      (): boolean => markerTypeToDisplay === Marker.CnfsByRegion,
+      requestOrCache$('listCnfsByRegion', this._listCnfsByRegionPositions$),
+      EMPTY
+    );
   }
 
   private cnfsMarkersInViewportAtZoomLevel$(
@@ -133,7 +182,7 @@ export class CartographyPresenter {
   private listCnfsPermanencesInViewport$(
     viewportAndZoom: ViewportAndZoom
   ): Observable<Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[]> {
-    return this._listCnfsPermanences$.pipe(
+    return requestOrCache$<MarkerProperties<CnfsPermanenceProperties>>('listCnfsPermanences', this._listCnfsPermanences$).pipe(
       map(
         (
           allCnfs: Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[]
