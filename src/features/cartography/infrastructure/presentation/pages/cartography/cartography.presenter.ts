@@ -12,13 +12,13 @@ import {
   PointOfInterestMarkers,
   StructurePresentation
 } from '../../models';
-import { Cnfs, CnfsByDepartmentProperties, CnfsByRegionProperties, Coordinates } from '../../../../core';
+import { CnfsByDepartmentProperties, CnfsByRegionProperties, Coordinates } from '../../../../core';
 import { EMPTY, iif, map, merge, Observable, of, switchMap } from 'rxjs';
 import { ListCnfsByDepartmentUseCase, ListCnfsByRegionUseCase, ListCnfsUseCase } from '../../../../use-cases';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
 import { Feature, Point } from 'geojson';
 import { MapViewCullingService } from '../../services/map-view-culling.service';
-import { mergeMap } from 'rxjs/operators';
+import { mergeMap, share } from 'rxjs/operators';
 import { ViewportAndZoom } from '../../directives/leaflet-map-state-change';
 import { cnfsPermanencesToStructurePresentations } from '../../models/structure/structure.presentation-mapper';
 import { Marker } from '../../../configuration';
@@ -81,6 +81,13 @@ const structuresOrEmpty =
 
 @Injectable()
 export class CartographyPresenter {
+  private readonly _listCnfsByDepartmentPositions$: Observable<Feature<Point, MarkerProperties<CnfsByDepartmentProperties>>[]> =
+    this.listCnfsByDepartmentUseCase.execute$().pipe(map(cnfsByDepartmentToPresentation), share());
+  private readonly _listCnfsByRegionPositions$: Observable<Feature<Point, MarkerProperties<CnfsByRegionProperties>>[]> =
+    this.listCnfsByRegionUseCase.execute$().pipe(map(listCnfsByRegionToPresentation), share());
+  private readonly _listCnfsPermanences$: Observable<Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[]> =
+    this.listCnfsPositionUseCase.execute$().pipe(map(cnfsCoreToCnfsPermanenceFeatures), share());
+
   public constructor(
     @Inject(ListCnfsByRegionUseCase) private readonly listCnfsByRegionUseCase: ListCnfsByRegionUseCase,
     @Inject(ListCnfsByDepartmentUseCase) private readonly listCnfsByDepartmentUseCase: ListCnfsByDepartmentUseCase,
@@ -90,11 +97,11 @@ export class CartographyPresenter {
   ) {}
 
   private cnfsByDepartmentOrEmpty$(markerTypeToDisplay: Marker): Observable<Feature<Point, PointOfInterestMarkers>[]> {
-    return iif((): boolean => markerTypeToDisplay === Marker.CnfsByDepartment, this.listCnfsByDepartmentPositions$(), EMPTY);
+    return iif((): boolean => markerTypeToDisplay === Marker.CnfsByDepartment, this._listCnfsByDepartmentPositions$, EMPTY);
   }
 
   private cnfsByRegionOrEmpty$(markerTypeToDisplay: Marker): Observable<Feature<Point, PointOfInterestMarkers>[]> {
-    return iif((): boolean => markerTypeToDisplay === Marker.CnfsByRegion, this.listCnfsByRegionPositions$(), EMPTY);
+    return iif((): boolean => markerTypeToDisplay === Marker.CnfsByRegion, this._listCnfsByRegionPositions$, EMPTY);
   }
 
   private cnfsMarkersInViewportAtZoomLevel$(
@@ -123,24 +130,17 @@ export class CartographyPresenter {
     );
   }
 
-  private listCnfsByDepartmentPositions$(): Observable<Feature<Point, MarkerProperties<CnfsByDepartmentProperties>>[]> {
-    return this.listCnfsByDepartmentUseCase.execute$().pipe(map(cnfsByDepartmentToPresentation));
-  }
-
-  private listCnfsByRegionPositions$(): Observable<Feature<Point, MarkerProperties<CnfsByRegionProperties>>[]> {
-    return this.listCnfsByRegionUseCase.execute$().pipe(map(listCnfsByRegionToPresentation));
-  }
-
   private listCnfsPermanencesInViewport$(
     viewportAndZoom: ViewportAndZoom
   ): Observable<Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[]> {
-    return this.listCnfsPositionUseCase
-      .execute$()
-      .pipe(
-        map((allCnfs: Cnfs[]): Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[] =>
-          this.mapViewCullingService.cull(cnfsCoreToCnfsPermanenceFeatures(allCnfs), viewportAndZoom)
-        )
-      );
+    return this._listCnfsPermanences$.pipe(
+      map(
+        (
+          allCnfs: Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[]
+        ): Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[] =>
+          this.mapViewCullingService.cull(allCnfs, viewportAndZoom)
+      )
+    );
   }
 
   public geocodeAddress$(addressToGeocode$: Observable<string>): Observable<Coordinates> {

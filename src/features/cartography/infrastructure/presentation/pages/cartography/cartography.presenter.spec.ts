@@ -415,9 +415,15 @@ describe('cartography presenter', (): void => {
   describe('structures list', (): void => {
     it(`should emit empty array if map position features properties are not of type CnfsPermanenceProperties`, async (): Promise<void> => {
       const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
-        {} as ListCnfsByRegionUseCase,
-        {} as ListCnfsByDepartmentUseCase,
-        {} as ListCnfsUseCase,
+        {
+          execute$: (): Observable<CnfsByRegion[]> => of([])
+        } as unknown as ListCnfsByRegionUseCase,
+        {
+          execute$: (): Observable<CnfsByDepartment[]> => of([])
+        } as unknown as ListCnfsByDepartmentUseCase,
+        {
+          execute$: (): Observable<Cnfs[]> => of([])
+        } as unknown as ListCnfsUseCase,
         {} as GeocodeAddressUseCase,
         {} as MapViewCullingService
       );
@@ -488,9 +494,15 @@ describe('cartography presenter', (): void => {
         of(CNFS_PERMANENCE_MARKERS_FEATURES);
 
       const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
-        {} as ListCnfsByRegionUseCase,
-        {} as ListCnfsByDepartmentUseCase,
-        {} as ListCnfsUseCase,
+        {
+          execute$: (): Observable<CnfsByRegion[]> => of([])
+        } as unknown as ListCnfsByRegionUseCase,
+        {
+          execute$: (): Observable<CnfsByDepartment[]> => of([])
+        } as unknown as ListCnfsByDepartmentUseCase,
+        {
+          execute$: (): Observable<Cnfs[]> => of([])
+        } as unknown as ListCnfsUseCase,
         {} as GeocodeAddressUseCase,
         {} as MapViewCullingService
       );
