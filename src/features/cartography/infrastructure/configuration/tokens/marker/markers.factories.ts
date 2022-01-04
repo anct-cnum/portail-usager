@@ -22,7 +22,7 @@ const CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS: LeafletPoint = new LeafletPoint(
   ROUND_FALSE
 );
 
-const CNFS_MARKER_CNFS_BY_DEPARTMENT_WIDTH_IN_PIXEL: number = 72;
+const CNFS_MARKER_CNFS_BY_DEPARTMENT_WIDTH_IN_PIXEL: number = 62;
 const CNFS_MARKER_CNFS_BY_DEPARTMENT_HEIGTH_IN_PIXEL: number = 72;
 const CNFS_MARKER_CNFS_BY_DEPARTMENT_DIMENSIONS: LeafletPoint = new LeafletPoint(
   CNFS_MARKER_CNFS_BY_DEPARTMENT_WIDTH_IN_PIXEL,
@@ -104,7 +104,7 @@ export const cnfsByDepartmentMarkerFactory: DivIconMarkerFactory<CnfsByDepartmen
           style="
             width: ${CNFS_MARKER_CNFS_BY_DEPARTMENT_DIMENSIONS.x}px;
             height: ${CNFS_MARKER_CNFS_BY_DEPARTMENT_DIMENSIONS.y}px;
-            padding: 8px;
+            padding: 6px;
             background-image: url('./assets/map/pin-cnfs-by-department.svg');
             background-repeat: no-repeat;
             background-position: center;
@@ -117,7 +117,8 @@ export const cnfsByDepartmentMarkerFactory: DivIconMarkerFactory<CnfsByDepartmen
              style="
                width: 100%;
                color: #ffff;
-               margin-left: 8px;
+               text-align: center;
+               margin: 0 0 4px 4px;
                font-family: Marianne, sans-serif;
                font-weight: 600;
                font-size: 16px;
