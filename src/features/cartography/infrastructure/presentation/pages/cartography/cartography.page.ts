@@ -39,9 +39,15 @@ const usagerFeatureFromCoordinates = (coordinates: Coordinates): Feature<Point, 
     zIndexOffset: 1000
   },
   type: 'Feature'
-})
+});
 
-const addUsagerFeatureToMarkers = (visibleMapPointsOfInterest: Feature<Point, PointOfInterestMarkers>[], usagerCoordinates: Coordinates | null): Feature<Point, PointOfInterestMarkers | TypedMarker>[] => (usagerCoordinates == null) ? visibleMapPointsOfInterest : [ ...visibleMapPointsOfInterest, usagerFeatureFromCoordinates(usagerCoordinates) ]
+const addUsagerFeatureToMarkers = (
+  visibleMapPointsOfInterest: Feature<Point, PointOfInterestMarkers>[],
+  usagerCoordinates: Coordinates | null
+): Feature<Point, PointOfInterestMarkers | TypedMarker>[] =>
+  usagerCoordinates == null
+    ? visibleMapPointsOfInterest
+    : [...visibleMapPointsOfInterest, usagerFeatureFromCoordinates(usagerCoordinates)];
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -93,9 +99,7 @@ export class CartographyPage {
     );
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  public structuresList$: Observable<StructurePresentation[]> = this.presenter.structuresList$(
-    this._visibleMapPointsOfInterest$
-  );
+  public structuresList$: Observable<StructurePresentation[]> = this.presenter.structuresList$(this._mapViewportAndZoom$);
 
   public constructor(
     private readonly presenter: CartographyPresenter,

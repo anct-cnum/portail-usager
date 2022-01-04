@@ -1,7 +1,7 @@
 import { StructurePresentation } from './structure.presentation';
 import { Feature, Point } from 'geojson';
 import { CnfsPermanenceProperties } from '../cnfs-permanence';
-import { MarkerProperties } from '../markers';
+import { MarkerProperties, PointOfInterestMarkers } from '../markers';
 
 export const cnfsPermanencesToStructurePresentations = (
   cnfsPermanences: Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[]

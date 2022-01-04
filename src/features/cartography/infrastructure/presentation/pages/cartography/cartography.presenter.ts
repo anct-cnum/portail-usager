@@ -20,8 +20,8 @@ import { Feature, Point } from 'geojson';
 import { MapViewCullingService } from '../../services/map-view-culling.service';
 import { mergeMap, share, tap } from 'rxjs/operators';
 import { ViewportAndZoom } from '../../directives/leaflet-map-state-change';
-import { cnfsPermanencesToStructurePresentations } from '../../models/structure/structure.presentation-mapper';
 import { Marker } from '../../../configuration';
+import { cnfsPermanencesToStructurePresentations } from "../../models/structure/structure.presentation-mapper";
 
 export const REGION_ZOOM_LEVEL: number = 7;
 export const DEPARTMENT_ZOOM_LEVEL: number = 9;
@@ -53,31 +53,11 @@ export const coordinatesToCenterView = (coordinates: Coordinates): CenterView =>
   zoomLevel: CITY_ZOOM_LEVEL
 });
 
-const isArrayOfCnfsPermanence = (features: Feature<Point, PointOfInterestMarkers>[]): boolean =>
-  features[0]?.properties.markerType === Marker.CnfsPermanence;
-
 export const markerTypeToDisplayAtZoomLevel = (zoomLevel: number): Marker => {
   if (zoomLevel > DEPARTMENT_ZOOM_LEVEL) return Marker.CnfsPermanence;
   if (zoomLevel > REGION_ZOOM_LEVEL) return Marker.CnfsByDepartment;
   return Marker.CnfsByRegion;
 };
-
-const structuresOrEmpty =
-  (
-    visibleMarkers$: Observable<Feature<Point, PointOfInterestMarkers>[]>
-  ): ((markers: Feature<Point, PointOfInterestMarkers>[]) => Observable<StructurePresentation[]>) =>
-  (markers: Feature<Point, PointOfInterestMarkers>[]): Observable<StructurePresentation[]> =>
-    iif(
-      (): boolean => isArrayOfCnfsPermanence(markers),
-      visibleMarkers$.pipe(
-        map((cnfsPermanence: Feature<Point, PointOfInterestMarkers>[]): StructurePresentation[] =>
-          cnfsPermanencesToStructurePresentations(
-            cnfsPermanence as Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[]
-          )
-        )
-      ),
-      of([])
-    );
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const cache: Record<string, AsyncSubject<Feature<Point, PointOfInterestMarkers>[]>> = {};
@@ -188,7 +168,8 @@ export class CartographyPresenter {
           allCnfs: Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[]
         ): Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[] =>
           this.mapViewCullingService.cull(allCnfs, viewportAndZoom)
-      )
+      ),
+      share()
     );
   }
 
@@ -199,10 +180,17 @@ export class CartographyPresenter {
   }
 
   public structuresList$(
-    visibleCnfsPermanenceMarkers$: Observable<Feature<Point, PointOfInterestMarkers>[]>
+    viewportAndZoom$: Observable<ViewportAndZoom>
   ): Observable<StructurePresentation[]> {
-    return visibleCnfsPermanenceMarkers$.pipe(mergeMap(structuresOrEmpty(visibleCnfsPermanenceMarkers$)));
-  }
+    return viewportAndZoom$.pipe(
+      mergeMap((viewportAndZoom: ViewportAndZoom): Observable<StructurePresentation[]> =>
+        iif(
+        (): boolean => markerTypeToDisplayAtZoomLevel(viewportAndZoom.zoomLevel) === Marker.CnfsPermanence,
+        this.listCnfsPermanencesInViewport$(viewportAndZoom).pipe(map(cnfsPermanencesToStructurePresentations)),
+        of([])
+      ))
+    );
+}
 
   public visibleMapPointsOfInterestThroughViewportAtZoomLevel$(
     viewBoxWithZoomLevel$: Observable<ViewportAndZoom>
