@@ -5,7 +5,7 @@ import { FailedToCompileError } from '@angular-common/errors';
 describe('Leaflet-map component', (): void => {
   beforeEach(async (): Promise<void> => {
     await TestBed.configureTestingModule({
-      declarations: [CnfsDetailsComponent],
+      declarations: [CnfsDetailsComponent]
     })
       .compileComponents()
       .catch((): void => {

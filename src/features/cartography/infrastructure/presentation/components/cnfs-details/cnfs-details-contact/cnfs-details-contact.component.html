@@ -1,0 +1,11 @@
+<div *ngIf="phone">
+  <a class="fr-link fr-fi-app fr-fi-phone-line fr-link--icon-left" [href]="'tel://' + phone">
+    {{ phone }}
+  </a>
+</div>
+<div *ngIf="email">
+  <a class="fr-link fr-fi-mail-line fr-link--icon-left" [href]="'mailto:' + email">Courriel</a>
+</div>
+<div *ngIf="website">
+  <a class="fr-link fr-fi-app fr-fi-global-line fr-link--icon-left" [href]="website" target="_blank">Site internet</a>
+</div>
