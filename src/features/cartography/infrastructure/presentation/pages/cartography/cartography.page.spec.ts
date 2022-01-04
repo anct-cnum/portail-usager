@@ -14,6 +14,10 @@ import { DisplayMapStubComponent } from '../../test-doubles';
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class CartographyPresenterStub {
+  public cnfsDetails$(): Observable<null> {
+    return of(null);
+  }
+
   public geocodeAddress$(): Observable<null> {
     return of(null);
   }

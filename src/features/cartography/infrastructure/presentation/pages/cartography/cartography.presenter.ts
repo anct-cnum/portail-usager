@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import {
   cnfsByDepartmentToPresentation,
   cnfsCoreToCnfsPermanenceFeatures,
+  CnfsDetailsPresentation,
   CnfsPermanenceProperties,
   listCnfsByRegionToPresentation,
   MarkerEvent,
@@ -141,6 +142,43 @@ export class CartographyPresenter {
       this.cnfsByDepartmentOrEmpty$(markerTypeToDisplay),
       this.cnfsPermanencesInViewportOrEmpty$(markerTypeToDisplay, viewportWithZoomLevel)
     );
+  }
+
+  public cnfsDetails$(): Observable<CnfsDetailsPresentation> {
+    return of({
+      address: 'Place José Moron 3200 RIOM',
+      cnfsNumber: 2,
+      email: 'email@example.com',
+      opening: [
+        {
+          day: 'Lun.',
+          hours: '9h30 - 17h30'
+        },
+        {
+          day: 'Mar.',
+          hours: '9h30 - 17h30'
+        },
+        {
+          day: 'Mer.',
+          hours: '9h30 - 17h30'
+        },
+        {
+          day: 'Jeu.',
+          hours: '9h30 - 17h30'
+        },
+        {
+          day: 'Ven.',
+          hours: '9h30 - 17h30'
+        },
+        {
+          day: 'Sam.',
+          hours: '9h30 - 12h00'
+        }
+      ],
+      phone: '03 86 55 26 40',
+      structureName: 'Association Des Centres Sociaux Et Culturels Du Bassin De Riom',
+      website: 'https://www.test.com'
+    });
   }
 
   public geocodeAddress$(addressToGeocode$: Observable<string>): Observable<Coordinates> {

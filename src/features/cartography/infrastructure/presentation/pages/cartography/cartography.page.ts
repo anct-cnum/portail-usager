@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import {
   BoundedMarkers,
   CenterView,
+  CnfsDetailsPresentation,
   CnfsPermanenceProperties,
   MarkerEvent,
   MarkerProperties,
@@ -10,7 +11,7 @@ import {
   TypedMarker
 } from '../../models';
 import { isGuyaneBoundedMarker, addUsagerFeatureToMarkers, CartographyPresenter } from './cartography.presenter';
-import { BehaviorSubject, merge, Observable, of, Subject, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, merge, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { Coordinates } from '../../../../core';
 import { ViewportAndZoom, ViewReset } from '../../directives/leaflet-map-state-change';
 import { CartographyConfiguration, CARTOGRAPHY_TOKEN, Marker } from '../../../configuration';
@@ -37,6 +38,9 @@ const DEFAULT_MAP_VIEWPORT_AND_ZOOM: ViewportAndZoom = {
 export class CartographyPage {
   private readonly _addressToGeocode$: Subject<string> = new Subject<string>();
 
+  private readonly _cnfsDetails$: BehaviorSubject<CnfsDetailsPresentation | null> =
+    new BehaviorSubject<CnfsDetailsPresentation | null>(null);
+
   private readonly _forceCnfsPermanence$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   private readonly _mapViewportAndZoom$: Subject<ViewportAndZoom> = new BehaviorSubject<ViewportAndZoom>(
@@ -50,6 +54,11 @@ export class CartographyPage {
     .pipe(startWith([]));
 
   public centerView: CenterView = this.cartographyConfiguration;
+
+  public cnfsDetails$: Observable<CnfsDetailsPresentation | null> = this.presenter.cnfsDetails$().pipe(
+    tap((cnfsDetails: CnfsDetailsPresentation): void => this._cnfsDetails$.next(cnfsDetails)),
+    switchMap((): Observable<CnfsDetailsPresentation | null> => this._cnfsDetails$.asObservable())
+  );
 
   public displayDetails: boolean = false;
 
@@ -100,6 +109,15 @@ export class CartographyPage {
 
   private handleCnfsPermanenceMarkerEvents(markerEvent: MarkerEvent<PointOfInterestMarkerProperties>): void {
     this.centerView = permanenceMarkerEventToCenterView(markerEvent as MarkerEvent<MarkerProperties<CnfsPermanenceProperties>>);
+  }
+
+  public displayCnfsDetails(): void {
+    this.displayDetails = true;
+  }
+
+  public hideCnfsDetails(): void {
+    this._cnfsDetails$.next(null);
+    this.displayDetails = false;
   }
 
   public onAutoLocateUsagerRequest(coordinates: Coordinates): void {

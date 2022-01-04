@@ -14,6 +14,7 @@ import {
 } from '../../../../core';
 import {
   CenterView,
+  CnfsDetailsPresentation,
   CnfsPermanenceProperties,
   MarkerEvent,
   MarkerProperties,
@@ -574,5 +575,54 @@ describe('cartography presenter', (): void => {
 
       expect(structuresList).toStrictEqual(expectedStructureList);
     });
+  });
+
+  it('should get cnfs details', async (): Promise<void> => {
+    const expectedCnfsDetails: CnfsDetailsPresentation = {
+      address: 'Place José Moron 3200 RIOM',
+      cnfsNumber: 2,
+      email: 'email@example.com',
+      opening: [
+        {
+          day: 'Lun.',
+          hours: '9h30 - 17h30'
+        },
+        {
+          day: 'Mar.',
+          hours: '9h30 - 17h30'
+        },
+        {
+          day: 'Mer.',
+          hours: '9h30 - 17h30'
+        },
+        {
+          day: 'Jeu.',
+          hours: '9h30 - 17h30'
+        },
+        {
+          day: 'Ven.',
+          hours: '9h30 - 17h30'
+        },
+        {
+          day: 'Sam.',
+          hours: '9h30 - 12h00'
+        }
+      ],
+      phone: '03 86 55 26 40',
+      structureName: 'Association Des Centres Sociaux Et Culturels Du Bassin De Riom',
+      website: 'https://www.test.com'
+    };
+
+    const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+      LIST_CNFS_BY_REGION_USE_CASE,
+      LIST_CNFS_BY_DEPARTMENT_USE_CASE,
+      LIST_CNFS_USE_CASE,
+      {} as GeocodeAddressUseCase,
+      {} as MapViewCullingService
+    );
+
+    const cnfsDetails: CnfsDetailsPresentation = await firstValueFrom(cartographyPresenter.cnfsDetails$());
+
+    expect(cnfsDetails).toStrictEqual(expectedCnfsDetails);
   });
 });

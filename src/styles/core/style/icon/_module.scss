@@ -8,18 +8,18 @@ $cartography-icon-timestamp: '1641220202230';
 $cartography-icon-namespace: 'fi';
 
 @font-face {
-  font-family: "cartography-icons";
+  font-family: 'cartography-icons';
   src: url($cartography-icon-full-path + '.eot?t=' + $cartography-icon-timestamp);
   src: url($cartography-icon-full-path + '.icons.eot?t=' + $cartography-icon-timestamp + '#iefix') format('embedded-opentype'),
-  url($cartography-icon-full-path + ".woff2?t=" + $cartography-icon-timestamp) format("woff2"),
-  url($cartography-icon-full-path + ".woff?t=" + $cartography-icon-timestamp) format("woff"),
-  url($cartography-icon-full-path + '.ttf?t=' + $cartography-icon-timestamp) format('truetype'),
-  url($cartography-icon-full-path + '.svg?t=1' + $cartography-icon-timestamp +'#cartography.icons') format('svg');
+    url($cartography-icon-full-path + '.woff2?t=' + $cartography-icon-timestamp) format('woff2'),
+    url($cartography-icon-full-path + '.woff?t=' + $cartography-icon-timestamp) format('woff'),
+    url($cartography-icon-full-path + '.ttf?t=' + $cartography-icon-timestamp) format('truetype'),
+    url($cartography-icon-full-path + '.svg?t=1' + $cartography-icon-timestamp + '#cartography.icons') format('svg');
   font-display: swap;
 }
 
 .#{$prefix}-fi-app::before {
-  font-family: cartography-icons !important;
+  font-family: cartography-icons, sans-serif !important;
   vertical-align: bottom;
 }
 
@@ -27,7 +27,3 @@ $cartography-icon-namespace: 'fi';
 // * Définitions des symboles des icones de l'application
 // **/
 @include generate-icons(fi);
-
-
-
-
