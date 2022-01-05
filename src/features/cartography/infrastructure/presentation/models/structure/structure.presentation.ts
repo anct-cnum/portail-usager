@@ -1,7 +1,6 @@
 export interface StructurePresentation {
-  name: string;
-  type: string;
   address: string;
-  phone?: string;
+  id: string;
   isLabeledFranceServices?: boolean;
+  name: string;
 }

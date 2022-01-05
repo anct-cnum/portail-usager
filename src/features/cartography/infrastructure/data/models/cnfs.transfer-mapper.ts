@@ -1,4 +1,4 @@
-import { Cnfs, CnfsProperties, Coordinates, StructureProperties } from '../../../core';
+import { Cnfs, CnfsPermanence, Coordinates } from '../../../core';
 import { CnfsTransfer, CnfsTransferProperties } from './cnfs.transfer';
 import { Point, Feature, Position } from 'geojson';
 
@@ -7,20 +7,11 @@ const hasValidCoordinates = (feature: Feature<Point>): boolean => {
   return Coordinates.isValidLatitudeAngle(latitude) && Coordinates.isValidLongitudeAngle(longitude);
 };
 
-const transferToCoreProperties = (
-  featureProperties: CnfsTransferProperties
-): { cnfs: CnfsProperties; structure: StructureProperties } => ({
-  cnfs: {
-    email: featureProperties.conseiller.email,
-    name: featureProperties.conseiller.name
-  },
-  structure: {
-    address: featureProperties.structure.address ?? '',
-    isLabeledFranceServices: featureProperties.structure.isLabeledFranceServices ?? false,
-    name: featureProperties.structure.name ?? '',
-    phone: featureProperties.structure.phone ?? '',
-    type: featureProperties.structure.type ?? ''
-  }
+const transferToCoreProperties = (featureProperties: CnfsTransferProperties): CnfsPermanence => ({
+  address: featureProperties.address ?? '',
+  id: featureProperties.id,
+  isLabeledFranceServices: featureProperties.isLabeledFranceServices ?? false,
+  name: featureProperties.name
 });
 
 export const cnfsTransferToCore = (cnfsTransfer: CnfsTransfer): Cnfs[] =>

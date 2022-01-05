@@ -21,9 +21,9 @@ export class CnfsRest extends CnfsRepository {
     super();
   }
 
-  public cnfsDetails$(): Observable<CnfsDetails> {
+  public cnfsDetails$(id: string): Observable<CnfsDetails> {
     return this.httpClient
-      .get<CnfsDetailsTransfer>(`${Api.ConseillerNumerique}/conseillers/permanence/60462011871498b5cec20e37`)
+      .get<CnfsDetailsTransfer>(`${Api.ConseillerNumerique}/conseillers/permanence/${id}`)
       .pipe(map(cnfsDetailsTransferToCore));
   }
 

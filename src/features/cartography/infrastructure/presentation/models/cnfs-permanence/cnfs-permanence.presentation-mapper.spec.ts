@@ -9,30 +9,16 @@ describe('cnfs presentation mapper', (): void => {
   it('should map core model array to presentation model feature collection', (): void => {
     const coreModels: Cnfs[] = [
       new Cnfs(new Coordinates(46.869512, -1.012996), {
-        cnfs: {
-          email: 'john.doe@conseiller-numerique.fr',
-          name: 'John Doe'
-        },
-        structure: {
-          address: '6 RUE DU TOURNIQUET, MAIRIE, 85500 LES HERBIERS',
-          isLabeledFranceServices: false,
-          name: 'CCAS des HERBIERS',
-          phone: '0251912975',
-          type: ''
-        }
+        address: '6 RUE DU TOURNIQUET, MAIRIE, 85500 LES HERBIERS',
+        id: '4c38ebc9a06fdd532bf9d7be',
+        isLabeledFranceServices: false,
+        name: 'CCAS des HERBIERS'
       }),
       new Cnfs(new Coordinates(45.741535, -0.64312), {
-        cnfs: {
-          email: 'jane.smith@conseiller-numerique.fr',
-          name: 'Jane Smith'
-        },
-        structure: {
-          address: '2 RUE DES ROCHERS, 17100 SAINTES',
-          isLabeledFranceServices: false,
-          name: 'SOLURIS  (SOLUTIONS NUMERIQUES TERRITORIALES INNOVANTES)',
-          phone: '',
-          type: ''
-        }
+        address: '2 RUE DES ROCHERS, 17100 SAINTES',
+        id: '88bc36fb0db191928330b1e6',
+        isLabeledFranceServices: false,
+        name: 'SOLURIS  (SOLUTIONS NUMERIQUES TERRITORIALES INNOVANTES)'
       })
     ];
 
@@ -43,20 +29,11 @@ describe('cnfs presentation mapper', (): void => {
           type: 'Point'
         },
         properties: {
-          cnfs: [
-            {
-              email: 'john.doe@conseiller-numerique.fr',
-              name: 'John Doe'
-            }
-          ],
+          address: '6 RUE DU TOURNIQUET, MAIRIE, 85500 LES HERBIERS',
+          id: '4c38ebc9a06fdd532bf9d7be',
+          isLabeledFranceServices: false,
           markerType: Marker.CnfsPermanence,
-          structure: {
-            address: '6 RUE DU TOURNIQUET, MAIRIE, 85500 LES HERBIERS',
-            isLabeledFranceServices: false,
-            name: 'CCAS des HERBIERS',
-            phone: '0251912975',
-            type: ''
-          }
+          name: 'CCAS des HERBIERS'
         },
         type: 'Feature'
       },
@@ -66,20 +43,11 @@ describe('cnfs presentation mapper', (): void => {
           type: 'Point'
         },
         properties: {
-          cnfs: [
-            {
-              email: 'jane.smith@conseiller-numerique.fr',
-              name: 'Jane Smith'
-            }
-          ],
+          address: '2 RUE DES ROCHERS, 17100 SAINTES',
+          id: '88bc36fb0db191928330b1e6',
+          isLabeledFranceServices: false,
           markerType: Marker.CnfsPermanence,
-          structure: {
-            address: '2 RUE DES ROCHERS, 17100 SAINTES',
-            isLabeledFranceServices: false,
-            name: 'SOLURIS  (SOLUTIONS NUMERIQUES TERRITORIALES INNOVANTES)',
-            phone: '',
-            type: ''
-          }
+          name: 'SOLURIS  (SOLUTIONS NUMERIQUES TERRITORIALES INNOVANTES)'
         },
         type: 'Feature'
       }

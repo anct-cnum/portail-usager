@@ -150,8 +150,8 @@ export class CartographyPresenter {
     );
   }
 
-  public cnfsDetails$(): Observable<CnfsDetailsPresentation> {
-    return this.cnfsDetailsUseCase.execute$().pipe(map(cnfsDetailsToPresentation));
+  public cnfsDetails$(id: string): Observable<CnfsDetailsPresentation> {
+    return this.cnfsDetailsUseCase.execute$(id).pipe(map(cnfsDetailsToPresentation));
   }
 
   public geocodeAddress$(addressToGeocode$: Observable<string>): Observable<Coordinates> {

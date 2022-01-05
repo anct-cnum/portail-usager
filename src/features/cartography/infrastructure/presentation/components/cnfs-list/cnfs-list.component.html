@@ -3,12 +3,11 @@
     <li *ngFor="let structure of structuresList; index as i; trackBy: trackByStructureAddress" class="fr-list-group__item">
       <div class="fr-display--flex fr-justify-content--space-between fr-column-gap-3v">
         <h4 class="fr-list-group__item__title">{{ structure.name }}</h4>
-        <p class="fr-text-mention--grey fr-white-space--nowrap">{{ structure.type }}</p>
       </div>
       <div class="fr-display--flex fr-justify-content--space-between fr-column-gap-3v">
         <p class="fr-text-mention--grey fr-text--sm">{{ structure.address }}</p>
         <div>
-          <button class="fr-btn fr-btn--secondary fr-white-space--nowrap" (click)="displayDetails.emit()">
+          <button class="fr-btn fr-btn--secondary fr-white-space--nowrap" (click)="displayDetails.emit(structure.id)">
             Afficher les détails
           </button>
         </div>

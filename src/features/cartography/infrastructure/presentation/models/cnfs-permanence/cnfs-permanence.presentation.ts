@@ -1,6 +1,3 @@
-import { CnfsProperties, StructureProperties } from '../../../../core';
+import { CnfsPermanence } from '../../../../core';
 
-export interface CnfsPermanenceProperties {
-  cnfs: CnfsProperties[];
-  structure: StructureProperties;
-}
+export type CnfsPermanenceProperties = CnfsPermanence;

@@ -144,9 +144,10 @@ describe('cnfs rest repository', (): void => {
       new StructureContact('john.doe@aide-rurale.net', '04 23 45 68 97')
     );
 
+    const id: string = '88bc36fb0db191928330b1e6';
     const cnfsRestRepository: CnfsRest = new CnfsRest(httpClient);
 
-    const cnfsDetails: CnfsDetails = await firstValueFrom(cnfsRestRepository.cnfsDetails$());
+    const cnfsDetails: CnfsDetails = await firstValueFrom(cnfsRestRepository.cnfsDetails$(id));
 
     expect(cnfsDetails).toStrictEqual(expectedCnfsDetails);
   });

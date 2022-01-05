@@ -18,7 +18,9 @@
       <div class="fr-display--flex">
         <img width="35" class="fr-px-1v" src="/assets/map/pin-cnfs.svg" alt="" />
         <div>
-          <div class="fr-text--bold fr-ml-3v">{{ cnfsDetails.cnfsNumber }} conseillers numériques</div>
+          <div class="fr-text--bold fr-ml-3v">{{ cnfsDetails.cnfsNumber }}
+            {{ cnfsDetails.cnfsNumber === 1 ? 'conseiller numérique' : 'conseillers numériques' }}
+          </div>
           <a class="fr-link" href="/" target="_blank">Que peuvent-ils faire pour moi ?</a>
         </div>
       </div>

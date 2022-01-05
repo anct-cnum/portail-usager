@@ -7,7 +7,7 @@ import { StructurePresentation } from '../../models';
   templateUrl: './cnfs-list.component.html'
 })
 export class CnfsListComponent {
-  @Output() public readonly displayDetails: EventEmitter<void> = new EventEmitter<void>();
+  @Output() public readonly displayDetails: EventEmitter<string> = new EventEmitter<string>();
 
   @Input() public structuresList: StructurePresentation[] = [];
 

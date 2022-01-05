@@ -11,16 +11,18 @@ const CNFS_DETAILS: CnfsDetails = new CnfsDetails(
 );
 
 const CNFS_REPOSITORY: CnfsRepository = {
-  cnfsDetails$(): Observable<CnfsDetails> {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  cnfsDetails$(_: string): Observable<CnfsDetails> {
     return of(CNFS_DETAILS);
   }
 } as CnfsRepository;
 
 describe('cnfs details', (): void => {
   it('should get the cnfs details', async (): Promise<void> => {
+    const id: string = '88bc36fb0db191928330b1e6';
     const cnfsDetailsUseCase: CnfsDetailsUseCase = new CnfsDetailsUseCase(CNFS_REPOSITORY);
 
-    const cnfsDetails: CnfsDetails = await firstValueFrom(cnfsDetailsUseCase.execute$());
+    const cnfsDetails: CnfsDetails = await firstValueFrom(cnfsDetailsUseCase.execute$(id));
 
     expect(cnfsDetails).toStrictEqual(CNFS_DETAILS);
   });

@@ -12,9 +12,8 @@ export const cnfsCoreToCnfsPermanenceFeatures = (cnfs: Cnfs[]): Feature<Point, M
         type: 'Point'
       },
       properties: {
-        cnfs: [{ ...singleCnfs.properties.cnfs }],
         markerType: Marker.CnfsPermanence,
-        structure: { ...singleCnfs.properties.structure }
+        ...singleCnfs.properties
       },
       type: 'Feature'
     })
