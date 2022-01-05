@@ -11,7 +11,7 @@ import {
   TypedMarker
 } from '../../models';
 import { isGuyaneBoundedMarker, addUsagerFeatureToMarkers, CartographyPresenter } from './cartography.presenter';
-import { BehaviorSubject, combineLatest, merge, Observable, of, Subject, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, merge, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { Coordinates } from '../../../../core';
 import { ViewportAndZoom, ViewReset } from '../../directives/leaflet-map-state-change';
 import { CartographyConfiguration, CARTOGRAPHY_TOKEN, Marker } from '../../../configuration';

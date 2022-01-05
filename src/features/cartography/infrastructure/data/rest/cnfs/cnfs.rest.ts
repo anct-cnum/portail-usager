@@ -2,12 +2,14 @@ import { Observable } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
-import { Cnfs, CnfsByDepartment, CnfsByRegion, CnfsRepository } from '../../../../core';
+import { Cnfs, CnfsByDepartment, CnfsByRegion, CnfsDetails, CnfsRepository } from '../../../../core';
 import {
-  CnfsByRegionTransfer,
-  cnfsByRegionTransferToCore,
   CnfsByDepartmentTransfer,
   cnfsByDepartmentTransferToCore,
+  CnfsByRegionTransfer,
+  cnfsByRegionTransferToCore,
+  CnfsDetailsTransfer,
+  cnfsDetailsTransferToCore,
   CnfsTransfer,
   cnfsTransferToCore
 } from '../../models';
@@ -17,6 +19,12 @@ import { Api } from '../../../../../../environments/environment.model';
 export class CnfsRest extends CnfsRepository {
   public constructor(@Inject(HttpClient) private readonly httpClient: HttpClient) {
     super();
+  }
+
+  public cnfsDetails$(): Observable<CnfsDetails> {
+    return this.httpClient
+      .get<CnfsDetailsTransfer>(`${Api.ConseillerNumerique}/conseillers/permanence/60462011871498b5cec20e37`)
+      .pipe(map(cnfsDetailsTransferToCore));
   }
 
   public listCnfs$(): Observable<Cnfs[]> {

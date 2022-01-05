@@ -1,8 +1,8 @@
 import { CnfsRest } from './cnfs.rest';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Observable, of } from 'rxjs';
-import { CnfsByRegion, CnfsByDepartment, Coordinates } from '../../../../core';
-import { CnfsByRegionTransfer, CnfsByDepartmentTransfer } from '../../models';
+import { CnfsByRegion, CnfsByDepartment, CnfsDetails, Coordinates, StructureContact } from '../../../../core';
+import { CnfsByRegionTransfer, CnfsByDepartmentTransfer, CnfsDetailsTransfer } from '../../models';
 
 const CNFS_BY_REGION_TRANSFER: CnfsByRegionTransfer = {
   features: [
@@ -67,19 +67,13 @@ const CNFS_BY_DEPARTMENT_TRANSFER: CnfsByDepartmentTransfer = {
 };
 
 describe('cnfs rest repository', (): void => {
-  const httpClient: HttpClient = {
-    get(): Observable<CnfsByRegionTransfer> {
-      return of(CNFS_BY_REGION_TRANSFER);
-    }
-  } as unknown as HttpClient;
-
-  const httpClientDepartment: HttpClient = {
-    get(): Observable<CnfsByDepartmentTransfer> {
-      return of(CNFS_BY_DEPARTMENT_TRANSFER);
-    }
-  } as unknown as HttpClient;
-
   it('should list cnfs by region', async (): Promise<void> => {
+    const httpClient: HttpClient = {
+      get(): Observable<CnfsByRegionTransfer> {
+        return of(CNFS_BY_REGION_TRANSFER);
+      }
+    } as unknown as HttpClient;
+
     const expectedCnfsByRegion: CnfsByRegion[] = [
       new CnfsByRegion(new Coordinates(43.955, 6.053333), {
         boundingZoom: 8,
@@ -100,6 +94,12 @@ describe('cnfs rest repository', (): void => {
   });
 
   it('should list cnfs by department', async (): Promise<void> => {
+    const httpClient: HttpClient = {
+      get(): Observable<CnfsByDepartmentTransfer> {
+        return of(CNFS_BY_DEPARTMENT_TRANSFER);
+      }
+    } as unknown as HttpClient;
+
     const expectedCnfsByDepartment: CnfsByDepartment[] = [
       new CnfsByDepartment(new Coordinates(46.099798450280282, 5.348666025399395), {
         boundingZoom: 10,
@@ -114,10 +114,40 @@ describe('cnfs rest repository', (): void => {
         department: 'Mayotte'
       })
     ];
-    const cnfsRestRepository: CnfsRest = new CnfsRest(httpClientDepartment);
+    const cnfsRestRepository: CnfsRest = new CnfsRest(httpClient);
 
     const response: CnfsByDepartment[] = await firstValueFrom(cnfsRestRepository.listCnfsByDepartment$());
 
     expect(response).toStrictEqual(expectedCnfsByDepartment);
+  });
+
+  it('should get cnfs details', async (): Promise<void> => {
+    const cnfsDetailsTransfer: CnfsDetailsTransfer = {
+      adresse: '12 RUE DE LA PLACE, 87100 LIMOGES',
+      email: 'john.doe@aide-rurale.net',
+      nom: 'Aide rurale',
+      nombreCnfs: 2,
+      telephone: '04 23 45 68 97'
+    };
+
+    const httpClient: HttpClient = {
+      get(): Observable<CnfsDetailsTransfer> {
+        return of(cnfsDetailsTransfer);
+      }
+    } as unknown as HttpClient;
+
+    const expectedCnfsDetails: CnfsDetails = new CnfsDetails(
+      2,
+      'Aide rurale',
+      [],
+      '12 RUE DE LA PLACE, 87100 LIMOGES',
+      new StructureContact('john.doe@aide-rurale.net', '04 23 45 68 97')
+    );
+
+    const cnfsRestRepository: CnfsRest = new CnfsRest(httpClient);
+
+    const cnfsDetails: CnfsDetails = await firstValueFrom(cnfsRestRepository.cnfsDetails$());
+
+    expect(cnfsDetails).toStrictEqual(expectedCnfsDetails);
   });
 });
