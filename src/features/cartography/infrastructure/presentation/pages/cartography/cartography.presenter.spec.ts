@@ -1,6 +1,11 @@
 import { CartographyPresenter } from './cartography.presenter';
-import { ListCnfsByDepartmentUseCase, ListCnfsByRegionUseCase, ListCnfsUseCase } from '../../../../use-cases';
-import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
+import {
+  CnfsDetailsUseCase,
+  GeocodeAddressUseCase,
+  ListCnfsByDepartmentUseCase,
+  ListCnfsByRegionUseCase,
+  ListCnfsUseCase
+} from '../../../../use-cases';
 import { MapViewCullingService } from '../../services/map-view-culling.service';
 import { firstValueFrom, Observable, of } from 'rxjs';
 import { Feature, Point } from 'geojson';
@@ -10,12 +15,15 @@ import {
   CnfsByDepartmentProperties,
   CnfsByRegion,
   CnfsByRegionProperties,
-  Coordinates
+  CnfsDetails,
+  Coordinates,
+  StructureContact
 } from '../../../../core';
 import {
   CenterView,
   CnfsDetailsPresentation,
   CnfsPermanenceProperties,
+  DayPresentation,
   MarkerEvent,
   MarkerProperties,
   PointOfInterestMarkerProperties,
@@ -99,6 +107,20 @@ const LIST_CNFS_USE_CASE: ListCnfsUseCase = {
   }
 } as ListCnfsUseCase;
 
+const CNFS_DETAILS_USE_CASE: CnfsDetailsUseCase = {
+  execute$(): Observable<CnfsDetails> {
+    return of(
+      new CnfsDetails(
+        2,
+        'Association Des Centres Sociaux Et Culturels Du Bassin De Riom',
+        ['9h30 - 17h30', '9h30 - 17h30', '9h30 - 17h30', '9h30 - 17h30', '9h30 - 17h30', '9h30 - 12h00'],
+        'Place José Moron 3200 RIOM',
+        new StructureContact('email@example.com', '03 86 55 26 40', 'https://www.test.com')
+      )
+    );
+  }
+} as CnfsDetailsUseCase;
+
 describe('cartography presenter', (): void => {
   describe('visible point of interest markers', (): void => {
     it('should display the cnfs grouped by region markers at the region zoom level', async (): Promise<void> => {
@@ -138,6 +160,7 @@ describe('cartography presenter', (): void => {
       });
 
       const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+        {} as CnfsDetailsUseCase,
         LIST_CNFS_BY_REGION_USE_CASE,
         LIST_CNFS_BY_DEPARTMENT_USE_CASE,
         LIST_CNFS_USE_CASE,
@@ -185,6 +208,7 @@ describe('cartography presenter', (): void => {
       ];
 
       const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+        {} as CnfsDetailsUseCase,
         LIST_CNFS_BY_REGION_USE_CASE,
         LIST_CNFS_BY_DEPARTMENT_USE_CASE,
         LIST_CNFS_USE_CASE,
@@ -371,6 +395,7 @@ describe('cartography presenter', (): void => {
     it('should display all cnfs permanences if zoomed more than the department level', async (): Promise<void> => {
       const viewCullingService: MapViewCullingService = new MapViewCullingService();
       const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+        {} as CnfsDetailsUseCase,
         LIST_CNFS_BY_REGION_USE_CASE,
         LIST_CNFS_BY_DEPARTMENT_USE_CASE,
         LIST_CNFS_USE_CASE,
@@ -506,6 +531,7 @@ describe('cartography presenter', (): void => {
   describe('structures list', (): void => {
     it(`should be empty if markers to display are not CnfsPermanence`, async (): Promise<void> => {
       const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+        {} as CnfsDetailsUseCase,
         {
           execute$: (): Observable<CnfsByRegion[]> => of([])
         } as unknown as ListCnfsByRegionUseCase,
@@ -558,6 +584,7 @@ describe('cartography presenter', (): void => {
 
       const viewCullingService: MapViewCullingService = new MapViewCullingService();
       const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+        {} as CnfsDetailsUseCase,
         {
           execute$: (): Observable<CnfsByRegion[]> => of([])
         } as unknown as ListCnfsByRegionUseCase,
@@ -584,27 +611,27 @@ describe('cartography presenter', (): void => {
       email: 'email@example.com',
       opening: [
         {
-          day: 'Lun.',
+          day: DayPresentation.Monday,
           hours: '9h30 - 17h30'
         },
         {
-          day: 'Mar.',
+          day: DayPresentation.Tuesday,
           hours: '9h30 - 17h30'
         },
         {
-          day: 'Mer.',
+          day: DayPresentation.Wednesday,
           hours: '9h30 - 17h30'
         },
         {
-          day: 'Jeu.',
+          day: DayPresentation.Thursday,
           hours: '9h30 - 17h30'
         },
         {
-          day: 'Ven.',
+          day: DayPresentation.Friday,
           hours: '9h30 - 17h30'
         },
         {
-          day: 'Sam.',
+          day: DayPresentation.Saturday,
           hours: '9h30 - 12h00'
         }
       ],
@@ -614,6 +641,7 @@ describe('cartography presenter', (): void => {
     };
 
     const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+      CNFS_DETAILS_USE_CASE,
       LIST_CNFS_BY_REGION_USE_CASE,
       LIST_CNFS_BY_DEPARTMENT_USE_CASE,
       LIST_CNFS_USE_CASE,

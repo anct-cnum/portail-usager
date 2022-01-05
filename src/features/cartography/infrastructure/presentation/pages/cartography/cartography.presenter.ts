@@ -3,6 +3,7 @@ import {
   cnfsByDepartmentToPresentation,
   cnfsCoreToCnfsPermanenceFeatures,
   CnfsDetailsPresentation,
+  cnfsDetailsToPresentation,
   CnfsPermanenceProperties,
   listCnfsByRegionToPresentation,
   MarkerEvent,
@@ -13,8 +14,13 @@ import {
 } from '../../models';
 import { CnfsByDepartmentProperties, CnfsByRegionProperties, Coordinates } from '../../../../core';
 import { EMPTY, iif, map, merge, Observable, of, switchMap } from 'rxjs';
-import { ListCnfsByDepartmentUseCase, ListCnfsByRegionUseCase, ListCnfsUseCase } from '../../../../use-cases';
-import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
+import {
+  CnfsDetailsUseCase,
+  GeocodeAddressUseCase,
+  ListCnfsByDepartmentUseCase,
+  ListCnfsByRegionUseCase,
+  ListCnfsUseCase
+} from '../../../../use-cases';
 import { Feature, Point } from 'geojson';
 import { MapViewCullingService } from '../../services/map-view-culling.service';
 import { combineLatestWith, mergeMap, share } from 'rxjs/operators';
@@ -62,6 +68,7 @@ export class CartographyPresenter {
     new ObservableCache<Feature<Point, PointOfInterestMarkerProperties>[], Marker>();
 
   public constructor(
+    @Inject(CnfsDetailsUseCase) private readonly cnfsDetailsUseCase: CnfsDetailsUseCase,
     @Inject(ListCnfsByRegionUseCase) private readonly listCnfsByRegionUseCase: ListCnfsByRegionUseCase,
     @Inject(ListCnfsByDepartmentUseCase) private readonly listCnfsByDepartmentUseCase: ListCnfsByDepartmentUseCase,
     @Inject(ListCnfsUseCase) private readonly listCnfsPositionUseCase: ListCnfsUseCase,
@@ -145,40 +152,7 @@ export class CartographyPresenter {
   }
 
   public cnfsDetails$(): Observable<CnfsDetailsPresentation> {
-    return of({
-      address: 'Place José Moron 3200 RIOM',
-      cnfsNumber: 2,
-      email: 'email@example.com',
-      opening: [
-        {
-          day: 'Lun.',
-          hours: '9h30 - 17h30'
-        },
-        {
-          day: 'Mar.',
-          hours: '9h30 - 17h30'
-        },
-        {
-          day: 'Mer.',
-          hours: '9h30 - 17h30'
-        },
-        {
-          day: 'Jeu.',
-          hours: '9h30 - 17h30'
-        },
-        {
-          day: 'Ven.',
-          hours: '9h30 - 17h30'
-        },
-        {
-          day: 'Sam.',
-          hours: '9h30 - 12h00'
-        }
-      ],
-      phone: '03 86 55 26 40',
-      structureName: 'Association Des Centres Sociaux Et Culturels Du Bassin De Riom',
-      website: 'https://www.test.com'
-    });
+    return this.cnfsDetailsUseCase.execute$().pipe(map(cnfsDetailsToPresentation));
   }
 
   public geocodeAddress$(addressToGeocode$: Observable<string>): Observable<Coordinates> {

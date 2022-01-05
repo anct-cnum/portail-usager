@@ -1,11 +1,20 @@
+export enum DayPresentation {
+  Monday = 'Lun.',
+  Tuesday = 'Mar.',
+  Wednesday = 'Mer.',
+  Thursday = 'Jeu.',
+  Friday = 'Ven.',
+  Saturday = 'Sam.',
+  Sunday = 'Dim.'
+}
+
 export interface Opening {
-  // eslint-disable-next-line @typescript-eslint/sort-type-union-intersection-members
-  day: 'Lun.' | 'Mar.' | 'Mer.' | 'Jeu.' | 'Ven.' | 'Sam.' | 'Dim.';
+  day: DayPresentation;
   hours: string;
 }
 
 export interface CnfsDetailsPresentation {
-  address: string;
+  address?: string;
   cnfsNumber: number;
   email?: string;
   opening: Opening[];
