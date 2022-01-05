@@ -63,7 +63,6 @@ export class CartographyPresenter {
     this.listCnfsByRegionUseCase.execute$().pipe(map(listCnfsByRegionToPresentation), share());
   private readonly _cnfsPermanences$: Observable<Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[]> =
     this.listCnfsPositionUseCase.execute$().pipe(map(cnfsCoreToCnfsPermanenceFeatures), share());
-
   private readonly _markersCache: ObservableCache<Feature<Point, PointOfInterestMarkerProperties>[], Marker> =
     new ObservableCache<Feature<Point, PointOfInterestMarkerProperties>[], Marker>();
 

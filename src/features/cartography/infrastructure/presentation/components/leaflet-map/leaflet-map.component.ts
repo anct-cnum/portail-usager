@@ -1,5 +1,3 @@
-// TODO Remove !!!
-/* eslint-disable max-lines */
 import {
   control,
   geoJSON,
