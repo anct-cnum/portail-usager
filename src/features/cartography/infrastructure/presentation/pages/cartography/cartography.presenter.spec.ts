@@ -1,4 +1,4 @@
-import { CartographyPresenter, REGION_ZOOM_LEVEL, DEPARTMENT_ZOOM_LEVEL } from './cartography.presenter';
+import { CartographyPresenter } from './cartography.presenter';
 import { ListCnfsByDepartmentUseCase, ListCnfsByRegionUseCase, ListCnfsUseCase } from '../../../../use-cases';
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
 import { MapViewCullingService } from '../../services/map-view-culling.service';
@@ -23,10 +23,11 @@ import {
 import { ViewportAndZoom } from '../../directives/leaflet-map-state-change';
 import { Marker } from '../../../configuration';
 import {
+  boundedMarkerEventToCenterView,
   coordinatesToCenterView,
-  permanenceMarkerEventToCenterView,
-  regionMarkerEventToCenterView
+  permanenceMarkerEventToCenterView
 } from '../../models/center-view/center-view.presentation-mapper';
+import { DEPARTMENT_ZOOM_LEVEL, REGION_ZOOM_LEVEL } from '../../helpers/map-constants';
 
 const LIST_CNFS_BY_REGION_USE_CASE: ListCnfsByRegionUseCase = {
   execute$(): Observable<CnfsByRegion[]> {
@@ -296,7 +297,7 @@ describe('cartography presenter', (): void => {
         zoomLevel: 8
       };
 
-      expect(regionMarkerEventToCenterView(markerEvent)).toStrictEqual(expectedCenterView);
+      expect(boundedMarkerEventToCenterView(markerEvent)).toStrictEqual(expectedCenterView);
     });
 
     it('should map a markerEvent for a cnfs permanence to a CenterView', (): void => {

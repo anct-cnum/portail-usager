@@ -19,10 +19,7 @@ import { ViewportAndZoom } from '../../directives/leaflet-map-state-change';
 import { cnfsPermanencesToStructurePresentations } from '../../models/structure/structure.presentation-mapper';
 import { Marker } from '../../../configuration';
 import { ObservableCache } from '../../helpers/observable-cache';
-
-export const REGION_ZOOM_LEVEL: number = 6;
-export const DEPARTMENT_ZOOM_LEVEL: number = 9;
-export const CITY_ZOOM_LEVEL: number = 12;
+import { DEPARTMENT_ZOOM_LEVEL, REGION_ZOOM_LEVEL } from '../../helpers/map-constants';
 
 export const markerTypeToDisplayAtZoomLevel = (zoomLevel: number): Marker => {
   if (zoomLevel > DEPARTMENT_ZOOM_LEVEL) return Marker.CnfsPermanence;
@@ -39,9 +36,8 @@ export class CartographyPresenter {
   private readonly _cnfsPermanences$: Observable<Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[]> =
     this.listCnfsPositionUseCase.execute$().pipe(map(cnfsCoreToCnfsPermanenceFeatures), share());
 
-  private readonly _markersCache: ObservableCache<Feature<Point, PointOfInterestMarkerProperties>[]> = new ObservableCache<
-    Feature<Point, PointOfInterestMarkerProperties>[]
-  >();
+  private readonly _markersCache: ObservableCache<Feature<Point, PointOfInterestMarkerProperties>[], Marker> =
+    new ObservableCache<Feature<Point, PointOfInterestMarkerProperties>[], Marker>();
 
   public constructor(
     @Inject(ListCnfsByRegionUseCase) private readonly listCnfsByRegionUseCase: ListCnfsByRegionUseCase,
@@ -54,7 +50,7 @@ export class CartographyPresenter {
   private cnfsByDepartmentOrEmpty$(markerTypeToDisplay: Marker): Observable<Feature<Point, PointOfInterestMarkerProperties>[]> {
     return iif(
       (): boolean => markerTypeToDisplay === Marker.CnfsByDepartment,
-      this._markersCache.request$(this._cnfsByDepartment$, 'cnfsByDepartment'),
+      this._markersCache.request$(this._cnfsByDepartment$, Marker.CnfsByDepartment),
       EMPTY
     );
   }
@@ -62,7 +58,7 @@ export class CartographyPresenter {
   private cnfsByRegionOrEmpty$(markerTypeToDisplay: Marker): Observable<Feature<Point, PointOfInterestMarkerProperties>[]> {
     return iif(
       (): boolean => markerTypeToDisplay === Marker.CnfsByRegion,
-      this._markersCache.request$(this._cnfsByRegion$, 'cnfsByRegion'),
+      this._markersCache.request$(this._cnfsByRegion$, Marker.CnfsByRegion),
       EMPTY
     );
   }
@@ -83,7 +79,7 @@ export class CartographyPresenter {
   }
 
   private cnfsPermanences$(): Observable<Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[]> {
-    return this._markersCache.request$(this._cnfsPermanences$, 'cnfsPermanences') as Observable<
+    return this._markersCache.request$(this._cnfsPermanences$, Marker.CnfsPermanence) as Observable<
       Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[]
     >;
   }

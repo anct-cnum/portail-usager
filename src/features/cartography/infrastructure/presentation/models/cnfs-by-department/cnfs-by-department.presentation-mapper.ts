@@ -3,12 +3,12 @@ import { CnfsByDepartment, CnfsByDepartmentProperties } from '../../../../core';
 import { MarkerProperties } from '../markers';
 import { Marker } from '../../../configuration';
 
-function coreToPresentationMarkerProperties({ properties }: CnfsByDepartment): MarkerProperties<CnfsByDepartmentProperties> {
-  return {
-    ...properties,
-    markerType: Marker.CnfsByDepartment
-  };
-}
+const coreToPresentationMarkerProperties = ({
+  properties
+}: CnfsByDepartment): MarkerProperties<CnfsByDepartmentProperties> => ({
+  ...properties,
+  markerType: Marker.CnfsByDepartment
+});
 
 export const cnfsByDepartmentToPresentation = (
   cnfsByDepartments: CnfsByDepartment[]

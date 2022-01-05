@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import {
+  BoundedMarkers,
   CenterView,
   CnfsPermanenceProperties,
   MarkerEvent,
@@ -10,17 +11,16 @@ import {
 } from '../../models';
 import { CartographyPresenter } from './cartography.presenter';
 import { BehaviorSubject, merge, Observable, of, Subject, tap } from 'rxjs';
-import { CnfsByDepartmentProperties, CnfsByRegionProperties, Coordinates } from '../../../../core';
+import { Coordinates } from '../../../../core';
 import { ViewportAndZoom, ViewReset } from '../../directives/leaflet-map-state-change';
 import { CartographyConfiguration, CARTOGRAPHY_TOKEN, Marker } from '../../../configuration';
 import { Feature, FeatureCollection, Point } from 'geojson';
 import { catchError, combineLatestWith, map, startWith } from 'rxjs/operators';
 import { usagerFeatureFromCoordinates } from '../../helpers';
 import {
+  boundedMarkerEventToCenterView,
   coordinatesToCenterView,
-  departmentMarkerEventToCenterView,
-  permanenceMarkerEventToCenterView,
-  regionMarkerEventToCenterView
+  permanenceMarkerEventToCenterView
 } from '../../models/center-view/center-view.presentation-mapper';
 
 // TODO Inject though configuration token
@@ -94,14 +94,8 @@ export class CartographyPage {
     @Inject(CARTOGRAPHY_TOKEN) private readonly cartographyConfiguration: CartographyConfiguration
   ) {}
 
-  private handleCnfsByDepartmentMarkerEvents(markerEvent: MarkerEvent<PointOfInterestMarkerProperties>): void {
-    this.centerView = departmentMarkerEventToCenterView(
-      markerEvent as MarkerEvent<MarkerProperties<CnfsByDepartmentProperties>>
-    );
-  }
-
-  private handleCnfsByRegionMarkerEvents(markerEvent: MarkerEvent<PointOfInterestMarkerProperties>): void {
-    this.centerView = regionMarkerEventToCenterView(markerEvent as MarkerEvent<MarkerProperties<CnfsByRegionProperties>>);
+  private handleBoundedMarkerEvents(markerEvent: MarkerEvent<PointOfInterestMarkerProperties>): void {
+    this.centerView = boundedMarkerEventToCenterView(markerEvent as MarkerEvent<MarkerProperties<BoundedMarkers>>);
   }
 
   private handleCnfsPermanenceMarkerEvents(markerEvent: MarkerEvent<PointOfInterestMarkerProperties>): void {
@@ -126,10 +120,8 @@ export class CartographyPage {
         this.handleCnfsPermanenceMarkerEvents(markerEvent);
         break;
       case Marker.CnfsByRegion:
-        this.handleCnfsByRegionMarkerEvents(markerEvent);
-        break;
       case Marker.CnfsByDepartment:
-        this.handleCnfsByDepartmentMarkerEvents(markerEvent);
+        this.handleBoundedMarkerEvents(markerEvent);
         break;
       case Marker.Usager:
         break;

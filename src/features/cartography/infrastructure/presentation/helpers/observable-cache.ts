@@ -1,9 +1,9 @@
 import { AsyncSubject, Observable, tap } from 'rxjs';
 
-export class ObservableCache<T> {
-  private readonly _cache: Map<string, AsyncSubject<T>> = new Map<string, AsyncSubject<T>>();
+export class ObservableCache<T, U extends string = string> {
+  private readonly _cache: Map<U, AsyncSubject<T>> = new Map<U, AsyncSubject<T>>();
 
-  public request$ = (observable$: Observable<T>, cacheKey: string): Observable<T> =>
+  public request$ = (observable$: Observable<T>, cacheKey: U): Observable<T> =>
     this._cache.get(cacheKey)?.asObservable() ??
     observable$.pipe(
       tap((observable: T): void => {
