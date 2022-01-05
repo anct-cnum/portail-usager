@@ -19,8 +19,7 @@ import { catchError, combineLatestWith, map, startWith } from 'rxjs/operators';
 import { usagerFeatureFromCoordinates } from '../../helpers';
 import {
   boundedMarkerEventToCenterView,
-  coordinatesToCenterView,
-  permanenceMarkerEventToCenterView
+  coordinatesToCenterView
 } from '../../models/center-view/center-view.presentation-mapper';
 
 // TODO Inject though configuration token
@@ -99,7 +98,16 @@ export class CartographyPage {
   }
 
   private handleCnfsPermanenceMarkerEvents(markerEvent: MarkerEvent<PointOfInterestMarkerProperties>): void {
-    this.centerView = permanenceMarkerEventToCenterView(markerEvent as MarkerEvent<MarkerProperties<CnfsPermanenceProperties>>);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const marker: MarkerEvent<MarkerProperties<CnfsPermanenceProperties>> = markerEvent as MarkerEvent<
+      MarkerProperties<CnfsPermanenceProperties>
+    >;
+    // eslint-disable-next-line @typescript-eslint/typedef
+    const elem = document.getElementById('item-5');
+    if (elem != null) {
+      elem.scrollIntoView({ behavior: 'smooth' });
+      elem.style.border = 'solid 1px red';
+    }
   }
 
   public onAutoLocateUsagerRequest(coordinates: Coordinates): void {
