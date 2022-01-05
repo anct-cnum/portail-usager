@@ -5,6 +5,7 @@ import { Api, EnvironmentModel } from './environment.model';
 export const ENVIRONMENT: EnvironmentModel = {
   apisConfiguration: {
     [Api.Adresse]: { domain: 'https://api-adresse.data.gouv.fr' },
+    [Api.AdresseFallback]: { domain: 'https://nominatim.openstreetmap.org' },
     [Api.Geo]: { domain: 'https://geo.api.gouv.fr' },
     [Api.ConseillerNumerique]: { domain: 'https://api.conseiller-numerique.gouv.fr' }
   },

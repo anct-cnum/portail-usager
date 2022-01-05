@@ -1,4 +1,4 @@
-import { Observable, map, switchMap } from 'rxjs';
+import { Observable, map, switchMap, of } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Coordinates, CoordinatesRepository } from '../../../../core';
@@ -23,6 +23,7 @@ const firstResultLocalityNameOrEmpty = (geoResult: ApiGeoResult[]): string => (g
 
 @Injectable()
 export class CoordinatesRest extends CoordinatesRepository {
+  private readonly _addressFallbackEndpoint: string = 'search';
   private readonly _addressSearchEndpoint: string = 'search';
 
   private readonly _geoCodePostalParameter: string = 'codePostal=';
@@ -36,28 +37,36 @@ export class CoordinatesRest extends CoordinatesRepository {
     const getAddressApiFullUrlWithLocality = (localityName: string): string =>
       this.getAddressApiFullUrl(
         replacePostalCodeByLocalityName(addressQuery, postalCode, localityName),
-        `?postcode=${postalCode}&q=`
+        `?postcode=${postalCode}&limit=1&q=`
       );
 
     return this.httpClient
       .get<ApiGeoResult[]>(this.getGeoApiFullUrl(postalCode))
-      .pipe(switchMap(this.completedAddressRequest$(getAddressApiFullUrlWithLocality)));
+      .pipe(switchMap(this.completedAddressRequest$(getAddressApiFullUrlWithLocality, addressQuery)));
   }
 
   private completedAddressRequest$(
-    getAddressApiFullUrlWithLocality: (localityName: string) => string
+    getAddressApiFullUrlWithLocality: (localityName: string) => string,
+    originalAddressQueryForFallBack: string
   ): (geoResult: ApiGeoResult[]) => Observable<Coordinates> {
     return (geoResult: ApiGeoResult[]): Observable<Coordinates> => {
       const localityNameByPostalCode: string = firstResultLocalityNameOrEmpty(geoResult);
 
       return this.httpClient
         .get<FeatureCollection<Point>>(getAddressApiFullUrlWithLocality(localityNameByPostalCode))
-        .pipe(map(featureCollectionToFirstCoordinates));
+        .pipe(switchMap(this.tryFallbackIfNoResult(originalAddressQueryForFallBack)), map(featureCollectionToFirstCoordinates));
     };
   }
 
   private getAddressApiFullUrl(userAddressQuery: string, queryParameters: string = '?q='): string {
     return `${Api.Adresse}/${this._addressSearchEndpoint}/${queryParameters}${encodeURI(userAddressQuery)}`;
+  }
+
+  private getAddressFallbackApiFullUrl(
+    userAddressQuery: string,
+    queryParameters: string = '?countrycodes=FR&format=geojson&limit=1&q='
+  ): string {
+    return `${Api.AdresseFallback}/${this._addressFallbackEndpoint}/${queryParameters}${encodeURI(userAddressQuery)}`;
   }
 
   private getGeoApiFullUrl(postalCode: string): string {
@@ -68,6 +77,15 @@ export class CoordinatesRest extends CoordinatesRepository {
     return this.httpClient
       .get<FeatureCollection<Point>>(this.getAddressApiFullUrl(usagerAddressInput))
       .pipe(map(featureCollectionToFirstCoordinates));
+  }
+
+  private tryFallbackIfNoResult(
+    originalAddressQueryForFallBack: string
+  ): (apiAddressResponse: FeatureCollection<Point>) => Observable<FeatureCollection<Point>> {
+    return (apiAddressResponse: FeatureCollection<Point>): Observable<FeatureCollection<Point>> =>
+      apiAddressResponse.features.length === 0
+        ? this.httpClient.get<FeatureCollection<Point>>(this.getAddressFallbackApiFullUrl(originalAddressQueryForFallBack))
+        : of(apiAddressResponse);
   }
 
   public geocodeAddress$(usagerAddressInput: string): Observable<Coordinates> {
