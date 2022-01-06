@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CnfsDetailsContactComponent } from './cnfs-details-contact.component';
 import { FailedToCompileError } from '@angular-common/errors';
 
-describe('Leaflet-map component', (): void => {
+describe('cnfs-details-contact component', (): void => {
   beforeEach(async (): Promise<void> => {
     await TestBed.configureTestingModule({
       declarations: [CnfsDetailsContactComponent]
