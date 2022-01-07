@@ -1,3 +1,16 @@
+<ng-template #headerLinks>
+  <ul class="fr-links-group">
+    <li>
+      <a
+        class="fr-link fr-fi-question-line fr-link--icon-left"
+        href="https://aide.conseiller-numerique.gouv.fr/fr/"
+        target="_blank"
+        rel="noopener">
+        J'ai une question
+      </a>
+    </li>
+  </ul>
+</ng-template>
 <header role="banner" class="fr-header">
   <div class="fr-header__body">
     <div class="fr-container">
@@ -18,12 +31,12 @@
             </div>
             <div class="fr-header__navbar">
               <button
+                (click)="isOpen = true"
                 class="fr-btn--menu fr-btn"
-                data-fr-opened="false"
-                aria-controls="modal-870"
+                aria-controls="modal-menu-mobile"
                 aria-haspopup="menu"
                 title="Menu"
-                id="fr-btn-menu-mobile-4">
+                id="fr-btn-menu-mobile">
                 Menu
               </button>
             </div>
@@ -31,36 +44,24 @@
         </div>
         <div class="fr-header__tools">
           <div class="fr-header__tools-links">
-            <ul class="fr-links-group">
-              <li>
-                <a
-                  class="fr-link fr-fi-question-line fr-link--icon-left"
-                  href="https://aide.conseiller-numerique.gouv.fr/fr/"
-                  target="_blank"
-                  rel="noopener">
-                  J'ai une question
-                </a>
-              </li>
-            </ul>
+            <ng-container *ngTemplateOutlet="headerLinks"></ng-container>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="fr-header__menu fr-modal" id="modal-870" aria-labelledby="fr-btn-menu-mobile-4">
+  <div
+    class="fr-header__menu fr-modal"
+    [ngClass]="{ 'fr-modal--opened': isOpen }"
+    id="modal-menu-mobile"
+    role="dialog"
+    aria-labelledby="fr-btn-menu-mobile"
+    [attr.aria-modal]="isOpen ? true : null">
     <div class="fr-container">
-      <button class="fr-link--close fr-link" aria-controls="modal-870">Fermer</button>
-      <div class="fr-header__menu-links"></div>
-      <nav class="fr-nav fr-display--none-lg" id="navigation-869" role="navigation" aria-label="Menu principal">
-        <ul class="fr-nav__list">
-          <li class="fr-nav__item">
-            <a class="fr-nav__link" href="#" target="_self">Afficher la carte</a>
-          </li>
-          <li class="fr-nav__item">
-            <a class="fr-nav__link" href="#" target="_self">Afficher la liste</a>
-          </li>
-        </ul>
-      </nav>
+      <button class="fr-link--close fr-link" aria-controls="modal-menu-mobile" (click)="isOpen = false">Fermer</button>
+      <div class="fr-header__menu-links">
+        <ng-container *ngTemplateOutlet="headerLinks"></ng-container>
+      </div>
     </div>
   </div>
 </header>
