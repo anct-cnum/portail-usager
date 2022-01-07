@@ -5,7 +5,7 @@ import { ListCnfsByRegionUseCase, ListCnfsByDepartmentUseCase, ListCnfsUseCase }
 import { CnfsRepository, Coordinates, CoordinatesRepository } from '../../../core';
 import { CARTOGRAPHY_TOKEN, MARKERS, MARKERS_TOKEN } from '../tokens';
 import { CartographyPage } from '../../presentation/pages';
-import { LeafletMapComponent } from '../../presentation/components';
+import { DisplayMapComponent, LeafletMapComponent } from '../../presentation/components';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CnfsRest } from '../../data/rest';
 import { CoordinatesRest } from '../../data/rest/coordinates';
@@ -23,6 +23,7 @@ const METROPOLITAN_FRANCE_CENTER_LATITUDE: number = 46.28146057911664;
     AddressGeolocationComponent,
     CartographyPage,
     CnfsListComponent,
+    DisplayMapComponent,
     LeafletMapComponent,
     LeafletMapStateChangeDirective
   ],

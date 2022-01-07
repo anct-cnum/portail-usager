@@ -56,6 +56,8 @@ export class CartographyPage {
 
   public centerView: CenterView = this.cartographyConfiguration;
 
+  public displayMap: boolean = false;
+
   public hasAddressError: boolean = false;
 
   public structuresList$: Observable<StructurePresentation[]> = this.presenter.structuresList$(this._mapViewportAndZoom$);

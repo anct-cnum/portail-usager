@@ -1,5 +1,7 @@
-<div class="fr-grid-row fr-flex-wrap--nowrap fr-full-container--height">
-  <div class="fr-col-xl-4 fr-col-lg-5 fr-col-12 fr-display--flex fr-flex-direction--column fr-index--over fr-shadow--right">
+<div class="fr-grid-row fr-flex-wrap--nowrap fr-full-container--height fr-overflow--hidden">
+  <div
+    class="fr-col-xl-4 fr-col-lg-5 fr-display--flex fr-flex-direction--column fr-index--over fr-shadow--right"
+    [ngClass]="displayMap ? 'fr-displayed-lg': 'fr-col-12'">
     <address-geolocation
       (usagerAutolocate)="onAutoLocateUsagerRequest($event)"
       (addressToGeocode)="onGeocodeUsagerRequest($event)"></address-geolocation>
@@ -10,7 +12,7 @@
       <cnfs-list class="fr-px-3w fr-overflow--auto" [structuresList]="structuresList"></cnfs-list>
     </ng-container>
   </div>
-  <div class="fr-col-xl-8 fr-col-lg-7">
+  <div class="fr-col-xl-8 fr-col-lg-7 fr-col-12">
     <ng-container *ngIf="visibleMarkersWithUsager$ | async as markers">
       <leaflet-map
         [centerView]="centerView"
@@ -20,3 +22,4 @@
     </ng-container>
   </div>
 </div>
+<display-map (displayMap)="this.displayMap = $event"></display-map>

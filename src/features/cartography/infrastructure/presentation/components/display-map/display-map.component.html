@@ -1,0 +1,23 @@
+<div
+  class="
+    fr-hidden-lg
+    fr-display--flex
+    fr-shadow--up
+    fr-index--over
+    fr-background-default--white
+    fr-px-2w
+    fr-align-items--center
+    fr-position--absolute
+    fr-bottom-0 fr-left-half fr-translate-x-center
+  ">
+  <label class="fr-pr-1w" for="toggle-map">Liste</label>
+  <span class="fr-toggle">
+    <input
+      type="checkbox"
+      class="fr-toggle__input"
+      id="toggle-map"
+      [formControl]="displayMapControl"
+      (change)="this.displayMap.next(displayMapControl.value)" />
+    <label class="fr-toggle__label fr-pl-1w" for="toggle-map">Carte</label>
+  </span>
+</div>
