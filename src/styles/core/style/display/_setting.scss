@@ -9,5 +9,6 @@ $display-vars: map-get($variables, display);
 @import 'setting/flex-properties';
 @import 'setting/gap';
 @import 'setting/overflow';
+@import 'setting/position';
 @import 'setting/size';
 @import 'setting/white-space';

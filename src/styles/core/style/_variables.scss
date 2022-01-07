@@ -5,6 +5,7 @@
 /// @group core
 ////
 
+/* stylelint-disable indentation */
 $variables: (
   color: (
     gradient: (
@@ -17,6 +18,34 @@ $variables: (
   display: (
     display: (
       active: true,
+      breakpoints: sm md lg
+    ),
+    position: (
+      active: true,
+      breakpoints: sm md lg
+    ),
+    position-values: (
+      active: true,
+      special: 0
+        (
+          half: 50%
+        )
+        (
+          full: 100%
+        )
+        auto,
+      breakpoints: sm md lg
+    ),
+    position-alignments: (
+      active: true,
+      values: (
+        x: (
+          center: -50%
+        ),
+        y: (
+          center: -50%
+        )
+      ),
       breakpoints: sm md lg
     ),
     flex-properties: (
@@ -37,3 +66,4 @@ $variables: (
     )
   )
 ) !default;
+/* stylelint-enable indentation */
