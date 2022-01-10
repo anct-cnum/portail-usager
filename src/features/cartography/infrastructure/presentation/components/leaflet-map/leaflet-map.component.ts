@@ -48,8 +48,7 @@ const MAP_OPTIONS: LeafletMapOptions = {
   maxZoom: 18,
   minZoom: 2.5,
   zoomAnimationThreshold: 12,
-  zoomControl: false,
-  zoomDelta: 0.5
+  zoomControl: false
 };
 // TODO Convert configuration to injected token for default options then remove
 const DEFAULT_LONGITUDE: number = 4.468874066180609;

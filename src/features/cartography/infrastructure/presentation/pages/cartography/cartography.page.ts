@@ -9,14 +9,13 @@ import {
   StructurePresentation,
   TypedMarker
 } from '../../models';
-import { CartographyPresenter } from './cartography.presenter';
+import { isGuyaneBoundedMarker, addUsagerFeatureToMarkers, CartographyPresenter } from './cartography.presenter';
 import { BehaviorSubject, merge, Observable, of, Subject, tap } from 'rxjs';
 import { Coordinates } from '../../../../core';
 import { ViewportAndZoom, ViewReset } from '../../directives/leaflet-map-state-change';
 import { CartographyConfiguration, CARTOGRAPHY_TOKEN, Marker } from '../../../configuration';
 import { Feature, FeatureCollection, Point } from 'geojson';
 import { catchError, combineLatestWith, map, startWith } from 'rxjs/operators';
-import { usagerFeatureFromCoordinates } from '../../helpers';
 import {
   boundedMarkerEventToCenterView,
   coordinatesToCenterView,
@@ -30,14 +29,6 @@ const DEFAULT_MAP_VIEWPORT_AND_ZOOM: ViewportAndZoom = {
   zoomLevel: 6
 };
 
-const addUsagerFeatureToMarkers = (
-  visibleMapPointsOfInterest: Feature<Point, PointOfInterestMarkerProperties>[],
-  usagerCoordinates: Coordinates | null
-): Feature<Point, PointOfInterestMarkerProperties | TypedMarker>[] =>
-  usagerCoordinates == null
-    ? visibleMapPointsOfInterest
-    : [...visibleMapPointsOfInterest, usagerFeatureFromCoordinates(usagerCoordinates)];
-
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CartographyPresenter],
@@ -45,13 +36,17 @@ const addUsagerFeatureToMarkers = (
 })
 export class CartographyPage {
   private readonly _addressToGeocode$: Subject<string> = new Subject<string>();
+
+  private readonly _forceCnfsPermanence$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
   private readonly _mapViewportAndZoom$: Subject<ViewportAndZoom> = new BehaviorSubject<ViewportAndZoom>(
     DEFAULT_MAP_VIEWPORT_AND_ZOOM
   );
+
   private readonly _usagerCoordinates$: Subject<Coordinates> = new Subject<Coordinates>();
 
   private readonly _visibleMapPointsOfInterest$: Observable<Feature<Point, PointOfInterestMarkerProperties>[]> = this.presenter
-    .visibleMapPointsOfInterestThroughViewportAtZoomLevel$(this._mapViewportAndZoom$)
+    .visibleMapPointsOfInterestThroughViewportAtZoomLevel$(this._mapViewportAndZoom$, this._forceCnfsPermanence$.asObservable())
     .pipe(startWith([]));
 
   public centerView: CenterView = this.cartographyConfiguration;
@@ -97,6 +92,7 @@ export class CartographyPage {
   ) {}
 
   private handleBoundedMarkerEvents(markerEvent: MarkerEvent<PointOfInterestMarkerProperties>): void {
+    this._forceCnfsPermanence$.next(isGuyaneBoundedMarker(markerEvent));
     this.centerView = boundedMarkerEventToCenterView(markerEvent as MarkerEvent<MarkerProperties<BoundedMarkers>>);
   }
 
@@ -128,5 +124,9 @@ export class CartographyPage {
       case Marker.Usager:
         break;
     }
+  }
+
+  public onZoomOut(): void {
+    this._forceCnfsPermanence$.next(false);
   }
 }

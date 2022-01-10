@@ -204,6 +204,169 @@ describe('cartography presenter', (): void => {
       expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsByDepartmentFeatures);
     });
 
+    it('should display cnfs permanences at department zoom level if marker display is forced', async (): Promise<void> => {
+      const forceCnfsPermanenceDisplay$: Observable<boolean> = of(true);
+      const viewCullingService: MapViewCullingService = new MapViewCullingService();
+      const listCnfsByDepartmentUseCase: ListCnfsByDepartmentUseCase = {
+        execute$(): Observable<CnfsByDepartment[]> {
+          return of([
+            new CnfsByDepartment(new Coordinates(3.922060670769425, -53.237712294069844), {
+              boundingZoom: 10,
+              code: '973',
+              count: 27,
+              department: 'Guyane'
+            })
+          ]);
+        }
+      } as ListCnfsByDepartmentUseCase;
+
+      const listCnfsUseCase: ListCnfsUseCase = {
+        execute$(): Observable<Cnfs[]> {
+          return of([
+            new Cnfs(new Coordinates(4.33889, -50.125782), {
+              cnfs: {
+                email: 'mary.doe@conseiller-numerique.fr',
+                name: 'Mary Doe'
+              },
+              structure: {
+                address: '31 Avenue de la mer, 13003 Cayenne',
+                isLabeledFranceServices: true,
+                name: 'Médiathèque de la mer',
+                phone: '0478563641',
+                type: ''
+              }
+            })
+          ]);
+        }
+      } as ListCnfsUseCase;
+
+      const expectedCnfsPermanenceMarkersFeatures: Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[] = [
+        {
+          geometry: {
+            coordinates: [-50.125782, 4.33889],
+            type: 'Point'
+          },
+          properties: {
+            cnfs: [
+              {
+                email: 'mary.doe@conseiller-numerique.fr',
+                name: 'Mary Doe'
+              }
+            ],
+            markerType: Marker.CnfsPermanence,
+            structure: {
+              address: '31 Avenue de la mer, 13003 Cayenne',
+              isLabeledFranceServices: true,
+              name: 'Médiathèque de la mer',
+              phone: '0478563641',
+              type: ''
+            }
+          },
+          type: 'Feature'
+        }
+      ];
+
+      const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+        LIST_CNFS_BY_REGION_USE_CASE,
+        listCnfsByDepartmentUseCase,
+        listCnfsUseCase,
+        {} as GeocodeAddressUseCase,
+        viewCullingService
+      );
+
+      const viewportAndZoom$: Observable<ViewportAndZoom> = of({
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+        viewport: [-55, 1, -49, 5],
+        zoomLevel: DEPARTMENT_ZOOM_LEVEL
+      });
+
+      const visibleMapPointsOfInterest: Feature<Point, PointOfInterestMarkerProperties>[] = await firstValueFrom(
+        cartographyPresenter.visibleMapPointsOfInterestThroughViewportAtZoomLevel$(
+          viewportAndZoom$,
+          forceCnfsPermanenceDisplay$
+        )
+      );
+
+      expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsPermanenceMarkersFeatures);
+    });
+
+    it('should display cnfs by department at depatment zoom level if marker display is not forced', async (): Promise<void> => {
+      const forceCnfsPermanenceDisplay$: Observable<boolean> = of(false);
+      const viewCullingService: MapViewCullingService = new MapViewCullingService();
+      const listCnfsByDepartmentUseCase: ListCnfsByDepartmentUseCase = {
+        execute$(): Observable<CnfsByDepartment[]> {
+          return of([
+            new CnfsByDepartment(new Coordinates(3.922060670769425, -53.237712294069844), {
+              boundingZoom: 10,
+              code: '973',
+              count: 27,
+              department: 'Guyane'
+            })
+          ]);
+        }
+      } as ListCnfsByDepartmentUseCase;
+
+      const listCnfsUseCase: ListCnfsUseCase = {
+        execute$(): Observable<Cnfs[]> {
+          return of([
+            new Cnfs(new Coordinates(4.33889, -50.125782), {
+              cnfs: {
+                email: 'mary.doe@conseiller-numerique.fr',
+                name: 'Mary Doe'
+              },
+              structure: {
+                address: '31 Avenue de la mer, 13003 Cayenne',
+                isLabeledFranceServices: true,
+                name: 'Médiathèque de la mer',
+                phone: '0478563641',
+                type: ''
+              }
+            })
+          ]);
+        }
+      } as ListCnfsUseCase;
+
+      const expectedCnfsByDepartmentMarkersFeatures: Feature<Point, MarkerProperties<CnfsByDepartmentProperties>>[] = [
+        {
+          geometry: {
+            coordinates: [-53.237712294069844, 3.922060670769425],
+            type: 'Point'
+          },
+          properties: {
+            boundingZoom: 10,
+            code: '973',
+            count: 27,
+            department: 'Guyane',
+            markerType: Marker.CnfsByDepartment
+          },
+          type: 'Feature'
+        }
+      ];
+
+      const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+        LIST_CNFS_BY_REGION_USE_CASE,
+        listCnfsByDepartmentUseCase,
+        listCnfsUseCase,
+        {} as GeocodeAddressUseCase,
+        viewCullingService
+      );
+
+      const viewportAndZoom$: Observable<ViewportAndZoom> = of({
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+        viewport: [-55, 1, -49, 5],
+        zoomLevel: DEPARTMENT_ZOOM_LEVEL
+      });
+
+      const visibleMapPointsOfInterest: Feature<Point, PointOfInterestMarkerProperties>[] = await firstValueFrom(
+        cartographyPresenter.visibleMapPointsOfInterestThroughViewportAtZoomLevel$(
+          viewportAndZoom$,
+          forceCnfsPermanenceDisplay$
+        )
+      );
+
+      expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsByDepartmentMarkersFeatures);
+    });
+
     it('should display all cnfs permanences if zoomed more than the department level', async (): Promise<void> => {
       const viewCullingService: MapViewCullingService = new MapViewCullingService();
       const cartographyPresenter: CartographyPresenter = new CartographyPresenter(

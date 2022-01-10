@@ -8,5 +8,6 @@ module.exports = {
       skipComments: true
     }
   ],
-  'max-nested-callbacks': ['error', 4]
+  'max-nested-callbacks': ['error', 4],
+  'max-statements': 'off'
 };

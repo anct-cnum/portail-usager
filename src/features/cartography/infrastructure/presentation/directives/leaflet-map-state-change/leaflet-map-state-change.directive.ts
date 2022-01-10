@@ -13,11 +13,16 @@ export interface ViewReset extends ViewportAndZoom {
   center: LatLng;
 }
 
+const isZoomOut = (previousZoomLevel: number, currentZoomLevel: number): boolean => previousZoomLevel - currentZoomLevel > 0;
+
 @Directive({
   selector: 'leaflet-map[stateChange]'
 })
 export class LeafletMapStateChangeDirective implements AfterViewInit, OnDestroy {
+  private _previousZoomLevel: number = 0;
+
   @Output() public readonly stateChange: EventEmitter<ViewReset> = new EventEmitter<ViewReset>();
+  @Output() public readonly zoomOut: EventEmitter<void> = new EventEmitter<void>();
 
   public constructor(public readonly mapComponent: LeafletMapComponent) {}
 
@@ -40,11 +45,20 @@ export class LeafletMapStateChangeDirective implements AfterViewInit, OnDestroy 
   }
 
   private emitStateChange(): void {
+    const zoomLevel: number = this.mapComponent.map.getZoom();
     this.stateChange.emit({
       center: this.mapComponent.map.getCenter(),
       viewport: this.getViewport(this.mapComponent.map.getBounds()),
-      zoomLevel: this.mapComponent.map.getZoom()
+      zoomLevel
     });
+    this.emitZoomOutIfNeeded(zoomLevel);
+    this._previousZoomLevel = zoomLevel;
+  }
+
+  private emitZoomOutIfNeeded(currentZoomLevel: number): void {
+    if (isZoomOut(this._previousZoomLevel, currentZoomLevel)) {
+      this.zoomOut.emit();
+    }
   }
 
   private getViewport(bounds: LatLngBounds): BBox {

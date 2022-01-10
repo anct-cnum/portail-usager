@@ -4,9 +4,11 @@ import {
   cnfsCoreToCnfsPermanenceFeatures,
   CnfsPermanenceProperties,
   listCnfsByRegionToPresentation,
+  MarkerEvent,
   MarkerProperties,
   PointOfInterestMarkerProperties,
-  StructurePresentation
+  StructurePresentation,
+  TypedMarker
 } from '../../models';
 import { CnfsByDepartmentProperties, CnfsByRegionProperties, Coordinates } from '../../../../core';
 import { EMPTY, iif, map, merge, Observable, of, switchMap } from 'rxjs';
@@ -14,17 +16,36 @@ import { ListCnfsByDepartmentUseCase, ListCnfsByRegionUseCase, ListCnfsUseCase }
 import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
 import { Feature, Point } from 'geojson';
 import { MapViewCullingService } from '../../services/map-view-culling.service';
-import { mergeMap, share } from 'rxjs/operators';
+import { combineLatestWith, mergeMap, share } from 'rxjs/operators';
 import { ViewportAndZoom } from '../../directives/leaflet-map-state-change';
 import { cnfsPermanencesToStructurePresentations } from '../../models/structure/structure.presentation-mapper';
 import { Marker } from '../../../configuration';
 import { ObservableCache } from '../../helpers/observable-cache';
 import { DEPARTMENT_ZOOM_LEVEL, REGION_ZOOM_LEVEL } from '../../helpers/map-constants';
+import { usagerFeatureFromCoordinates } from '../../helpers';
 
-export const markerTypeToDisplayAtZoomLevel = (zoomLevel: number): Marker => {
+const markerTypeToDisplayAtZoomLevel = (zoomLevel: number): Marker => {
   if (zoomLevel > DEPARTMENT_ZOOM_LEVEL) return Marker.CnfsPermanence;
   if (zoomLevel > REGION_ZOOM_LEVEL) return Marker.CnfsByDepartment;
   return Marker.CnfsByRegion;
+};
+
+const getMarkerToDisplay = (forceCnfsPermanenceDisplay: boolean, viewportWithZoomLevel: ViewportAndZoom): Marker =>
+  forceCnfsPermanenceDisplay ? Marker.CnfsPermanence : markerTypeToDisplayAtZoomLevel(viewportWithZoomLevel.zoomLevel);
+
+export const addUsagerFeatureToMarkers = (
+  visibleMapPointsOfInterest: Feature<Point, PointOfInterestMarkerProperties>[],
+  usagerCoordinates: Coordinates | null
+): Feature<Point, PointOfInterestMarkerProperties | TypedMarker>[] =>
+  usagerCoordinates == null
+    ? visibleMapPointsOfInterest
+    : [...visibleMapPointsOfInterest, usagerFeatureFromCoordinates(usagerCoordinates)];
+
+export const isGuyaneBoundedMarker = (markerEvent: MarkerEvent<PointOfInterestMarkerProperties>): boolean => {
+  const departementProperties: CnfsByDepartmentProperties = markerEvent.markerProperties as CnfsByDepartmentProperties;
+  const regionProperties: CnfsByRegionProperties = markerEvent.markerProperties as CnfsByRegionProperties;
+
+  return departementProperties.department === 'Guyane' || regionProperties.region === 'Guyane';
 };
 
 @Injectable()
@@ -64,17 +85,19 @@ export class CartographyPresenter {
   }
 
   private cnfsMarkersInViewportAtZoomLevel$(
-    viewportWithZoomLevel$: Observable<ViewportAndZoom>
+    viewportWithZoomLevel$: Observable<ViewportAndZoom>,
+    forceCnfsPermanenceDisplay$: Observable<boolean>
   ): Observable<Feature<Point, PointOfInterestMarkerProperties>[]> {
     return viewportWithZoomLevel$.pipe(
-      mergeMap((viewportWithZoomLevel: ViewportAndZoom): Observable<Feature<Point, PointOfInterestMarkerProperties>[]> => {
-        const markerTypeToDisplay: Marker = markerTypeToDisplayAtZoomLevel(viewportWithZoomLevel.zoomLevel);
-        return merge(
-          this.cnfsByRegionOrEmpty$(markerTypeToDisplay),
-          this.cnfsByDepartmentOrEmpty$(markerTypeToDisplay),
-          this.cnfsPermanencesInViewportOrEmpty$(markerTypeToDisplay, viewportWithZoomLevel)
-        );
-      })
+      combineLatestWith(forceCnfsPermanenceDisplay$),
+      mergeMap(
+        ([viewportWithZoomLevel, forceCnfsPermanenceDisplay]: [ViewportAndZoom, boolean]): Observable<
+          Feature<Point, PointOfInterestMarkerProperties>[]
+        > => {
+          const markerTypeToDisplay: Marker = getMarkerToDisplay(forceCnfsPermanenceDisplay, viewportWithZoomLevel);
+          return this.mergedMarkersFilteredByTypeToDisplay$(markerTypeToDisplay, viewportWithZoomLevel);
+        }
+      )
     );
   }
 
@@ -109,6 +132,17 @@ export class CartographyPresenter {
     );
   }
 
+  private mergedMarkersFilteredByTypeToDisplay$(
+    markerTypeToDisplay: Marker,
+    viewportWithZoomLevel: ViewportAndZoom
+  ): Observable<Feature<Point, PointOfInterestMarkerProperties>[]> {
+    return merge(
+      this.cnfsByRegionOrEmpty$(markerTypeToDisplay),
+      this.cnfsByDepartmentOrEmpty$(markerTypeToDisplay),
+      this.cnfsPermanencesInViewportOrEmpty$(markerTypeToDisplay, viewportWithZoomLevel)
+    );
+  }
+
   public geocodeAddress$(addressToGeocode$: Observable<string>): Observable<Coordinates> {
     return addressToGeocode$.pipe(
       switchMap((address: string): Observable<Coordinates> => this.geocodeAddressUseCase.execute$(address))
@@ -129,8 +163,9 @@ export class CartographyPresenter {
   }
 
   public visibleMapPointsOfInterestThroughViewportAtZoomLevel$(
-    viewBoxWithZoomLevel$: Observable<ViewportAndZoom>
+    viewBoxWithZoomLevel$: Observable<ViewportAndZoom>,
+    forceCnfsPermanenceDisplay$: Observable<boolean> = of(false)
   ): Observable<Feature<Point, PointOfInterestMarkerProperties>[]> {
-    return this.cnfsMarkersInViewportAtZoomLevel$(viewBoxWithZoomLevel$);
+    return this.cnfsMarkersInViewportAtZoomLevel$(viewBoxWithZoomLevel$, forceCnfsPermanenceDisplay$);
   }
 }
