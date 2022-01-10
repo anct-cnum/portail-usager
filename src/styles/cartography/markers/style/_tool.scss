@@ -1,0 +1,45 @@
+////
+/// Cartography Tools : Global markers
+/// @group cartography
+////
+
+@mixin _marker() {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin _marker-variations() {
+  @each $marker-name, $marker-properties in $markers {
+    &--#{$marker-name} {
+      width: map-get($marker-properties, width);
+      height: map-get($marker-properties, height);
+      padding: map-get($marker-properties, padding);
+      background-image: url(map-get($marker-properties, icon-path));
+    }
+  }
+}
+
+@mixin _marker-label() {
+  & > &__label {
+    width: 100%;
+    color: #ffff;
+    margin-left: 8px;
+    font-family: Marianne, sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    text-rendering: auto;
+    line-height: 24px;
+  }
+}
+
+@mixin build-markers() {
+  #{ns(marker)} {
+    @include _marker();
+    @include _marker-variations();
+    @include _marker-label();
+  }
+}
