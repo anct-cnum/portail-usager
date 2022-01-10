@@ -54,6 +54,7 @@ export class CartographyPage {
 
   public centerView: CenterView = this.cartographyConfiguration;
 
+  // Todo : use empty object pattern.
   public cnfsDetails$: Observable<CnfsDetailsPresentation | null> = this._cnfsDetails$.pipe(
     switchMap(
       (id: string | null): Observable<CnfsDetailsPresentation | null> =>
@@ -69,6 +70,7 @@ export class CartographyPage {
 
   public structuresList$: Observable<StructurePresentation[]> = this.presenter.structuresList$(this._mapViewportAndZoom$);
 
+  // Todo : use empty object pattern.
   public readonly usagerCoordinates$: Observable<Coordinates | null> = merge(
     this.presenter.geocodeAddress$(this._addressToGeocode$),
     this._usagerCoordinates$

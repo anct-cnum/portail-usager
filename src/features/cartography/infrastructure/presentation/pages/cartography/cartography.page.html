@@ -1,10 +1,12 @@
 <div class="fr-grid-row fr-flex-wrap--nowrap fr-full-container--height fr-overflow--hidden">
-  <div [ngClass]="{
+  <div
+    [ngClass]="{
     'fr-col-xl-8 fr-col-lg-7 fr-overflow--auto': displayDetails,
     'fr-col-xl-4 fr-col-lg-5': !displayDetails,
     'fr-displayed-lg': displayMap,
     'fr-col-12': !displayMap
-  }" class="fr-display--flex fr-flex-direction--column fr-index--over fr-shadow--right fr-full-container--width">
+  }"
+    class="fr-display--flex fr-flex-direction--column fr-index--over fr-shadow--right fr-full-container--width">
     <cnfs-details
       class="fr-px-3w"
       *ngIf="displayDetails; else: displayCnfsList"
@@ -16,7 +18,7 @@
         (addressToGeocode)="onGeocodeUsagerRequest($event)"></address-geolocation>
       <ng-container *ngIf="structuresList$ | async as structuresList">
         <small class="fr-px-3w fr-background-contrast--blue-cumulus" *ngIf="structuresList.length > 0">
-          Nombre de structures visibles&nbsp;: {{ structuresList.length }}
+          {{ structuresList.length }} structures trouvées
         </small>
         <cnfs-list
           class="fr-px-3w fr-overflow--auto"
@@ -25,15 +27,15 @@
       </ng-container>
     </ng-template>
   </div>
-  <div
-    *ngIf="visibleMarkersWithUsager$ | async as markers"
-    [ngClass]="displayDetails ? 'fr-col-xl-4 fr-col-lg-5' : 'fr-col-xl-8 fr-col-lg-7'">
-    <leaflet-map
-      [centerView]="centerView"
-      [markers]="markers"
-      (markerChange)="onMarkerChanged($event)"
-      (stateChange)="onMapViewChanged($event)"
-      (zoomOut)="onZoomOut()"></leaflet-map>
+  <div [ngClass]="displayDetails ? 'fr-col-xl-4 fr-col-lg-5' : 'fr-col-xl-8 fr-col-lg-7'" class="fr-col-12">
+    <ng-container *ngIf="visibleMarkersWithUsager$ | async as markers">
+      <leaflet-map
+        [centerView]="centerView"
+        [markers]="markers"
+        (markerChange)="onMarkerChanged($event)"
+        (stateChange)="onMapViewChanged($event)"
+        (zoomOut)="onZoomOut()"></leaflet-map>
+    </ng-container>
   </div>
 </div>
 <display-map (displayMap)="displayMap = $event"></display-map>
