@@ -1,13 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="62px" height="72px" viewBox="0 0 62 72" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>hexagone-département</title>
-    <defs>
-        <linearGradient x1="50%" y1="-4.60742555e-13%" x2="50%" y2="76.9968313%" id="linearGradient-1">
-            <stop stop-color="#0A76F6" stop-opacity="0.995356206" offset="0%"></stop>
-            <stop stop-color="#000091" offset="100%"></stop>
-        </linearGradient>
-    </defs>
-    <g id="hexagone-département" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <polygon id="Fill-1-Copy-6" fill="url(#linearGradient-1)" fill-rule="nonzero" points="31.174322 0 2.7000624e-13 18.0040728 2.7000624e-13 53.9959272 31.174322 72 62.348644 53.9959272 62.348644 18.0040728"></polygon>
-    </g>
-</svg>
+<svg width="62" height="72" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient x1="50%" y1="0%" x2="50%" y2="76.997%" id="a"><stop stop-color="#0A76F6" stop-opacity=".995" offset="0%"/><stop stop-color="#000091" offset="100%"/></linearGradient></defs><path fill="url(#a)" d="M31.174 0 0 18.004v35.992L31.174 72 62.35 53.996V18.004z"/></svg>
