@@ -1,17 +1,18 @@
 import {
   control,
+  DivIcon,
   geoJSON,
+  Icon,
   latLng,
   LatLng,
   Layer,
+  LeafletMouseEvent,
   map,
   Map as LeafletMap,
   MapOptions as LeafletMapOptions,
   marker,
   Marker as LeafletMarker,
-  tileLayer,
-  DivIcon,
-  Icon
+  tileLayer
 } from 'leaflet';
 import {
   AfterViewChecked,
@@ -28,9 +29,8 @@ import {
   ViewChild
 } from '@angular/core';
 import { CenterView, MarkerEvent, MarkerProperties, PointOfInterestMarkerProperties, TypedMarker } from '../../models';
-import { MarkersConfiguration, MARKERS_TOKEN } from '../../../configuration';
+import { MARKERS_TOKEN, MarkersConfiguration } from '../../../configuration';
 import { Feature, FeatureCollection, Point } from 'geojson';
-import { GeocodeAddressUseCase } from '../../../../use-cases/geocode-address/geocode-address.use-case';
 import { CnfsByDepartmentProperties, CnfsByRegionProperties, Coordinates } from '../../../../core';
 import { emptyFeatureCollection } from '../../helpers';
 
@@ -55,13 +55,26 @@ const DEFAULT_LATITUDE: number = 46.28146057911664;
 // TODO Convert configuration to injected token for default options then remove
 const DEFAULT_ZOOM_LEVEL: number = 6;
 
+type TypedLeafletMouseEvent<T> = Omit<LeafletMouseEvent, 'target'> & {
+  target: {
+    feature: T;
+  };
+};
+
 const shouldSetView = (centerViewChange: SimpleChange | undefined): boolean => !(centerViewChange?.firstChange ?? true);
 
 const currentValue = <T>(simpleChange: SimpleChange | undefined): T => simpleChange?.currentValue as T;
 
+const markerPayloadFromEvent = (
+  markerEvent: TypedLeafletMouseEvent<Feature<Point, PointOfInterestMarkerProperties>>
+): MarkerEvent<PointOfInterestMarkerProperties> => ({
+  eventType: markerEvent.type,
+  markerPosition: new Coordinates(markerEvent.latlng.lat, markerEvent.latlng.lng),
+  markerProperties: markerEvent.target.feature.properties
+});
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [GeocodeAddressUseCase],
   selector: 'leaflet-map',
   templateUrl: './leaflet-map.component.html'
 })
@@ -98,26 +111,14 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
 
   public constructor(@Inject(MARKERS_TOKEN) private readonly markersConfigurations: MarkersConfiguration) {}
 
-  // eslint-disable-next-line max-lines-per-function
   private createEventedMarker(
     position: LatLng,
     feature: Feature<Point, PointOfInterestMarkerProperties>,
     iconMarker: DivIcon | Icon
   ): LeafletMarker {
-    return (
-      marker(position, { icon: iconMarker, zIndexOffset: feature.properties.zIndexOffset ?? 0 })
-        // WARNING : Typing 'event' will cause a error in leaflet.
-        // eslint-disable-next-line @typescript-eslint/typedef
-        .on('click', (markerEvent): void => {
-          const payload: MarkerEvent<PointOfInterestMarkerProperties> = {
-            eventType: markerEvent.type,
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
-            markerPosition: new Coordinates(markerEvent.target._latlng.lat, markerEvent.target._latlng.lng),
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            markerProperties: markerEvent.target?.feature?.properties as PointOfInterestMarkerProperties
-          };
-          this.markerChange.emit(payload);
-        })
+    return marker(position, { icon: iconMarker, zIndexOffset: feature.properties.zIndexOffset ?? 0 }).on(
+      'click',
+      (markerEvent: LeafletMouseEvent): void => this.markerChange.emit(markerPayloadFromEvent(markerEvent))
     );
   }
 
