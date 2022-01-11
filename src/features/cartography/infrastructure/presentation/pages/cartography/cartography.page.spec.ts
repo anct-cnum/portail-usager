@@ -6,11 +6,13 @@ import { CnfsRestTestDouble } from '../../../../use-cases/test-doubles/cnfs-rest
 import { CnfsRepository } from '../../../../core';
 import { CartographyPresenter } from './cartography.presenter';
 import { Observable, of } from 'rxjs';
-import { CnfsListStubComponent } from '../../test-doubles/components/cnfs-list/cnfs-list.component.stub';
-import { AddressGeolocationStubComponent } from '../../test-doubles/components/address-geolocation/address-geolocation.component.stub';
-import { LeafletMapStubComponent } from '../../test-doubles/components/leaflet-map/leaflet-map.component.stub';
+import {
+  AddressGeolocationStubComponent,
+  CnfsListStubComponent,
+  DisplayMapStubComponent,
+  PermanenceMapStubComponent
+} from '../../test-doubles';
 import { CARTOGRAPHY_TOKEN } from '../../../configuration';
-import { DisplayMapStubComponent } from '../../test-doubles';
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class CartographyPresenterStub {
@@ -38,9 +40,9 @@ describe('cartography page', (): void => {
       declarations: [
         AddressGeolocationStubComponent,
         CartographyPage,
-        LeafletMapStubComponent,
         CnfsListStubComponent,
-        DisplayMapStubComponent
+        DisplayMapStubComponent,
+        PermanenceMapStubComponent
       ],
       imports: [],
       providers: [

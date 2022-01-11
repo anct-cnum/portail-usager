@@ -4,3 +4,4 @@ export * from './cnfs-details/cnfs-details-contact/cnfs-details-contact.componen
 export * from './cnfs-list/cnfs-list.component';
 export * from './display-map/display-map.component';
 export * from './leaflet-map/leaflet-map.component';
+export * from './permanence-map/permanence-map.component';

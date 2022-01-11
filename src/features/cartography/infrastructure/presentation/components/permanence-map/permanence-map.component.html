@@ -1,0 +1,7 @@
+<ng-container *ngIf="markers">
+  <leaflet-map
+    [centerView]="centerView"
+    [markers]="markers"
+    (markerChange)="onMarkerChanged($event)"
+    (stateChange)="onStateChanged($event)"></leaflet-map>
+</ng-container>
