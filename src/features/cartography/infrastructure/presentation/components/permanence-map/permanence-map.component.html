@@ -3,5 +3,6 @@
     [centerView]="centerView"
     [markers]="markers"
     (markerChange)="onMarkerChanged($event)"
-    (stateChange)="onStateChanged($event)"></leaflet-map>
+    (stateChange)="onStateChanged($event)"
+    (zoomOut)="zoomOut.emit()"></leaflet-map>
 </ng-container>

@@ -23,21 +23,21 @@
         <cnfs-list
           class="fr-px-3w fr-overflow--auto"
           [structuresList]="structuresList"
+          [highlightedStructureId]="highlightedStructureId$ | async"
           (displayDetails)="displayCnfsDetails($event)"></cnfs-list>
       </ng-container>
     </ng-template>
   </div>
   <div [ngClass]="displayDetails ? 'fr-col-xl-4 fr-col-lg-5' : 'fr-col-xl-8 fr-col-lg-7'" class="fr-col-12">
-    <ng-container *ngIf="visibleMarkersWithUsager$ | async as markers">
-      <ng-container *ngIf="centerView$ | async as centerView">
-        <leaflet-map
-          [centerView]="centerView"
-          [markers]="markers"
-          (markerChange)="onMarkerChanged($event)"
-          (stateChange)="onMapViewChanged($event)"
-          (zoomOut)="onZoomOut()"></leaflet-map>
-      </ng-container>
+    <ng-container *ngIf="centerView$ | async as centerView">
+      <permanence-map
+        [centerView]="centerView"
+        [markers]="visibleMarkersWithUsager$ | async"
+        (cnfsLocalityMarkerChange)="onCnfsLocalityMarkerChange($event)"
+        (cnfsPermanenceMarkerChange)="onCnfsPermanenceMarkerChange($event)"
+        (stateChange)="onMapViewChanged($event)"
+        (zoomOut)="onZoomOut()"></permanence-map>
     </ng-container>
   </div>
 </div>
-<display-map (displayMap)="displayMap = $event"></display-map>
+<display-map (displayMap)="onDisplayMap($event)"></display-map>

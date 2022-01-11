@@ -29,6 +29,8 @@ export class PermanenceMapComponent {
 
   @Output() public readonly stateChange: EventEmitter<ViewReset> = new EventEmitter<ViewReset>();
 
+  @Output() public readonly zoomOut: EventEmitter<void> = new EventEmitter<void>();
+
   // eslint-disable-next-line @typescript-eslint/member-ordering
   private readonly _markerChangedMap: Map<Marker, EventEmitter<MarkerEvent<PointOfInterestMarkerProperties>>> = new Map<
     Marker,

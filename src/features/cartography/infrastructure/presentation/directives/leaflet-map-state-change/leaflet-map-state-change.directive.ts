@@ -22,6 +22,7 @@ export class LeafletMapStateChangeDirective implements AfterViewInit, OnDestroy 
   private _previousZoomLevel: number = 0;
 
   @Output() public readonly stateChange: EventEmitter<ViewReset> = new EventEmitter<ViewReset>();
+
   @Output() public readonly zoomOut: EventEmitter<void> = new EventEmitter<void>();
 
   public constructor(public readonly mapComponent: LeafletMapComponent) {}

@@ -27,7 +27,7 @@ import {
   MarkerEvent,
   MarkerProperties,
   PointOfInterestMarkerProperties,
-  StructurePresentation,
+  StructurePresentation
 } from '../../models';
 import { ViewportAndZoom } from '../../directives/leaflet-map-state-change';
 import { Marker } from '../../../configuration';
