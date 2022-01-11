@@ -22,6 +22,7 @@ import {
   coordinatesToCenterView,
   permanenceMarkerEventToCenterView
 } from '../../models/center-view/center-view.presentation-mapper';
+import { CITY_ZOOM_LEVEL } from '../../helpers/map-constants';
 
 // TODO Inject though configuration token
 const DEFAULT_MAP_VIEWPORT_AND_ZOOM: ViewportAndZoom = {
@@ -38,11 +39,13 @@ const DEFAULT_MAP_VIEWPORT_AND_ZOOM: ViewportAndZoom = {
 export class CartographyPage {
   private readonly _addressToGeocode$: Subject<string> = new Subject<string>();
 
+  private readonly _centerView$: BehaviorSubject<CenterView> = new BehaviorSubject<CenterView>(this.cartographyConfiguration);
+
   private readonly _cnfsDetails$: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
 
   private readonly _forceCnfsPermanence$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  private readonly _mapViewportAndZoom$: Subject<ViewportAndZoom> = new BehaviorSubject<ViewportAndZoom>(
+  private readonly _mapViewportAndZoom$: BehaviorSubject<ViewportAndZoom> = new BehaviorSubject<ViewportAndZoom>(
     DEFAULT_MAP_VIEWPORT_AND_ZOOM
   );
 
@@ -52,7 +55,7 @@ export class CartographyPage {
     .visibleMapPointsOfInterestThroughViewportAtZoomLevel$(this._mapViewportAndZoom$, this._forceCnfsPermanence$.asObservable())
     .pipe(startWith([]));
 
-  public centerView: CenterView = this.cartographyConfiguration;
+  public centerView$: Observable<CenterView> = this._centerView$.asObservable();
 
   // Todo : use empty object pattern.
   public cnfsDetails$: Observable<CnfsDetailsPresentation | null> = this._cnfsDetails$.pipe(
@@ -76,7 +79,7 @@ export class CartographyPage {
     this._usagerCoordinates$
   ).pipe(
     tap((coordinates: Coordinates): void => {
-      this.centerView = coordinatesToCenterView(coordinates);
+      this._centerView$.next(coordinatesToCenterView(coordinates, CITY_ZOOM_LEVEL));
     }),
     startWith(null),
     catchError((): Observable<null> => {
@@ -88,15 +91,19 @@ export class CartographyPage {
   public readonly visibleMarkersWithUsager$: Observable<
     FeatureCollection<Point, PointOfInterestMarkerProperties | TypedMarker>
   > = this._visibleMapPointsOfInterest$.pipe(
-    combineLatestWith(this.usagerCoordinates$),
+    combineLatestWith(this.usagerCoordinates$, this._mapViewportAndZoom$),
     map(
-      ([visibleMapPointsOfInterest, usagerCoordinates]: [
+      ([visibleMapPointsOfInterest, usagerCoordinates, viewportAndZoom]: [
         Feature<Point, PointOfInterestMarkerProperties>[],
-        Coordinates | null
-      ]): FeatureCollection<Point, PointOfInterestMarkerProperties | TypedMarker> => ({
-        features: addUsagerFeatureToMarkers(visibleMapPointsOfInterest, usagerCoordinates),
-        type: 'FeatureCollection'
-      })
+        Coordinates | null,
+        ViewportAndZoom
+      ]): FeatureCollection<Point, PointOfInterestMarkerProperties | TypedMarker> => {
+        this.dezoomRequestIfNoPermanenceIsVisible(usagerCoordinates, visibleMapPointsOfInterest, viewportAndZoom);
+        return {
+          features: addUsagerFeatureToMarkers(visibleMapPointsOfInterest, usagerCoordinates),
+          type: 'FeatureCollection'
+        };
+      }
     )
   );
 
@@ -105,13 +112,25 @@ export class CartographyPage {
     @Inject(CARTOGRAPHY_TOKEN) private readonly cartographyConfiguration: CartographyConfiguration
   ) {}
 
+  private dezoomRequestIfNoPermanenceIsVisible(
+    usagerCoordinates: Coordinates | null,
+    visibleMapPointsOfInterest: Feature<Point, PointOfInterestMarkerProperties>[],
+    viewportAndZoom: ViewportAndZoom
+  ): void {
+    if (usagerCoordinates != null && visibleMapPointsOfInterest.length === 0) {
+      this._centerView$.next(coordinatesToCenterView(usagerCoordinates, viewportAndZoom.zoomLevel - 1));
+    }
+  }
+
   private handleBoundedMarkerEvents(markerEvent: MarkerEvent<PointOfInterestMarkerProperties>): void {
     this._forceCnfsPermanence$.next(isGuyaneBoundedMarker(markerEvent));
-    this.centerView = boundedMarkerEventToCenterView(markerEvent as MarkerEvent<MarkerProperties<BoundedMarkers>>);
+    this._centerView$.next(boundedMarkerEventToCenterView(markerEvent as MarkerEvent<MarkerProperties<BoundedMarkers>>));
   }
 
   private handleCnfsPermanenceMarkerEvents(markerEvent: MarkerEvent<PointOfInterestMarkerProperties>): void {
-    this.centerView = permanenceMarkerEventToCenterView(markerEvent as MarkerEvent<MarkerProperties<CnfsPermanenceProperties>>);
+    this._centerView$.next(
+      permanenceMarkerEventToCenterView(markerEvent as MarkerEvent<MarkerProperties<CnfsPermanenceProperties>>)
+    );
   }
 
   public displayCnfsDetails(id: string): void {

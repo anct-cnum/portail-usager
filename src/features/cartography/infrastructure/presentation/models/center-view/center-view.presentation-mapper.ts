@@ -4,9 +4,9 @@ import { CnfsPermanenceProperties } from '../cnfs-permanence';
 import { CenterView } from './center-view.presentation';
 import { CITY_ZOOM_LEVEL } from '../../helpers/map-constants';
 
-export const coordinatesToCenterView = (coordinates: Coordinates): CenterView => ({
+export const coordinatesToCenterView = (coordinates: Coordinates, zoomLevel: number): CenterView => ({
   coordinates,
-  zoomLevel: CITY_ZOOM_LEVEL
+  zoomLevel
 });
 
 export const boundedMarkerEventToCenterView = (markerEvent: MarkerEvent<MarkerProperties<BoundedMarkers>>): CenterView => ({
@@ -16,4 +16,4 @@ export const boundedMarkerEventToCenterView = (markerEvent: MarkerEvent<MarkerPr
 
 export const permanenceMarkerEventToCenterView = (
   markerEvent: MarkerEvent<MarkerProperties<CnfsPermanenceProperties>>
-): CenterView => coordinatesToCenterView(markerEvent.markerPosition);
+): CenterView => coordinatesToCenterView(markerEvent.markerPosition, CITY_ZOOM_LEVEL);

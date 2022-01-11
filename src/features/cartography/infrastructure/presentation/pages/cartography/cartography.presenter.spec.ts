@@ -28,13 +28,14 @@ import {
   MarkerProperties,
   PointOfInterestMarkerProperties,
   StructurePresentation,
-  boundedMarkerEventToCenterView,
-  coordinatesToCenterView,
-  permanenceMarkerEventToCenterView
 } from '../../models';
 import { ViewportAndZoom } from '../../directives/leaflet-map-state-change';
 import { Marker } from '../../../configuration';
-import { DEPARTMENT_ZOOM_LEVEL, REGION_ZOOM_LEVEL } from '../../helpers/map-constants';
+import {
+  boundedMarkerEventToCenterView,
+  permanenceMarkerEventToCenterView
+} from '../../models/center-view/center-view.presentation-mapper';
+import { CITY_ZOOM_LEVEL, DEPARTMENT_ZOOM_LEVEL, REGION_ZOOM_LEVEL } from '../../helpers/map-constants';
 
 const LIST_CNFS_BY_REGION_USE_CASE: ListCnfsByRegionUseCase = {
   execute$(): Observable<CnfsByRegion[]> {
@@ -449,21 +450,10 @@ describe('cartography presenter', (): void => {
 
       const expectedCenterView: CenterView = {
         coordinates: palaisDeLElyseeCoordinates,
-        zoomLevel: 12
+        zoomLevel: CITY_ZOOM_LEVEL
       };
 
       expect(permanenceMarkerEventToCenterView(markerEvent)).toStrictEqual(expectedCenterView);
-    });
-
-    it('should create a CenterView from map coordinates', (): void => {
-      const usagerCoordinates: Coordinates = new Coordinates(48.87063, 2.316934);
-
-      const expectedCenterView: CenterView = {
-        coordinates: usagerCoordinates,
-        zoomLevel: 12
-      };
-
-      expect(coordinatesToCenterView(usagerCoordinates)).toStrictEqual(expectedCenterView);
     });
   });
 
