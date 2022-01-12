@@ -1,16 +1,18 @@
-<ng-container *ngIf="structuresList.length > 0; else emptyPermanenceList">
+<ng-container *ngIf="structuresList.length > 0; else emptyStructureList">
   <ul class="fr-list-group fr-list-group--flush">
     <li
-      [attr.id]="permanence.id"
-      *ngFor="let permanence of structuresList; index as i; trackBy: trackByPermanenceId"
+      [attr.id]="structure.id"
+      *ngFor="let structure of structuresList; index as i; trackBy: trackByStructureId"
+      [attr.aria-current]="structure.id === highlightedStructureId ? true : null"
+      [class.fr-list-group__item--active]="structure.id === highlightedStructureId"
       class="fr-list-group__item">
       <div class="fr-display--flex fr-justify-content--space-between fr-column-gap-3v">
-        <h4 class="fr-list-group__item__title">{{ permanence.name }}</h4>
+        <h4 class="fr-list-group__item__title">{{ structure.name }}</h4>
       </div>
       <div class="fr-display--flex fr-justify-content--space-between fr-column-gap-3v">
-        <p class="fr-text-mention--grey fr-text--sm">{{ permanence.address }}</p>
+        <p class="fr-text-mention--grey fr-text--sm fr-mb-0">{{ structure.address }}</p>
         <div>
-          <button class="fr-btn fr-btn--secondary fr-white-space--nowrap" (click)="displayDetails.emit(permanence.id)">
+          <button class="fr-btn fr-btn--secondary fr-white-space--nowrap" (click)="displayDetails.emit(structure.id)">
             Afficher les détails
           </button>
         </div>
@@ -19,7 +21,7 @@
   </ul>
   <div class="fr-hidden-lg fr-pb-6w"></div>
 </ng-container>
-<ng-template #emptyPermanenceList>
+<ng-template #emptyStructureList>
   <p class="fr-text--bold fr-mt-3w">
     Cette cartographie vous permet de localiser les permanences des conseillers numériques France Service de votre territoire.
   </p>

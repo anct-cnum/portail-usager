@@ -8,20 +8,20 @@ import {
   TypedMarker,
   boundedMarkerEventToCenterView,
   coordinatesToCenterView,
-  permanenceMarkerEventToCenterView,
   CnfsLocalityMarkerProperties,
   CnfsPermanenceMarkerProperties,
   MarkerProperties,
   CnfsPermanenceProperties,
-  BoundedMarkers
+  BoundedMarkers,
+  permanenceMarkerEventToCenterView
 } from '../../models';
 import { isGuyaneBoundedMarker, addUsagerFeatureToMarkers, CartographyPresenter } from './cartography.presenter';
-import { BehaviorSubject, merge, Observable, of, Subject, switchMap } from 'rxjs';
+import { BehaviorSubject, delay, merge, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { Coordinates } from '../../../../core';
 import { ViewportAndZoom, ViewReset } from '../../directives/leaflet-map-state-change';
 import { CartographyConfiguration, CARTOGRAPHY_TOKEN, Marker } from '../../../configuration';
 import { Feature, FeatureCollection, Point } from 'geojson';
-import { catchError, combineLatestWith, map, startWith, tap } from 'rxjs/operators';
+import { catchError, combineLatestWith, map, startWith } from 'rxjs/operators';
 import { CITY_ZOOM_LEVEL, DEPARTMENT_ZOOM_LEVEL } from '../../helpers/map-constants';
 
 // TODO Inject though configuration token
@@ -30,6 +30,8 @@ const DEFAULT_MAP_VIEWPORT_AND_ZOOM: ViewportAndZoom = {
   viewport: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
   zoomLevel: 6
 };
+
+const HIGHLIGHT_DELAY_IN_MILLISECONDS: number = 300;
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -75,7 +77,9 @@ export class CartographyPage {
 
   public hasAddressError: boolean = false;
 
-  public highlightedStructureId$: Observable<string> = this._highlightedStructureId$.asObservable();
+  public highlightedStructureId$: Observable<string> = this._highlightedStructureId$
+    .asObservable()
+    .pipe(delay(HIGHLIGHT_DELAY_IN_MILLISECONDS));
 
   public structuresList$: Observable<StructurePresentation[]> = this.presenter.structuresList$(this._mapViewportAndZoom$);
 
@@ -173,6 +177,7 @@ export class CartographyPage {
   }
 
   public onCnfsPermanenceMarkerChange(markerEvent: MarkerEvent<CnfsPermanenceMarkerProperties>): void {
+    this._centerView$.next(permanenceMarkerEventToCenterView(markerEvent));
     this._highlightedStructureId$.next(markerEvent.markerProperties.id);
   }
 

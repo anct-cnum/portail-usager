@@ -35,7 +35,7 @@ import { CnfsByDepartmentProperties, CnfsByRegionProperties, Coordinates } from 
 import { emptyFeatureCollection } from '../../helpers';
 
 // TODO Convert configuration to injected token for default options then remove
-const ANIMATION_DURATION_IN_SECONDS: number = 0.5;
+const ANIMATION_DURATION_IN_SECONDS: number = 0.2;
 // TODO Convert configuration to injected token for default options then remove
 const MAP_OPTIONS: LeafletMapOptions = {
   layers: [

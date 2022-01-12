@@ -20,10 +20,17 @@ const currentValue = <T>(simpleChange: SimpleChange | undefined): T => simpleCha
 
 const previousValue = <T>(simpleChange: SimpleChange | undefined): T => simpleChange?.previousValue as T;
 
-const highlight = (structureId: string): void => {
+const SCROLL_DELAY_IN_MILLISECONDS: number = 50;
+
+const highlight = (structureId: string): string => {
   const elem: HTMLElement | null = document.getElementById(structureId);
-  if (elem == null) return;
-  elem.scrollIntoView({ behavior: 'smooth' });
+  if (elem == null) return structureId;
+
+  setTimeout((): void => {
+    elem.scrollIntoView({ behavior: 'smooth' });
+  }, SCROLL_DELAY_IN_MILLISECONDS);
+
+  return structureId;
 };
 
 @Component({
@@ -41,10 +48,10 @@ export class CnfsListComponent implements OnChanges {
   public ngOnChanges(changes: SimpleChanges): void {
     shouldHighlight(changes['highlightedStructureId']) && highlight(currentValue<string>(changes['highlightedStructureId']));
     shouldReplayHighlight(changes['highlightedStructureId']) &&
-      highlight(previousValue<string>(changes['highlightedStructureId']));
+      (this.highlightedStructureId = highlight(previousValue<string>(changes['highlightedStructureId'])));
   }
 
-  public trackByPermanenceId(_: number, permanence: StructurePresentation): string {
-    return permanence.id;
+  public trackByStructureId(_: number, structure: StructurePresentation): string {
+    return structure.id;
   }
 }
