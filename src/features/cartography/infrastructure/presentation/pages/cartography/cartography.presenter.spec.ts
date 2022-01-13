@@ -242,8 +242,6 @@ describe('cartography presenter', (): void => {
         }
       } as ListCnfsUseCase;
 
-
-
       const expectedCnfsPermanenceMarkersFeatures: Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[] = [
         {
           geometry: {
