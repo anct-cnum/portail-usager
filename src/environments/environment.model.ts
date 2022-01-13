@@ -3,6 +3,7 @@ import { ApiConfiguration } from '../app/tokens';
 
 export enum Api {
   Adresse = '@adresse',
+  AdresseFallback = '@adresseFallback',
   Geo = '@geo',
   ConseillerNumerique = '@conseillerNumerique'
 }
