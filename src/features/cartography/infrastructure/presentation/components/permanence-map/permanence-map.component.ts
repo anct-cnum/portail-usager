@@ -25,6 +25,8 @@ export class PermanenceMapComponent {
   @Output() public readonly cnfsPermanenceMarkerChange: EventEmitter<MarkerEvent<CnfsPermanenceMarkerProperties>> =
     new EventEmitter<MarkerEvent<CnfsPermanenceMarkerProperties>>();
 
+  @Input() public highlightedStructureId: string | null = null;
+
   @Input() public markers: FeatureCollection<Point, PointOfInterestMarkerProperties | TypedMarker> | null = null;
 
   @Output() public readonly stateChange: EventEmitter<ViewReset> = new EventEmitter<ViewReset>();

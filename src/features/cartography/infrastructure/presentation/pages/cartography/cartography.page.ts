@@ -49,7 +49,7 @@ export class CartographyPage {
 
   private readonly _forceCnfsPermanence$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  private readonly _highlightedStructureId$: Subject<string> = new Subject<string>();
+  private readonly _highlightedStructureId$: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
 
   private readonly _mapViewportAndZoom$: BehaviorSubject<ViewportAndZoom> = new BehaviorSubject<ViewportAndZoom>(
     DEFAULT_MAP_VIEWPORT_AND_ZOOM
@@ -71,13 +71,13 @@ export class CartographyPage {
     )
   );
 
-  public displayDetails: boolean = false;
+  public displayDetailsStructureId: string | null = null;
 
   public displayMap: boolean = false;
 
   public hasAddressError: boolean = false;
 
-  public highlightedStructureId$: Observable<string> = this._highlightedStructureId$
+  public highlightedStructureId$: Observable<string | null> = this._highlightedStructureId$
     .asObservable()
     .pipe(delay(HIGHLIGHT_DELAY_IN_MILLISECONDS));
 
@@ -158,12 +158,13 @@ export class CartographyPage {
 
   public displayCnfsDetails(id: string): void {
     this._cnfsDetails$.next(id);
-    this.displayDetails = true;
+    this.displayDetailsStructureId = id;
   }
 
   public hideCnfsDetails(): void {
     this._cnfsDetails$.next(null);
-    this.displayDetails = false;
+    this.displayDetailsStructureId != null && this._highlightedStructureId$.next(this.displayDetailsStructureId);
+    this.displayDetailsStructureId = null;
   }
 
   public onAutoLocateUsagerRequest(coordinates: Coordinates): void {
