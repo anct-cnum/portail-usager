@@ -31,8 +31,6 @@ const DEFAULT_MAP_VIEWPORT_AND_ZOOM: ViewportAndZoom = {
   zoomLevel: 6
 };
 
-const HIGHLIGHT_DELAY_IN_MILLISECONDS: number = 300;
-
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CartographyPresenter],
@@ -77,9 +75,7 @@ export class CartographyPage {
 
   public hasAddressError: boolean = false;
 
-  public highlightedStructureId$: Observable<string | null> = this._highlightedStructureId$
-    .asObservable()
-    .pipe(delay(HIGHLIGHT_DELAY_IN_MILLISECONDS));
+  public highlightedStructureId$: Observable<string | null> = this._highlightedStructureId$.asObservable().pipe(delay(0));
 
   public structuresList$: Observable<StructurePresentation[]> = this.presenter.structuresList$(this._mapViewportAndZoom$);
 
@@ -158,6 +154,7 @@ export class CartographyPage {
 
   public displayCnfsDetails(id: string): void {
     this._cnfsDetails$.next(id);
+    this._highlightedStructureId$.next(id);
     this.displayDetailsStructureId = id;
   }
 

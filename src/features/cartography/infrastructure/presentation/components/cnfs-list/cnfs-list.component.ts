@@ -20,7 +20,7 @@ const currentValue = <T>(simpleChange: SimpleChange | undefined): T => simpleCha
 
 const previousValue = <T>(simpleChange: SimpleChange | undefined): T => simpleChange?.previousValue as T;
 
-const SCROLL_DELAY_IN_MILLISECONDS: number = 50;
+const SCROLL_DELAY_IN_MILLISECONDS: number = 250;
 
 const highlight = (structureId: string): string => {
   const elem: HTMLElement | null = document.getElementById(structureId);

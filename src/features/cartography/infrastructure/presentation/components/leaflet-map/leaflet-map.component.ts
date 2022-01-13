@@ -29,7 +29,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { CenterView, MarkerEvent, MarkerProperties, PointOfInterestMarkerProperties, TypedMarker } from '../../models';
-import { MARKERS_TOKEN, MarkersConfiguration } from '../../../configuration';
+import { Marker, MARKERS_TOKEN, MarkersConfiguration } from '../../../configuration';
 import { Feature, FeatureCollection, Point } from 'geojson';
 import { CnfsByDepartmentProperties, CnfsByRegionProperties, Coordinates } from '../../../../core';
 import { emptyFeatureCollection } from '../../helpers';
@@ -61,6 +61,10 @@ type TypedLeafletMouseEvent<T> = Omit<LeafletMouseEvent, 'target'> & {
   };
 };
 
+export type TypedLeafletMarker<T> = Omit<LeafletMarker, 'feature'> & {
+  feature: T;
+};
+
 const shouldSetView = (centerViewChange: SimpleChange | undefined): boolean => !(centerViewChange?.firstChange ?? true);
 
 const currentValue = <T>(simpleChange: SimpleChange | undefined): T => simpleChange?.currentValue as T;
@@ -72,6 +76,17 @@ const markerPayloadFromEvent = (
   markerPosition: new Coordinates(markerEvent.latlng.lat, markerEvent.latlng.lng),
   markerProperties: markerEvent.target.feature.properties
 });
+
+const getMapMarkers = (leafletMap: LeafletMap): LeafletMarker[] => {
+  const markers: LeafletMarker[] = [];
+  leafletMap.eachLayer(
+    (layer: Layer): number | false => Object.keys(layer).includes('feature') && markers.push(layer as LeafletMarker)
+  );
+
+  return markers;
+};
+
+const toArray = <T>(input: T | T[]): T[] => (Array.isArray(input) ? input : [input]);
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -107,6 +122,7 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
       zoom: this.centerView.zoomLevel
     });
     control.zoom({ position: 'bottomright' }).addTo(this._map);
+    new ResizeObserver((): LeafletMap => this._map.invalidateSize()).observe(mapContainer.nativeElement);
   }
 
   public constructor(@Inject(MARKERS_TOKEN) private readonly markersConfigurations: MarkersConfiguration) {}
@@ -118,7 +134,9 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
   ): LeafletMarker {
     return marker(position, { icon: iconMarker, zIndexOffset: feature.properties.zIndexOffset ?? 0 }).on(
       'click',
-      (markerEvent: LeafletMouseEvent): void => this.markerChange.emit(markerPayloadFromEvent(markerEvent))
+      (markerEvent: LeafletMouseEvent): void => {
+        this.markerChange.emit(markerPayloadFromEvent(markerEvent));
+      }
     );
   }
 
@@ -127,7 +145,7 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
       position,
       feature,
       this.markersConfigurations[feature.properties.markerType](
-        feature as unknown as Feature<Point, MarkerProperties<CnfsByDepartmentProperties & CnfsByRegionProperties>>
+        feature as Feature<Point, MarkerProperties<CnfsByDepartmentProperties & CnfsByRegionProperties>>
       )
     );
 
@@ -136,6 +154,16 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
       animate: true,
       duration: ANIMATION_DURATION_IN_SECONDS
     });
+  }
+
+  public findMarker<T extends Feature<Point, PointOfInterestMarkerProperties>>(
+    markerType: Marker | Marker[],
+    predicate: (marker: T) => boolean
+  ): TypedLeafletMarker<T> | undefined {
+    return (getMapMarkers(this._map) as unknown as TypedLeafletMarker<T>[]).find(
+      (mapMarker: TypedLeafletMarker<T>): boolean =>
+        toArray(markerType).includes(mapMarker.feature.properties.markerType) && predicate(mapMarker.feature)
+    );
   }
 
   public ngAfterViewChecked(): void {
