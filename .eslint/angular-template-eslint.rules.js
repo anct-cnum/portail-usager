@@ -15,7 +15,7 @@ module.exports = {
   '@angular-eslint/template/cyclomatic-complexity': [
     'error',
     {
-      maxComplexity: 4
+      maxComplexity: 5
     }
   ],
   '@angular-eslint/template/eqeqeq': 'error',
