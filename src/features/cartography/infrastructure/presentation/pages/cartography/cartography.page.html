@@ -28,11 +28,11 @@
     </ng-template>
   </div>
   <div [ngClass]="displayDetails ? 'fr-col-xl-4 fr-col-lg-5' : 'fr-col-xl-8 fr-col-lg-7'" class="fr-col-12">
-    <ng-container *ngIf="visibleMarkersWithUsager$ | async as markers">
+    <ng-container *ngIf="mapReadyAtZoomLevel$ | async as map">
       <ng-container *ngIf="centerView$ | async as centerView">
         <leaflet-map
           [centerView]="centerView"
-          [markers]="markers"
+          [markers]="map.markers"
           (markerChange)="onMarkerChanged($event)"
           (stateChange)="onMapViewChanged($event)"
           (zoomOut)="onZoomOut()"></leaflet-map>
@@ -41,3 +41,4 @@
   </div>
 </div>
 <display-map (displayMap)="displayMap = $event"></display-map>
+<ng-container *ngIf="automaticLocationDezoomBehaviorIfNoPermanenceIsVisible$ | async" ></ng-container>

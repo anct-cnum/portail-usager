@@ -16,13 +16,14 @@ import { Coordinates } from '../../../../core';
 import { ViewportAndZoom, ViewReset } from '../../directives/leaflet-map-state-change';
 import { CartographyConfiguration, CARTOGRAPHY_TOKEN, Marker } from '../../../configuration';
 import { Feature, FeatureCollection, Point } from 'geojson';
-import { catchError, combineLatestWith, map, startWith } from 'rxjs/operators';
+import { catchError, combineLatestWith, debounceTime, filter, map, skipWhile, startWith, takeWhile } from 'rxjs/operators';
 import {
   boundedMarkerEventToCenterView,
   coordinatesToCenterView,
   permanenceMarkerEventToCenterView
 } from '../../models/center-view/center-view.presentation-mapper';
-import { CITY_ZOOM_LEVEL } from '../../helpers/map-constants';
+import { CITY_ZOOM_LEVEL, DEPARTMENT_ZOOM_LEVEL } from '../../helpers/map-constants';
+import { allowIfMapNotAtCityLevelOrCenterViewNotOnUsager, firstMarkerIsNotCnfsPermanence, usagerIsAlone } from '../../helpers';
 
 // TODO Inject though configuration token
 const DEFAULT_MAP_VIEWPORT_AND_ZOOM: ViewportAndZoom = {
@@ -38,6 +39,8 @@ const DEFAULT_MAP_VIEWPORT_AND_ZOOM: ViewportAndZoom = {
 })
 export class CartographyPage {
   private readonly _addressToGeocode$: Subject<string> = new Subject<string>();
+
+  private _automaticLocationInProgress: boolean = false;
 
   private readonly _centerView$: BehaviorSubject<CenterView> = new BehaviorSubject<CenterView>(this.cartographyConfiguration);
 
@@ -73,14 +76,14 @@ export class CartographyPage {
 
   public structuresList$: Observable<StructurePresentation[]> = this.presenter.structuresList$(this._mapViewportAndZoom$);
 
-  // Todo : use empty object pattern.
+  // TODO On peut merger ça plus haut pour éviter le null
   public readonly usagerCoordinates$: Observable<Coordinates | null> = merge(
     this.presenter.geocodeAddress$(this._addressToGeocode$),
     this._usagerCoordinates$
   ).pipe(
-    tap((coordinates: Coordinates): void => {
-      this._centerView$.next(coordinatesToCenterView(coordinates, CITY_ZOOM_LEVEL));
-    }),
+    /*tap((usagerCoordinates: Coordinates) => {
+      this._centerView$.next(coordinatesToCenterView(usagerCoordinates, CITY_ZOOM_LEVEL));
+    }),*/
     startWith(null),
     catchError((): Observable<null> => {
       this.hasAddressError = true;
@@ -88,21 +91,121 @@ export class CartographyPage {
     })
   );
 
+  public readonly validUsagerCoordinates$: Observable<Coordinates> = this.usagerCoordinates$.pipe(
+    filter((coordinates: Coordinates | null): coordinates is Coordinates => coordinates !== null)
+  );
+
   public readonly visibleMarkersWithUsager$: Observable<
     FeatureCollection<Point, PointOfInterestMarkerProperties | TypedMarker>
   > = this._visibleMapPointsOfInterest$.pipe(
-    combineLatestWith(this.usagerCoordinates$, this._mapViewportAndZoom$),
+    combineLatestWith(this.usagerCoordinates$),
     map(
-      ([visibleMapPointsOfInterest, usagerCoordinates, viewportAndZoom]: [
+      ([visibleMapPointsOfInterest, usagerCoordinates]: [
         Feature<Point, PointOfInterestMarkerProperties>[],
-        Coordinates | null,
+        Coordinates | null
+      ]): FeatureCollection<Point, PointOfInterestMarkerProperties | TypedMarker> => ({
+        features: addUsagerFeatureToMarkers(visibleMapPointsOfInterest, usagerCoordinates),
+        type: 'FeatureCollection'
+      })
+    )
+  );
+
+  public readonly mapReadyAtZoomLevel$: Observable<{
+    markers: FeatureCollection<Point, PointOfInterestMarkerProperties | TypedMarker>;
+    viewportAndZoom: ViewportAndZoom;
+  }> = this.visibleMarkersWithUsager$.pipe(
+    combineLatestWith(this._mapViewportAndZoom$),
+    map(
+      ([visibleMarkersWithUsager, viewportAndZoom]: [
+        FeatureCollection<Point, PointOfInterestMarkerProperties | TypedMarker>,
         ViewportAndZoom
-      ]): FeatureCollection<Point, PointOfInterestMarkerProperties | TypedMarker> => {
-        this.dezoomRequestIfNoPermanenceIsVisible(usagerCoordinates, visibleMapPointsOfInterest, viewportAndZoom);
-        return {
-          features: addUsagerFeatureToMarkers(visibleMapPointsOfInterest, usagerCoordinates),
-          type: 'FeatureCollection'
-        };
+      ]): {
+        markers: FeatureCollection<Point, PointOfInterestMarkerProperties | TypedMarker>;
+        viewportAndZoom: ViewportAndZoom;
+      } => ({
+        markers: visibleMarkersWithUsager,
+        viewportAndZoom
+      })
+    )
+  );
+
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  public readonly automaticLocationDezoomBehaviorIfNoPermanenceIsVisible$: Observable<void> = this.mapReadyAtZoomLevel$.pipe(
+    combineLatestWith(this._centerView$.asObservable(), this.validUsagerCoordinates$),
+    skipWhile((): boolean => {
+      console.log(!this._automaticLocationInProgress ? 'Not in automatic mode, skipping' : 'Dezzom activated');
+      return !this._automaticLocationInProgress;
+    }),
+    takeWhile(
+      ([markersAndViewport, centerView, usagerCoordinates]: [
+        {
+          markers: FeatureCollection<Point, PointOfInterestMarkerProperties | TypedMarker>;
+          viewportAndZoom: ViewportAndZoom;
+        },
+        CenterView,
+        Coordinates
+      ]): boolean => {
+        if (
+          allowIfMapNotAtCityLevelOrCenterViewNotOnUsager(
+            markersAndViewport.viewportAndZoom.zoomLevel,
+            centerView,
+            usagerCoordinates
+          )
+        ) {
+          console.log('allowIfMapNotAtCityLevelOrCenterViewNotOnUsager');
+          return true;
+        }
+        console.log('markers ', markersAndViewport.markers.features.length, usagerIsAlone(markersAndViewport.markers));
+        if (usagerIsAlone(markersAndViewport.markers)) {
+          console.log('usagerIsAlone');
+          return true;
+        }
+
+        if (firstMarkerIsNotCnfsPermanence(markersAndViewport.markers)) {
+          console.log('firstMarkerIsNotCnfsPermanence');
+          return true;
+        }
+
+        //if (markersAreNotCnfsPermanence(markersAndViewport.markers))
+
+        /* return (
+          allowIfMapNotAtCityLevelOrCenterViewNotOnUsager(
+            markersAndViewport.viewportAndZoom.zoomLevel,
+            centerView,
+            usagerCoordinates
+          ) || usagerIsAlone(markersAndViewport.markers)
+        );*/
+
+        // if (allowIfFirstZoomToCityLevel(markersAndViewport.viewportAndZoom.zoomLevel, centerView.zoomLevel)) return true;
+        /*console.log('Is mapValidatedZoomLevel <= centerView.zoomLevel', markersAndViewport.viewportAndZoom.zoomLevel, centerView.zoomLevel, markersAndViewport.viewportAndZoom.zoomLevel >= centerView.zoomLevel);
+        console.log(markersAndViewport.markers.features.length > 1 && markersAndViewport.markers.features[0].properties.markerType !== Marker.CnfsPermanence);*/
+        return false; // markersAndViewport.viewportAndZoom.zoomLevel != centerView.zoomLevel;
+      }
+    ),
+    debounceTime(400),
+    map(
+      ([markersAndViewport, centerView, usagerCoordinates]: [
+        {
+          markers: FeatureCollection<Point, PointOfInterestMarkerProperties | TypedMarker>;
+          viewportAndZoom: ViewportAndZoom;
+        },
+        CenterView,
+        Coordinates
+      ]): void => {
+        if (usagerIsAlone(markersAndViewport.markers)) {
+          console.log('USAGER ALONE NEXT ZOOM', markersAndViewport.viewportAndZoom.zoomLevel - 1);
+          this._centerView$.next(coordinatesToCenterView(usagerCoordinates, DEPARTMENT_ZOOM_LEVEL + 1));
+        }
+
+        if (
+          allowIfMapNotAtCityLevelOrCenterViewNotOnUsager(
+            markersAndViewport.viewportAndZoom.zoomLevel,
+            centerView,
+            usagerCoordinates
+          )
+        ) {
+          this._centerView$.next(coordinatesToCenterView(usagerCoordinates, CITY_ZOOM_LEVEL));
+        }
       }
     )
   );
@@ -111,16 +214,6 @@ export class CartographyPage {
     private readonly presenter: CartographyPresenter,
     @Inject(CARTOGRAPHY_TOKEN) private readonly cartographyConfiguration: CartographyConfiguration
   ) {}
-
-  private dezoomRequestIfNoPermanenceIsVisible(
-    usagerCoordinates: Coordinates | null,
-    visibleMapPointsOfInterest: Feature<Point, PointOfInterestMarkerProperties>[],
-    viewportAndZoom: ViewportAndZoom
-  ): void {
-    if (usagerCoordinates != null && visibleMapPointsOfInterest.length === 0) {
-      this._centerView$.next(coordinatesToCenterView(usagerCoordinates, viewportAndZoom.zoomLevel - 1));
-    }
-  }
 
   private handleBoundedMarkerEvents(markerEvent: MarkerEvent<PointOfInterestMarkerProperties>): void {
     this._forceCnfsPermanence$.next(isGuyaneBoundedMarker(markerEvent));
@@ -144,10 +237,12 @@ export class CartographyPage {
   }
 
   public onAutoLocateUsagerRequest(coordinates: Coordinates): void {
+    this._automaticLocationInProgress = true;
     this._usagerCoordinates$.next(coordinates);
   }
 
   public onGeocodeUsagerRequest(address: string): void {
+    this._automaticLocationInProgress = true;
     this._addressToGeocode$.next(address);
   }
 
