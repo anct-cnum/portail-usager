@@ -17,10 +17,10 @@ export type PointOfInterestMarkerProperties = CnfsLocalityMarkerProperties | Cnf
 export interface TypedMarker {
   markerType: Marker;
   zIndexOffset?: number;
+  highlight?: boolean;
 }
 
-export type MarkerProperties<T extends CnfsByDepartmentProperties | CnfsByRegionProperties | CnfsPermanenceProperties> = T &
-  TypedMarker;
+export type MarkerProperties<T> = T & TypedMarker;
 
 export interface MarkerEvent<T> {
   eventType: string;

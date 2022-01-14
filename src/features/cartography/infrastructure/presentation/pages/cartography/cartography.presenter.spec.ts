@@ -20,22 +20,16 @@ import {
   StructureContact
 } from '../../../../core';
 import {
-  CenterView,
   CnfsDetailsPresentation,
   CnfsPermanenceProperties,
   DayPresentation,
-  MarkerEvent,
   MarkerProperties,
   PointOfInterestMarkerProperties,
   StructurePresentation
 } from '../../models';
 import { ViewportAndZoom } from '../../directives/leaflet-map-state-change';
 import { Marker } from '../../../configuration';
-import {
-  boundedMarkerEventToCenterView,
-  permanenceMarkerEventToCenterView
-} from '../../models/center-view/center-view.presentation-mapper';
-import { CITY_ZOOM_LEVEL, DEPARTMENT_ZOOM_LEVEL, REGION_ZOOM_LEVEL } from '../../helpers/map-constants';
+import { DEPARTMENT_ZOOM_LEVEL, REGION_ZOOM_LEVEL } from '../../helpers/map-constants';
 
 const LIST_CNFS_BY_REGION_USE_CASE: ListCnfsByRegionUseCase = {
   execute$(): Observable<CnfsByRegion[]> {
@@ -108,7 +102,134 @@ const CNFS_DETAILS_USE_CASE: CnfsDetailsUseCase = {
 } as CnfsDetailsUseCase;
 
 describe('cartography presenter', (): void => {
-  describe('visible point of interest markers', (): void => {
+  describe('cnfs details', (): void => {
+    it('should get cnfs details', async (): Promise<void> => {
+      const expectedCnfsDetails: CnfsDetailsPresentation = {
+        address: 'Place José Moron 3200 RIOM',
+        cnfsNumber: 2,
+        email: 'email@example.com',
+        opening: [
+          {
+            day: DayPresentation.Monday,
+            hours: '9h30 - 17h30'
+          },
+          {
+            day: DayPresentation.Tuesday,
+            hours: '9h30 - 17h30'
+          },
+          {
+            day: DayPresentation.Wednesday,
+            hours: '9h30 - 17h30'
+          },
+          {
+            day: DayPresentation.Thursday,
+            hours: '9h30 - 17h30'
+          },
+          {
+            day: DayPresentation.Friday,
+            hours: '9h30 - 17h30'
+          },
+          {
+            day: DayPresentation.Saturday,
+            hours: '9h30 - 12h00'
+          }
+        ],
+        phone: '03 86 55 26 40',
+        structureName: 'Association Des Centres Sociaux Et Culturels Du Bassin De Riom',
+        website: 'https://www.test.com'
+      };
+
+      const id: string = '4c38ebc9a06fdd532bf9d7be';
+
+      const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+        CNFS_DETAILS_USE_CASE,
+        LIST_CNFS_BY_REGION_USE_CASE,
+        LIST_CNFS_BY_DEPARTMENT_USE_CASE,
+        LIST_CNFS_USE_CASE,
+        {} as GeocodeAddressUseCase,
+        {} as MapViewCullingService
+      );
+
+      const cnfsDetails: CnfsDetailsPresentation = await firstValueFrom(cartographyPresenter.cnfsDetails$(id));
+
+      expect(cnfsDetails).toStrictEqual(expectedCnfsDetails);
+    });
+  });
+
+  describe('structures list', (): void => {
+    it(`should be empty if markers to display are not CnfsPermanence`, async (): Promise<void> => {
+      const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+        {} as CnfsDetailsUseCase,
+        {
+          execute$: (): Observable<CnfsByRegion[]> => of([])
+        } as unknown as ListCnfsByRegionUseCase,
+        {
+          execute$: (): Observable<CnfsByDepartment[]> => of([])
+        } as unknown as ListCnfsByDepartmentUseCase,
+        {
+          execute$: (): Observable<Cnfs[]> => of([])
+        } as unknown as ListCnfsUseCase,
+        {} as GeocodeAddressUseCase,
+        {} as MapViewCullingService
+      );
+
+      const viewportAndZoom$: Observable<ViewportAndZoom> = of({
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+        viewport: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
+        zoomLevel: REGION_ZOOM_LEVEL
+      });
+
+      const structuresList: StructurePresentation[] = await firstValueFrom(
+        cartographyPresenter.structuresList$(viewportAndZoom$)
+      );
+
+      expect(structuresList).toStrictEqual([]);
+    });
+
+    it('should be the structures of the visible Cnfs permanences', async (): Promise<void> => {
+      const expectedStructureList: StructurePresentation[] = [
+        {
+          address: '12 rue des Acacias, 69002 Lyon',
+          id: '4c38ebc9a06fdd532bf9d7be',
+          isLabeledFranceServices: false,
+          name: 'Association des centres sociaux et culturels de Lyon'
+        },
+        {
+          address: '31 Avenue de la mer, 13003 Marseille',
+          id: '88bc36fb0db191928330b1e6',
+          isLabeledFranceServices: true,
+          name: 'Médiathèque de la mer'
+        }
+      ];
+
+      const viewportAndZoom$: Observable<ViewportAndZoom> = of({
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+        viewport: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
+        zoomLevel: DEPARTMENT_ZOOM_LEVEL + 1
+      });
+
+      const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+        {} as CnfsDetailsUseCase,
+        {
+          execute$: (): Observable<CnfsByRegion[]> => of([])
+        } as unknown as ListCnfsByRegionUseCase,
+        {
+          execute$: (): Observable<CnfsByDepartment[]> => of([])
+        } as unknown as ListCnfsByDepartmentUseCase,
+        LIST_CNFS_USE_CASE,
+        {} as GeocodeAddressUseCase,
+        new MapViewCullingService()
+      );
+
+      const structuresList: StructurePresentation[] = await firstValueFrom(
+        cartographyPresenter.structuresList$(viewportAndZoom$)
+      );
+
+      expect(structuresList).toStrictEqual(expectedStructureList);
+    });
+  });
+
+  describe('visible point of interest markers through viewport at zoom level', (): void => {
     it('should display the cnfs grouped by region markers at the region zoom level', async (): Promise<void> => {
       const expectedCnfsByRegionFeatures: Feature<Point, MarkerProperties<CnfsByRegionProperties>>[] = [
         {
@@ -161,7 +282,7 @@ describe('cartography presenter', (): void => {
       expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsByRegionFeatures);
     });
 
-    it('should be cnfs by department at the department zoom level', async (): Promise<void> => {
+    it('should display cnfs by department at the department zoom level', async (): Promise<void> => {
       const expectedCnfsByDepartmentFeatures: Feature<Point, MarkerProperties<CnfsByDepartmentProperties>>[] = [
         {
           geometry: {
@@ -285,7 +406,7 @@ describe('cartography presenter', (): void => {
       expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsPermanenceMarkersFeatures);
     });
 
-    it('should display cnfs by department at depatment zoom level if marker display is not forced', async (): Promise<void> => {
+    it('should display cnfs by department at department zoom level if marker display is not forced', async (): Promise<void> => {
       const forceCnfsPermanenceDisplay$: Observable<boolean> = of(false);
       const listCnfsByDepartmentUseCase: ListCnfsByDepartmentUseCase = {
         execute$(): Observable<CnfsByDepartment[]> {
@@ -408,177 +529,65 @@ describe('cartography presenter', (): void => {
 
       expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsPermanenceMarkersFeatures);
     });
-  });
 
-  describe('center view', (): void => {
-    it('should map a markerEvent for a cnfs by region to a CenterView', (): void => {
-      const palaisDeLElyseeCoordinates: Coordinates = new Coordinates(48.87063, 2.316934);
-
-      const markerEvent: MarkerEvent<MarkerProperties<CnfsByRegionProperties>> = {
-        eventType: 'click',
-        markerPosition: palaisDeLElyseeCoordinates,
-        markerProperties: {
-          boundingZoom: 8,
-          count: 6,
-          markerType: Marker.CnfsByRegion,
-          region: 'Auvergne'
-        }
-      };
-
-      const expectedCenterView: CenterView = {
-        coordinates: palaisDeLElyseeCoordinates,
-        zoomLevel: 8
-      };
-
-      expect(boundedMarkerEventToCenterView(markerEvent)).toStrictEqual(expectedCenterView);
-    });
-
-    it('should map a markerEvent for a cnfs permanence to a CenterView', (): void => {
-      const palaisDeLElyseeCoordinates: Coordinates = new Coordinates(48.87063, 2.316934);
-
-      const markerEvent: MarkerEvent<MarkerProperties<CnfsPermanenceProperties>> = {
-        eventType: 'click',
-        markerPosition: palaisDeLElyseeCoordinates,
-        markerProperties: {
-          address: '12 rue des Acacias, 69002 Lyon',
-          id: '4c38ebc9a06fdd532bf9d7be',
-          isLabeledFranceServices: false,
-          markerType: Marker.CnfsPermanence,
-          name: 'Association des centres sociaux et culturels de Lyon'
-        }
-      };
-
-      const expectedCenterView: CenterView = {
-        coordinates: palaisDeLElyseeCoordinates,
-        zoomLevel: CITY_ZOOM_LEVEL
-      };
-
-      expect(permanenceMarkerEventToCenterView(markerEvent)).toStrictEqual(expectedCenterView);
-    });
-  });
-
-  describe('structures list', (): void => {
-    it(`should be empty if markers to display are not CnfsPermanence`, async (): Promise<void> => {
+    it('should display all cnfs permanences with highlighted permanence', async (): Promise<void> => {
       const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
         {} as CnfsDetailsUseCase,
-        {
-          execute$: (): Observable<CnfsByRegion[]> => of([])
-        } as unknown as ListCnfsByRegionUseCase,
-        {
-          execute$: (): Observable<CnfsByDepartment[]> => of([])
-        } as unknown as ListCnfsByDepartmentUseCase,
-        {
-          execute$: (): Observable<Cnfs[]> => of([])
-        } as unknown as ListCnfsUseCase,
-        {} as GeocodeAddressUseCase,
-        {} as MapViewCullingService
-      );
-
-      const viewportAndZoom$: Observable<ViewportAndZoom> = of({
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        viewport: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
-        zoomLevel: REGION_ZOOM_LEVEL
-      });
-
-      const structuresList: StructurePresentation[] = await firstValueFrom(
-        cartographyPresenter.structuresList$(viewportAndZoom$)
-      );
-
-      expect(structuresList).toStrictEqual([]);
-    });
-
-    it('should be the structures of the visible Cnfs permanences', async (): Promise<void> => {
-      const expectedStructureList: StructurePresentation[] = [
-        {
-          address: '12 rue des Acacias, 69002 Lyon',
-          id: '4c38ebc9a06fdd532bf9d7be',
-          isLabeledFranceServices: false,
-          name: 'Association des centres sociaux et culturels de Lyon'
-        },
-        {
-          address: '31 Avenue de la mer, 13003 Marseille',
-          id: '88bc36fb0db191928330b1e6',
-          isLabeledFranceServices: true,
-          name: 'Médiathèque de la mer'
-        }
-      ];
-
-      const viewportAndZoom$: Observable<ViewportAndZoom> = of({
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        viewport: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
-        zoomLevel: DEPARTMENT_ZOOM_LEVEL + 1
-      });
-
-      const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
-        {} as CnfsDetailsUseCase,
-        {
-          execute$: (): Observable<CnfsByRegion[]> => of([])
-        } as unknown as ListCnfsByRegionUseCase,
-        {
-          execute$: (): Observable<CnfsByDepartment[]> => of([])
-        } as unknown as ListCnfsByDepartmentUseCase,
+        LIST_CNFS_BY_REGION_USE_CASE,
+        LIST_CNFS_BY_DEPARTMENT_USE_CASE,
         LIST_CNFS_USE_CASE,
         {} as GeocodeAddressUseCase,
         new MapViewCullingService()
       );
 
-      const structuresList: StructurePresentation[] = await firstValueFrom(
-        cartographyPresenter.structuresList$(viewportAndZoom$)
+      const expectedCnfsPermanenceMarkersFeatures: Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[] = [
+        {
+          geometry: {
+            coordinates: [4.816864, 45.734377],
+            type: 'Point'
+          },
+          properties: {
+            address: '12 rue des Acacias, 69002 Lyon',
+            highlight: true,
+            id: '4c38ebc9a06fdd532bf9d7be',
+            isLabeledFranceServices: false,
+            markerType: Marker.CnfsPermanence,
+            name: 'Association des centres sociaux et culturels de Lyon'
+          },
+          type: 'Feature'
+        },
+        {
+          geometry: {
+            coordinates: [5.380007, 43.305645],
+            type: 'Point'
+          },
+          properties: {
+            address: '31 Avenue de la mer, 13003 Marseille',
+            id: '88bc36fb0db191928330b1e6',
+            isLabeledFranceServices: true,
+            markerType: Marker.CnfsPermanence,
+            name: 'Médiathèque de la mer'
+          },
+          type: 'Feature'
+        }
+      ];
+
+      const viewportAndZoom$: Observable<ViewportAndZoom> = of({
+        viewport: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
+        zoomLevel: DEPARTMENT_ZOOM_LEVEL + 1
+      });
+
+      const highlightedStructureId$: Observable<string> = of('4c38ebc9a06fdd532bf9d7be');
+
+      const visibleMapPointsOfInterest: Feature<Point, PointOfInterestMarkerProperties>[] = await firstValueFrom(
+        cartographyPresenter.visibleMapPointsOfInterestThroughViewportAtZoomLevel$(
+          viewportAndZoom$,
+          of(false),
+          highlightedStructureId$
+        )
       );
 
-      expect(structuresList).toStrictEqual(expectedStructureList);
+      expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsPermanenceMarkersFeatures);
     });
-  });
-
-  it('should get cnfs details', async (): Promise<void> => {
-    const expectedCnfsDetails: CnfsDetailsPresentation = {
-      address: 'Place José Moron 3200 RIOM',
-      cnfsNumber: 2,
-      email: 'email@example.com',
-      opening: [
-        {
-          day: DayPresentation.Monday,
-          hours: '9h30 - 17h30'
-        },
-        {
-          day: DayPresentation.Tuesday,
-          hours: '9h30 - 17h30'
-        },
-        {
-          day: DayPresentation.Wednesday,
-          hours: '9h30 - 17h30'
-        },
-        {
-          day: DayPresentation.Thursday,
-          hours: '9h30 - 17h30'
-        },
-        {
-          day: DayPresentation.Friday,
-          hours: '9h30 - 17h30'
-        },
-        {
-          day: DayPresentation.Saturday,
-          hours: '9h30 - 12h00'
-        }
-      ],
-      phone: '03 86 55 26 40',
-      structureName: 'Association Des Centres Sociaux Et Culturels Du Bassin De Riom',
-      website: 'https://www.test.com'
-    };
-
-    const id: string = '4c38ebc9a06fdd532bf9d7be';
-
-    const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
-      CNFS_DETAILS_USE_CASE,
-      LIST_CNFS_BY_REGION_USE_CASE,
-      LIST_CNFS_BY_DEPARTMENT_USE_CASE,
-      LIST_CNFS_USE_CASE,
-      {} as GeocodeAddressUseCase,
-      {} as MapViewCullingService
-    );
-
-    const cnfsDetails: CnfsDetailsPresentation = await firstValueFrom(cartographyPresenter.cnfsDetails$(id));
-
-    expect(cnfsDetails).toStrictEqual(expectedCnfsDetails);
   });
 });

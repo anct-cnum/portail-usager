@@ -56,7 +56,11 @@ export class CartographyPage {
   private readonly _usagerCoordinates$: Subject<Coordinates> = new Subject<Coordinates>();
 
   private readonly _visibleMapPointsOfInterest$: Observable<Feature<Point, PointOfInterestMarkerProperties>[]> = this.presenter
-    .visibleMapPointsOfInterestThroughViewportAtZoomLevel$(this._mapViewportAndZoom$, this._forceCnfsPermanence$.asObservable())
+    .visibleMapPointsOfInterestThroughViewportAtZoomLevel$(
+      this._mapViewportAndZoom$,
+      this._forceCnfsPermanence$.asObservable(),
+      this._highlightedStructureId$.asObservable()
+    )
     .pipe(startWith([]));
 
   public centerView$: Observable<CenterView> = this._centerView$.asObservable();

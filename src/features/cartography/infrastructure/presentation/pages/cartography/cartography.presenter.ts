@@ -4,6 +4,7 @@ import {
   cnfsCoreToCnfsPermanenceFeatures,
   CnfsDetailsPresentation,
   cnfsDetailsToPresentation,
+  CnfsPermanenceMarkerProperties,
   CnfsPermanenceProperties,
   listCnfsByRegionToPresentation,
   MarkerEvent,
@@ -55,6 +56,27 @@ export const isGuyaneBoundedMarker = (markerEvent: MarkerEvent<PointOfInterestMa
   return departementProperties.department === 'Guyane' || regionProperties.region === 'Guyane';
 };
 
+const highlightedPermanence = (
+  cnfsPermanence: Feature<Point, CnfsPermanenceMarkerProperties>
+): Feature<Point, CnfsPermanenceMarkerProperties> => ({
+  ...cnfsPermanence,
+  ...{
+    properties: {
+      ...cnfsPermanence.properties,
+      highlight: true
+    }
+  }
+});
+
+const highlightPermanence = (
+  listCnfsPermanencesInViewport: Feature<Point, CnfsPermanenceMarkerProperties>[],
+  highlightedStructureId: string | null
+): Feature<Point, CnfsPermanenceMarkerProperties>[] =>
+  listCnfsPermanencesInViewport.map(
+    (cnfsPermanence: Feature<Point, CnfsPermanenceMarkerProperties>): Feature<Point, CnfsPermanenceMarkerProperties> =>
+      cnfsPermanence.properties.id === highlightedStructureId ? highlightedPermanence(cnfsPermanence) : cnfsPermanence
+  );
+
 @Injectable()
 export class CartographyPresenter {
   private readonly _cnfsByDepartment$: Observable<Feature<Point, MarkerProperties<CnfsByDepartmentProperties>>[]> =
@@ -91,19 +113,25 @@ export class CartographyPresenter {
     );
   }
 
+  // eslint-disable-next-line max-lines-per-function
   private cnfsMarkersInViewportAtZoomLevel$(
     viewportWithZoomLevel$: Observable<ViewportAndZoom>,
-    forceCnfsPermanenceDisplay$: Observable<boolean>
+    forceCnfsPermanenceDisplay$: Observable<boolean>,
+    highlightedStructureId$: Observable<string | null>
   ): Observable<Feature<Point, PointOfInterestMarkerProperties>[]> {
     return viewportWithZoomLevel$.pipe(
-      combineLatestWith(forceCnfsPermanenceDisplay$),
+      combineLatestWith(forceCnfsPermanenceDisplay$, highlightedStructureId$),
       mergeMap(
-        ([viewportWithZoomLevel, forceCnfsPermanenceDisplay]: [ViewportAndZoom, boolean]): Observable<
-          Feature<Point, PointOfInterestMarkerProperties>[]
-        > => {
-          const markerTypeToDisplay: Marker = getMarkerToDisplay(forceCnfsPermanenceDisplay, viewportWithZoomLevel);
-          return this.mergedMarkersFilteredByTypeToDisplay$(markerTypeToDisplay, viewportWithZoomLevel);
-        }
+        ([viewportWithZoomLevel, forceCnfsPermanenceDisplay, highlightedStructureId]: [
+          ViewportAndZoom,
+          boolean,
+          string | null
+        ]): Observable<Feature<Point, PointOfInterestMarkerProperties>[]> =>
+          this.mergedMarkersFilteredByTypeToDisplay$(
+            getMarkerToDisplay(forceCnfsPermanenceDisplay, viewportWithZoomLevel),
+            viewportWithZoomLevel,
+            highlightedStructureId
+          )
       )
     );
   }
@@ -117,11 +145,26 @@ export class CartographyPresenter {
   private cnfsPermanencesInViewportOrEmpty$(
     markerTypeToDisplay: Marker,
     viewportAndZoom: ViewportAndZoom
-  ): Observable<Feature<Point, PointOfInterestMarkerProperties>[]> {
+  ): Observable<Feature<Point, CnfsPermanenceMarkerProperties>[]> {
     return iif(
       (): boolean => markerTypeToDisplay === Marker.CnfsPermanence,
       this.listCnfsPermanencesInViewport$(viewportAndZoom),
       EMPTY
+    );
+  }
+
+  private cnfsPermanencesWithHighlight$(
+    markerTypeToDisplay: Marker,
+    viewportAndZoom: ViewportAndZoom,
+    highlightedStructureId: string | null
+  ): Observable<Feature<Point, PointOfInterestMarkerProperties>[]> {
+    return this.cnfsPermanencesInViewportOrEmpty$(markerTypeToDisplay, viewportAndZoom).pipe(
+      map(
+        (
+          listCnfsPermanencesInViewport: Feature<Point, CnfsPermanenceMarkerProperties>[]
+        ): Feature<Point, PointOfInterestMarkerProperties>[] =>
+          highlightPermanence(listCnfsPermanencesInViewport, highlightedStructureId)
+      )
     );
   }
 
@@ -141,12 +184,13 @@ export class CartographyPresenter {
 
   private mergedMarkersFilteredByTypeToDisplay$(
     markerTypeToDisplay: Marker,
-    viewportWithZoomLevel: ViewportAndZoom
+    viewportWithZoomLevel: ViewportAndZoom,
+    highlightedStructureId: string | null
   ): Observable<Feature<Point, PointOfInterestMarkerProperties>[]> {
     return merge(
       this.cnfsByRegionOrEmpty$(markerTypeToDisplay),
       this.cnfsByDepartmentOrEmpty$(markerTypeToDisplay),
-      this.cnfsPermanencesInViewportOrEmpty$(markerTypeToDisplay, viewportWithZoomLevel)
+      this.cnfsPermanencesWithHighlight$(markerTypeToDisplay, viewportWithZoomLevel, highlightedStructureId)
     );
   }
 
@@ -175,8 +219,9 @@ export class CartographyPresenter {
 
   public visibleMapPointsOfInterestThroughViewportAtZoomLevel$(
     viewBoxWithZoomLevel$: Observable<ViewportAndZoom>,
-    forceCnfsPermanenceDisplay$: Observable<boolean> = of(false)
+    forceCnfsPermanenceDisplay$: Observable<boolean> = of(false),
+    highlightedStructureId$: Observable<string | null> = of('')
   ): Observable<Feature<Point, PointOfInterestMarkerProperties>[]> {
-    return this.cnfsMarkersInViewportAtZoomLevel$(viewBoxWithZoomLevel$, forceCnfsPermanenceDisplay$);
+    return this.cnfsMarkersInViewportAtZoomLevel$(viewBoxWithZoomLevel$, forceCnfsPermanenceDisplay$, highlightedStructureId$);
   }
 }

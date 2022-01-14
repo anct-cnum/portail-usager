@@ -1,3 +1,4 @@
+// eslint-disable-next-line id-length
 import {
   control,
   DivIcon,
@@ -28,7 +29,14 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import { CenterView, MarkerEvent, MarkerProperties, PointOfInterestMarkerProperties, TypedMarker } from '../../models';
+import {
+  CenterView,
+  CnfsPermanenceMarkerProperties,
+  MarkerEvent,
+  MarkerProperties,
+  PointOfInterestMarkerProperties,
+  TypedMarker
+} from '../../models';
 import { Marker, MARKERS_TOKEN, MarkersConfiguration } from '../../../configuration';
 import { Feature, FeatureCollection, Point } from 'geojson';
 import { CnfsByDepartmentProperties, CnfsByRegionProperties, Coordinates } from '../../../../core';
@@ -132,12 +140,12 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
     feature: Feature<Point, PointOfInterestMarkerProperties>,
     iconMarker: DivIcon | Icon
   ): LeafletMarker {
-    return marker(position, { icon: iconMarker, zIndexOffset: feature.properties.zIndexOffset ?? 0 }).on(
-      'click',
-      (markerEvent: LeafletMouseEvent): void => {
-        this.markerChange.emit(markerPayloadFromEvent(markerEvent));
-      }
-    );
+    return marker(position, {
+      icon: iconMarker,
+      zIndexOffset: feature.properties.zIndexOffset ?? 0
+    }).on('click', (markerEvent: LeafletMouseEvent): void => {
+      this.markerChange.emit(markerPayloadFromEvent(markerEvent));
+    });
   }
 
   private readonly featureToMarker = (feature: Feature<Point, PointOfInterestMarkerProperties>, position: LatLng): Layer =>
@@ -145,7 +153,10 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
       position,
       feature,
       this.markersConfigurations[feature.properties.markerType](
-        feature as Feature<Point, MarkerProperties<CnfsByDepartmentProperties & CnfsByRegionProperties>>
+        feature as Feature<
+          Point,
+          MarkerProperties<CnfsByDepartmentProperties & CnfsByRegionProperties & CnfsPermanenceMarkerProperties & null>
+        >
       )
     );
 

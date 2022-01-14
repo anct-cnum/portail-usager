@@ -1,5 +1,5 @@
 import { DivIcon, icon, Icon, Point as LeafletPoint } from 'leaflet';
-import { MarkerProperties } from '../../../presentation/models';
+import { CnfsPermanenceMarkerProperties, MarkerProperties } from '../../../presentation/models';
 import { Feature, Point } from 'geojson';
 import { CnfsByDepartmentProperties, CnfsByRegionProperties } from '../../../../core';
 
@@ -10,50 +10,61 @@ const HALF: number = 0.5;
 const ROUND_FALSE: boolean = false;
 
 const CNFS_MARKER_WIDTH_IN_PIXEL: number = 28.5;
-const CNFS_MARKER_HEIGTH_IN_PIXEL: number = 48;
+const CNS_MARKER_HEIGHT_IN_PIXEL: number = 48;
+const CNFS_MARKER_HIGHLIGHT_SCALE: number = 1.5;
+const CNFS_MARKER_HIGHLIGHT_WIDTH_IN_PIXEL: number = CNFS_MARKER_WIDTH_IN_PIXEL * CNFS_MARKER_HIGHLIGHT_SCALE;
+const CNFS_MARKER_HIGHLIGHT_HEIGTH_IN_PIXEL: number = CNS_MARKER_HEIGHT_IN_PIXEL * CNFS_MARKER_HIGHLIGHT_SCALE;
 const CNFS_MARKER_DIMENSIONS: LeafletPoint = new LeafletPoint(
   CNFS_MARKER_WIDTH_IN_PIXEL,
-  CNFS_MARKER_HEIGTH_IN_PIXEL,
+  CNS_MARKER_HEIGHT_IN_PIXEL,
+  ROUND_FALSE
+);
+const CNFS_MARKER_HIGHLIGHT_DIMENSIONS: LeafletPoint = new LeafletPoint(
+  CNFS_MARKER_HIGHLIGHT_WIDTH_IN_PIXEL,
+  CNFS_MARKER_HIGHLIGHT_HEIGTH_IN_PIXEL,
   ROUND_FALSE
 );
 
 const CNFS_MARKER_CNFS_BY_REGION_WIDTH_IN_PIXEL: number = 72;
-const CNFS_MARKER_CNFS_BY_REGION_HEIGTH_IN_PIXEL: number = 72;
+const CNS_MARKER_CNS_BY_REGION_HEIGHT_IN_PIXEL: number = 72;
 const CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS: LeafletPoint = new LeafletPoint(
   CNFS_MARKER_CNFS_BY_REGION_WIDTH_IN_PIXEL,
-  CNFS_MARKER_CNFS_BY_REGION_HEIGTH_IN_PIXEL,
+  CNS_MARKER_CNS_BY_REGION_HEIGHT_IN_PIXEL,
   ROUND_FALSE
 );
 
 const CNFS_MARKER_CNFS_BY_DEPARTMENT_WIDTH_IN_PIXEL: number = 62;
-const CNFS_MARKER_CNFS_BY_DEPARTMENT_HEIGTH_IN_PIXEL: number = 72;
+const CNS_MARKER_CNS_BY_DEPARTMENT_HEIGHT_IN_PIXEL: number = 72;
 const CNFS_MARKER_CNFS_BY_DEPARTMENT_DIMENSIONS: LeafletPoint = new LeafletPoint(
   CNFS_MARKER_CNFS_BY_DEPARTMENT_WIDTH_IN_PIXEL,
-  CNFS_MARKER_CNFS_BY_DEPARTMENT_HEIGTH_IN_PIXEL,
+  CNS_MARKER_CNS_BY_DEPARTMENT_HEIGHT_IN_PIXEL,
   ROUND_FALSE
 );
 
 const USAGER_MARKER_WIDTH_IN_PIXEL: number = 16;
-const USAGER_MARKER_HEIGTH_IN_PIXEL: number = 16;
+const USAGER_MARKER_HEIGHT_IN_PIXEL: number = 16;
 const USAGER_MARKER_DIMENSIONS: LeafletPoint = new LeafletPoint(
   USAGER_MARKER_WIDTH_IN_PIXEL,
-  USAGER_MARKER_HEIGTH_IN_PIXEL,
+  USAGER_MARKER_HEIGHT_IN_PIXEL,
   ROUND_FALSE
 );
 
-export type IconMarkerFactory = () => Icon;
-export type DivIconMarkerFactory<T extends CnfsByDepartmentProperties | CnfsByRegionProperties> = (
-  feature: Feature<Point, MarkerProperties<T>>
-) => DivIcon;
+export type IconMarkerFactory<T> = (feature: Feature<Point, MarkerProperties<T>>) => Icon;
+export type DivIconMarkerFactory<T> = (feature: Feature<Point, MarkerProperties<T>>) => DivIcon;
 
-export const cnfsMarkerFactory: IconMarkerFactory = (): Icon =>
-  icon({
-    iconAnchor: new LeafletPoint(CNFS_MARKER_DIMENSIONS.x * HALF, CNFS_MARKER_DIMENSIONS.y),
-    iconSize: CNFS_MARKER_DIMENSIONS,
+export const cnfsMarkerFactory: IconMarkerFactory<CnfsPermanenceMarkerProperties> = (
+  feature: Feature<Point, MarkerProperties<CnfsPermanenceMarkerProperties>>
+): Icon => {
+  const cnfsMarkerDimensions: LeafletPoint =
+    feature.properties.highlight === true ? CNFS_MARKER_HIGHLIGHT_DIMENSIONS : CNFS_MARKER_DIMENSIONS;
+  return icon({
+    iconAnchor: new LeafletPoint(cnfsMarkerDimensions.x * HALF, cnfsMarkerDimensions.y),
+    iconSize: cnfsMarkerDimensions,
     iconUrl: PIN_CNFS_BASE_64
   });
+};
 
-export const usagerMarkerFactory: IconMarkerFactory = (): Icon =>
+export const usagerMarkerFactory: IconMarkerFactory<null> = (): Icon =>
   icon({
     iconAnchor: new LeafletPoint(USAGER_MARKER_DIMENSIONS.x * HALF, USAGER_MARKER_DIMENSIONS.y),
     iconSize: USAGER_MARKER_DIMENSIONS,
