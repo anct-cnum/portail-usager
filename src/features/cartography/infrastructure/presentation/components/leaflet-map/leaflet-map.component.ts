@@ -73,9 +73,11 @@ export type TypedLeafletMarker<T> = Omit<LeafletMarker, 'feature'> & {
   feature: T;
 };
 
+const currentValue = <T>(simpleChange: SimpleChange | undefined): T => simpleChange?.currentValue as T;
+
 const shouldSetView = (centerViewChange: SimpleChange | undefined): boolean => !(centerViewChange?.firstChange ?? true);
 
-const currentValue = <T>(simpleChange: SimpleChange | undefined): T => simpleChange?.currentValue as T;
+const toArray = <T>(input: T | T[]): T[] => (Array.isArray(input) ? input : [input]);
 
 const markerPayloadFromEvent = (
   markerEvent: TypedLeafletMouseEvent<Feature<Point, PointOfInterestMarkerProperties>>
@@ -87,14 +89,13 @@ const markerPayloadFromEvent = (
 
 const getMapMarkers = (leafletMap: LeafletMap): LeafletMarker[] => {
   const markers: LeafletMarker[] = [];
-  leafletMap.eachLayer(
-    (layer: Layer): number | false => Object.keys(layer).includes('feature') && markers.push(layer as LeafletMarker)
-  );
+
+  const isLayerWithFeature = (layer: Layer): boolean => Object.keys(layer).includes('feature');
+
+  leafletMap.eachLayer((layer: Layer): number | false => isLayerWithFeature(layer) && markers.push(layer as LeafletMarker));
 
   return markers;
 };
-
-const toArray = <T>(input: T | T[]): T[] => (Array.isArray(input) ? input : [input]);
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
