@@ -20,7 +20,7 @@ describe('ApiRewriteUrl Interceptor', (): void => {
           provide: APIS_TOKENS,
           useValue: {
             [Api.Adresse]: { domain: 'https://api-adresse.data.gouv.fr' },
-            [Api.ConseillerNumerique]: { domain: 'https://beta.api.conseiller-numerique.gouv.fr' }
+            [Api.ConseillerNumerique]: { domain: 'https://api.conseiller-numerique.gouv.fr' }
           }
         }
       ]
