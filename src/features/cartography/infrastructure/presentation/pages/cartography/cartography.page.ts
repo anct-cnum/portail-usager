@@ -149,10 +149,7 @@ export class CartographyPage {
   private zoomOutUpToDepartmentLevel(
     featureCollection: FeatureCollection<Point, PointOfInterestMarkerProperties | TypedMarker>
   ): void {
-    const coordinates: Coordinates = new Coordinates(
-      featureCollection.features[0].geometry.coordinates[1],
-      featureCollection.features[0].geometry.coordinates[0]
-    );
+    const coordinates: Coordinates = Coordinates.fromGeoJsonFeature(featureCollection.features[0]);
     this._centerView$.next(coordinatesToCenterView(coordinates, DEPARTMENT_ZOOM_LEVEL + 1));
   }
 

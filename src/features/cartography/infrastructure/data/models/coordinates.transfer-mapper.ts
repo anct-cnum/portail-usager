@@ -6,4 +6,4 @@ import { Coordinates } from '../../../core';
 import { Point, FeatureCollection } from 'geojson';
 
 export const featureCollectionToFirstCoordinates = (featureCollection: FeatureCollection<Point>): Coordinates =>
-  new Coordinates(featureCollection.features[0].geometry.coordinates[1], featureCollection.features[0].geometry.coordinates[0]);
+  Coordinates.fromGeoJsonFeature(featureCollection.features[0]);

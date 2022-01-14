@@ -19,8 +19,5 @@ export const cnfsByDepartmentTransferToCore = (cnfsTransfer: CnfsByDepartmentTra
     .filter((feature: Feature<Point, CnfsByDepartmentTransferProperties>): boolean => hasValidCoordinates(feature))
     .map(
       (feature: Feature<Point, CnfsByDepartmentTransferProperties>): CnfsByDepartment =>
-        new CnfsByDepartment(
-          new Coordinates(feature.geometry.coordinates[1], feature.geometry.coordinates[0]),
-          transferToCoreProperties(feature.properties)
-        )
+        new CnfsByDepartment(Coordinates.fromGeoJsonFeature(feature), transferToCoreProperties(feature.properties))
     );

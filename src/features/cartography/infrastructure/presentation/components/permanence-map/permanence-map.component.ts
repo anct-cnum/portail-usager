@@ -95,7 +95,7 @@ export class PermanenceMapComponent implements OnChanges {
     if (markerFound == null) return;
 
     this._centerView$.next({
-      coordinates: new Coordinates(markerFound.feature.geometry.coordinates[1], markerFound.feature.geometry.coordinates[0]),
+      coordinates: Coordinates.fromGeoJsonFeature(markerFound.feature),
       zoomLevel: CITY_ZOOM_LEVEL
     });
   }

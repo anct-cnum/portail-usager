@@ -19,8 +19,5 @@ export const cnfsTransferToCore = (cnfsTransfer: CnfsTransfer): Cnfs[] =>
     .filter((feature: Feature<Point, CnfsTransferProperties>): boolean => hasValidCoordinates(feature))
     .map(
       (feature: Feature<Point, CnfsTransferProperties>): Cnfs =>
-        new Cnfs(
-          new Coordinates(feature.geometry.coordinates[1], feature.geometry.coordinates[0]),
-          transferToCoreProperties(feature.properties)
-        )
+        new Cnfs(Coordinates.fromGeoJsonFeature(feature), transferToCoreProperties(feature.properties))
     );
