@@ -6,6 +6,6 @@ import { CnfsPermanenceMarkerProperties } from '../../../presentation/models';
 type IconFactory =
   | DivIconMarkerFactory<CnfsByDepartmentProperties>
   | DivIconMarkerFactory<CnfsByRegionProperties>
-  | IconMarkerFactory<CnfsPermanenceMarkerProperties>
-  | IconMarkerFactory<null>;
+  | IconMarkerFactory
+  | IconMarkerFactory<CnfsPermanenceMarkerProperties>;
 export type MarkersConfiguration = Record<Marker, IconFactory>;

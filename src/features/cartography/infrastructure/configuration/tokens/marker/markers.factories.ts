@@ -49,7 +49,7 @@ const USAGER_MARKER_DIMENSIONS: LeafletPoint = new LeafletPoint(
   ROUND_FALSE
 );
 
-export type IconMarkerFactory<T> = (feature: Feature<Point, MarkerProperties<T>>) => Icon;
+export type IconMarkerFactory<T = null> = (feature: Feature<Point, MarkerProperties<T>>) => Icon;
 export type DivIconMarkerFactory<T> = (feature: Feature<Point, MarkerProperties<T>>) => DivIcon;
 
 export const cnfsMarkerFactory: IconMarkerFactory<CnfsPermanenceMarkerProperties> = (
@@ -64,7 +64,7 @@ export const cnfsMarkerFactory: IconMarkerFactory<CnfsPermanenceMarkerProperties
   });
 };
 
-export const usagerMarkerFactory: IconMarkerFactory<null> = (): Icon =>
+export const usagerMarkerFactory: IconMarkerFactory = (): Icon =>
   icon({
     iconAnchor: new LeafletPoint(USAGER_MARKER_DIMENSIONS.x * HALF, USAGER_MARKER_DIMENSIONS.y),
     iconSize: USAGER_MARKER_DIMENSIONS,
