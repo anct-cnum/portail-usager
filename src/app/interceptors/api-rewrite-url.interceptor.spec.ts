@@ -5,7 +5,6 @@ import { APIS_TOKENS } from '../tokens';
 import { Api } from '../../environments/environment.model';
 
 const HTTP_REQUEST_NO_REWRITE: HttpRequest<void> = new HttpRequest<void>('GET', 'https://www.google.com');
-const HTTP_REQUEST_SHOULD_REWRITE: HttpRequest<void> = new HttpRequest<void>('GET', '@adresse/search/?q=paris');
 
 // eslint-disable-next-line max-lines-per-function
 describe('ApiRewriteUrl Interceptor', (): void => {
@@ -19,7 +18,6 @@ describe('ApiRewriteUrl Interceptor', (): void => {
         {
           provide: APIS_TOKENS,
           useValue: {
-            [Api.Adresse]: { domain: 'https://api-adresse.data.gouv.fr' },
             [Api.ConseillerNumerique]: { domain: 'https://api.conseiller-numerique.gouv.fr' }
           }
         }
@@ -38,15 +36,6 @@ describe('ApiRewriteUrl Interceptor', (): void => {
     apiRewriteUrlInterceptor.intercept(HTTP_REQUEST_NO_REWRITE, {
       handle: (req: HttpRequest<void>): void => {
         expect(req.url).toBe('https://www.google.com');
-      }
-    } as HttpHandler);
-  });
-
-  it('should rewrite url', (): void => {
-    // eslint-disable-next-line rxjs/no-ignored-observable, @typescript-eslint/consistent-type-assertions
-    apiRewriteUrlInterceptor.intercept(HTTP_REQUEST_SHOULD_REWRITE, {
-      handle: (req: HttpRequest<void>): void => {
-        expect(req.url).toBe('https://api-adresse.data.gouv.fr/search/?q=paris');
       }
     } as HttpHandler);
   });

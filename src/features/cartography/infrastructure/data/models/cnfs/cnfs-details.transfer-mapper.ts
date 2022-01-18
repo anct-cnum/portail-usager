@@ -1,4 +1,4 @@
-import { CnfsDetails, StructureContact } from '../../../core';
+import { CnfsDetails, StructureContact } from '../../../../core';
 import { CnfsDetailsTransfer } from './cnfs-details.transfer';
 
 export const cnfsDetailsTransferToCore = (cnfsDetailsTransfer: CnfsDetailsTransfer): CnfsDetails =>

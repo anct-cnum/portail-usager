@@ -1,5 +1,5 @@
 import { CnfsTransfer } from './cnfs.transfer';
-import { Cnfs, Coordinates } from '../../../core';
+import { Cnfs, Coordinates } from '../../../../core';
 import { cnfsTransferToCore } from './cnfs.transfer-mapper';
 
 describe('cnfs transfer mapper', (): void => {

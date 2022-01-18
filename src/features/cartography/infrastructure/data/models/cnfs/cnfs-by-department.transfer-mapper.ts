@@ -1,5 +1,5 @@
 import { Feature, Point, Position } from 'geojson';
-import { CnfsByDepartment, CnfsByDepartmentProperties, Coordinates } from '../../../core';
+import { CnfsByDepartment, CnfsByDepartmentProperties, Coordinates } from '../../../../core';
 import { CnfsByDepartmentTransfer, CnfsByDepartmentTransferProperties } from './cnfs-by-department.transfer';
 
 const hasValidCoordinates = (feature: Feature<Point>): boolean => {

@@ -1,4 +1,4 @@
-import { Cnfs, CnfsPermanence, Coordinates } from '../../../core';
+import { Cnfs, CnfsPermanence, Coordinates } from '../../../../core';
 import { CnfsTransfer, CnfsTransferProperties } from './cnfs.transfer';
 import { Point, Feature, Position } from 'geojson';
 
