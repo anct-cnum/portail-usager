@@ -62,6 +62,85 @@
       <div class="fr-header__menu-links">
         <ng-container *ngTemplateOutlet="headerLinks"></ng-container>
       </div>
+      <nav class="fr-nav" id="navigation-menu-principal" role="navigation" aria-label="Menu principal">
+        <ul class="fr-nav__list">
+          <li class="fr-nav__item">
+            <app-menu label="Accueil">
+              <ul class="fr-menu__list">
+                <li>
+                  <a class="fr-nav__link" href="https://conseiller-numerique.gouv.fr/accueil/#ancre-themes">
+                    &bull;&nbsp;À propos des conseillers numériques
+                  </a>
+                </li>
+                <li>
+                  <a class="fr-nav__link">&bull;&nbsp;Le dispositif en chiffres</a>
+                </li>
+              </ul>
+            </app-menu>
+          </li>
+          <li class="fr-nav__item">
+            <a class="fr-nav__link" href="#" target="_self" aria-current="page">Carte</a>
+          </li>
+          <li class="fr-nav__item">
+            <app-menu label="Recrutement">
+              <ul class="fr-menu__list">
+                <li>
+                  <a class="fr-nav__link" href="https://conseiller-numerique.gouv.fr/aide-candidat" target="_self">
+                    &bull;&nbsp;Devenir conseiller numérique
+                  </a>
+                </li>
+                <li>
+                  <a class="fr-nav__link" href="https://conseiller-numerique.gouv.fr/aide-structure" target="_self">
+                    &bull;&nbsp;Recruter un conseiller numérique
+                  </a>
+                </li>
+              </ul>
+            </app-menu>
+          </li>
+          <li class="fr-nav__item">
+            <app-menu label="Mon compte">
+              <ul class="fr-menu__list">
+                <li>
+                  <a
+                    class="fr-nav__link"
+                    href="https://coop.conseiller-numerique.gouv.fr/login"
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    &bull;&nbsp;Espace coop
+                  </a>
+                </li>
+                <li>
+                  <a
+                    class="fr-nav__link"
+                    href="https://candidat.conseiller-numerique.gouv.fr/login"
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    &bull;&nbsp;Espace candidat
+                  </a>
+                </li>
+                <li>
+                  <a
+                    class="fr-nav__link"
+                    href="https://admin.conseiller-numerique.gouv.fr/login?role=structure"
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    &bull;&nbsp;Espace structure
+                  </a>
+                </li>
+                <li>
+                  <a
+                    class="fr-nav__link"
+                    href="https://admin.conseiller-numerique.gouv.fr/login?role=prefet"
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    &bull;&nbsp;Espace préfecture
+                  </a>
+                </li>
+              </ul>
+            </app-menu>
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
 </header>

@@ -1,0 +1,17 @@
+<button
+  #menuControl
+  class="fr-nav__btn"
+  [attr.aria-expanded]="expanded"
+  [attr.aria-controls]="'menu-' + (label | slugify)"
+  (click)="toggle()">
+  {{ label }}
+</button>
+<div
+  #container
+  class="fr-collapse fr-menu fr-collapse--expanded"
+  [id]="'menu-' + (label | slugify)"
+  style="--collapse: -324px; max-height: none">
+  <ng-container *ngIf="expanded">
+    <ng-content></ng-content>
+  </ng-container>
+</div>

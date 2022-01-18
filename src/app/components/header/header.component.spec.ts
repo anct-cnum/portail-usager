@@ -1,11 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HeaderComponent } from './header.component';
 import { FailedToCompileError } from '@angular-common/errors';
+import { MenuStubComponent } from '../../test-doubles';
 
 describe('HeaderComponent', (): void => {
   beforeEach(async (): Promise<void> => {
     await TestBed.configureTestingModule({
-      declarations: [HeaderComponent]
+      declarations: [HeaderComponent, MenuStubComponent]
     })
       .compileComponents()
       .catch((): void => {

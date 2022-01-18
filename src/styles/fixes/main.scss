@@ -1,0 +1,4 @@
+// Fix header menu items background is not highlighted on hover.
+a[href] {
+  background-size: auto !important;
+}
