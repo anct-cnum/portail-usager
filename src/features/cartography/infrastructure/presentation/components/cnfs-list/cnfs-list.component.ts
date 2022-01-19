@@ -27,7 +27,7 @@ const highlight = (structureId: string): string => {
   if (elem == null) return structureId;
 
   setTimeout((): void => {
-    elem.scrollIntoView({ behavior: 'smooth' });
+    elem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, SCROLL_DELAY_IN_MILLISECONDS);
 
   return structureId;
