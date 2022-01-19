@@ -16,6 +16,10 @@ $variables: (
     )
   ),
   display: (
+    column-count: (
+      active: true,
+      breakpoints: sm md lg
+    ),
     display: (
       active: true,
       breakpoints: sm md lg

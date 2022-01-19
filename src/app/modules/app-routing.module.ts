@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CartographyFeatureModule } from '@features/cartography';
-import { ContentLayout } from '../pages/layouts/content/content.layout';
+import { ContentLayout } from '../pages';
 
 const ROUTES: Routes = [
   {

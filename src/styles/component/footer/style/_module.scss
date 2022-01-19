@@ -1,0 +1,12 @@
+////
+/// Footer Module
+/// @group footer
+////
+
+#{ns(footer)} {
+  margin-top: 2px;
+
+  &__logo {
+    @include max-size('80px', auto);
+  }
+}

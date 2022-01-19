@@ -5,6 +5,7 @@
 
 $display-vars: map-get($variables, display);
 
+@import 'setting/column-count';
 @import 'setting/display';
 @import 'setting/flex-properties';
 @import 'setting/gap';

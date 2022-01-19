@@ -4,7 +4,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { ENVIRONMENT, EnvironmentType } from '../../environments';
-import { HeaderComponent, MenuComponent } from '../components';
+import { FooterComponent, HeaderComponent, MenuComponent } from '../components';
 import { ApiRewriteUrlInterceptor } from '../interceptors';
 import { ContentLayout, RootLayout } from '../pages';
 import { APIS_TOKENS } from '../tokens';
@@ -13,7 +13,7 @@ import { SlugifyPipe } from '../pipes';
 
 @NgModule({
   bootstrap: [RootLayout],
-  declarations: [ContentLayout, HeaderComponent, MenuComponent, RootLayout, SlugifyPipe],
+  declarations: [ContentLayout, FooterComponent, HeaderComponent, MenuComponent, RootLayout, SlugifyPipe],
   imports: [
     AppRoutingModule,
     BrowserModule,
