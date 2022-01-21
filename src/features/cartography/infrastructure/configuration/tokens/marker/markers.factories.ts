@@ -60,7 +60,8 @@ export const cnfsMarkerFactory: IconMarkerFactory<CnfsPermanenceMarkerProperties
   return icon({
     iconAnchor: new LeafletPoint(cnfsMarkerDimensions.x * HALF, cnfsMarkerDimensions.y),
     iconSize: cnfsMarkerDimensions,
-    iconUrl: PIN_CNFS_BASE_64
+    iconUrl: PIN_CNFS_BASE_64,
+    popupAnchor: [0, -cnfsMarkerDimensions.y]
   });
 };
 
@@ -71,33 +72,43 @@ export const usagerMarkerFactory: IconMarkerFactory = (): Icon =>
     iconUrl: 'assets/map/pin-usager.svg'
   });
 
+const cnfsByRegionMarkerHtmlTemplate = (feature: Feature<Point, MarkerProperties<CnfsByRegionProperties>>): string => `
+<div class="fr-marker fr-marker--cnfs-by-region">
+  <img style="height: 32px; width: 19px" alt="" src="${PIN_CNFS_BASE_64}"/>
+  <div class="fr-marker__label">
+    ${feature.properties.count}
+  </div>
+</div>`;
+
 export const cnfsByRegionMarkerFactory: DivIconMarkerFactory<CnfsByRegionProperties> = (
   feature: Feature<Point, MarkerProperties<CnfsByRegionProperties>>
 ): DivIcon =>
   new DivIcon({
     className: '',
-    html: `<div class="fr-marker fr-marker--cnfs-by-region">
-            <img style="height: 32px; width: 19px" alt="" src="${PIN_CNFS_BASE_64}"/>
-            <div class="fr-marker__label">
-             ${feature.properties.count}</div>
-           </div>`,
+    html: cnfsByRegionMarkerHtmlTemplate(feature),
     iconAnchor: new LeafletPoint(CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS.x * HALF, CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS.y),
-    iconSize: CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS
+    iconSize: CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS,
+    popupAnchor: [0, -CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS.y]
   });
+
+const cnfsByDepartmentMarkerHtmlTemplate = (feature: Feature<Point, MarkerProperties<CnfsByDepartmentProperties>>): string => `
+  <div class="fr-marker fr-marker--cnfs-by-department">
+    <img style="height: 32px; width: 19px" alt="" src="${PIN_CNFS_BASE_64}"/>
+    <div class="fr-marker__label">
+      ${feature.properties.count}
+    </div>
+  </div>`;
 
 export const cnfsByDepartmentMarkerFactory: DivIconMarkerFactory<CnfsByDepartmentProperties> = (
   feature: Feature<Point, MarkerProperties<CnfsByDepartmentProperties>>
 ): DivIcon =>
   new DivIcon({
     className: '',
-    html: `<div class="fr-marker fr-marker--cnfs-by-department">
-            <img style="height: 32px; width: 19px" alt="" src="${PIN_CNFS_BASE_64}"/>
-            <div class="fr-marker__label">
-             ${feature.properties.count}</div>
-           </div>`,
+    html: cnfsByDepartmentMarkerHtmlTemplate(feature),
     iconAnchor: new LeafletPoint(
       CNFS_MARKER_CNFS_BY_DEPARTMENT_DIMENSIONS.x * HALF,
       CNFS_MARKER_CNFS_BY_DEPARTMENT_DIMENSIONS.y
     ),
-    iconSize: CNFS_MARKER_CNFS_BY_DEPARTMENT_DIMENSIONS
+    iconSize: CNFS_MARKER_CNFS_BY_DEPARTMENT_DIMENSIONS,
+    popupAnchor: [0, -CNFS_MARKER_CNFS_BY_DEPARTMENT_DIMENSIONS.y]
   });

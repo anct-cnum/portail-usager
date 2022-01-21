@@ -37,16 +37,18 @@ const shouldHighlight = (featuredStructureIdChange: SimpleChange | undefined): b
 
 const currentValue = <T>(simpleChange: SimpleChange | undefined): T => simpleChange?.currentValue as T;
 
+const DEFAULT_CENTER_VIEW: CenterView = {
+  coordinates: new Coordinates(DEFAULT_LATITUDE, DEFAULT_LONGITUDE),
+  zoomLevel: DEFAULT_ZOOM_LEVEL
+};
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'permanence-map',
   templateUrl: './permanence-map.component.html'
 })
 export class PermanenceMapComponent implements OnChanges {
-  private readonly _centerView$: BehaviorSubject<CenterView> = new BehaviorSubject<CenterView>({
-    coordinates: new Coordinates(DEFAULT_LATITUDE, DEFAULT_LONGITUDE),
-    zoomLevel: DEFAULT_ZOOM_LEVEL
-  });
+  private readonly _centerView$: BehaviorSubject<CenterView> = new BehaviorSubject<CenterView>(DEFAULT_CENTER_VIEW);
 
   public centerView$: Observable<CenterView> = this._centerView$.asObservable();
 

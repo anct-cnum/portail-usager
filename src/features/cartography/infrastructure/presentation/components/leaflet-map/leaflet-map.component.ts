@@ -1,5 +1,5 @@
-// eslint-disable-next-line id-length
 import {
+  Control,
   control,
   DivIcon,
   geoJSON,
@@ -42,6 +42,8 @@ import { Feature, FeatureCollection, Point } from 'geojson';
 import { CnfsByDepartmentProperties, CnfsByRegionProperties, Coordinates } from '../../../../core';
 import { emptyFeatureCollection } from '../../helpers';
 
+const SCROLL_DELAY_IN_MILLISECONDS: number = 250;
+
 // TODO Convert configuration to injected token for default options then remove
 const ANIMATION_DURATION_IN_SECONDS: number = 0.2;
 // TODO Convert configuration to injected token for default options then remove
@@ -68,6 +70,12 @@ type TypedLeafletMouseEvent<T> = Omit<LeafletMouseEvent, 'target'> & {
     feature: T;
   };
 };
+
+interface Popup {
+  marker: LeafletMarker;
+  coordinates: LatLng;
+  name: string;
+}
 
 export type TypedLeafletMarker<T> = Omit<LeafletMarker, 'feature'> & {
   feature: T;
@@ -97,6 +105,19 @@ const getMapMarkers = (leafletMap: LeafletMap): LeafletMarker[] => {
   return markers;
 };
 
+const initializeMap = (mapContainerElement: HTMLElement, { zoomLevel, coordinates }: CenterView): LeafletMap =>
+  map(mapContainerElement, {
+    ...MAP_OPTIONS,
+    center: latLng(coordinates.latitude, coordinates.longitude),
+    zoom: zoomLevel
+  });
+
+const updateOnResize = (leafletMap: LeafletMap, mapContainerElement: HTMLElement): void => {
+  new ResizeObserver((): LeafletMap => leafletMap.invalidateSize()).observe(mapContainerElement);
+};
+
+const MAP_ZOOM_OPTIONS: Control.ZoomOptions = { position: 'bottomright' };
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'leaflet-map',
@@ -105,6 +126,8 @@ const getMapMarkers = (leafletMap: LeafletMap): LeafletMarker[] => {
 export class LeafletMapComponent implements AfterViewChecked, OnChanges {
   private _map!: LeafletMap;
   private _markersLayer: Layer = geoJSON();
+
+  private _popups: Popup[] = [];
 
   @Input() public centerView: CenterView = {
     coordinates: new Coordinates(DEFAULT_LATITUDE, DEFAULT_LONGITUDE),
@@ -125,13 +148,9 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
 
   @ViewChild('map')
   public set mapContainer(mapContainer: ElementRef<HTMLElement>) {
-    this._map = map(mapContainer.nativeElement, {
-      ...MAP_OPTIONS,
-      center: latLng(this.centerView.coordinates.latitude, this.centerView.coordinates.longitude),
-      zoom: this.centerView.zoomLevel
-    });
-    control.zoom({ position: 'bottomright' }).addTo(this._map);
-    new ResizeObserver((): LeafletMap => this._map.invalidateSize()).observe(mapContainer.nativeElement);
+    this._map = initializeMap(mapContainer.nativeElement, this.centerView);
+    control.zoom(MAP_ZOOM_OPTIONS).addTo(this._map);
+    updateOnResize(this._map, mapContainer.nativeElement);
   }
 
   public constructor(@Inject(MARKERS_TOKEN) private readonly markersConfigurations: MarkersConfiguration) {}
@@ -141,12 +160,15 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
     feature: Feature<Point, PointOfInterestMarkerProperties>,
     iconMarker: DivIcon | Icon
   ): LeafletMarker {
-    return marker(position, {
+    const eventedMarker: LeafletMarker = marker(position, {
       icon: iconMarker,
       zIndexOffset: feature.properties.zIndexOffset ?? 0
     }).on('click', (markerEvent: LeafletMouseEvent): void => {
       this.markerChange.emit(markerPayloadFromEvent(markerEvent));
     });
+    this.setPopup(feature.properties, position, eventedMarker);
+
+    return eventedMarker;
   }
 
   private readonly featureToMarker = (feature: Feature<Point, PointOfInterestMarkerProperties>, position: LatLng): Layer =>
@@ -161,6 +183,29 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
       )
     );
 
+  private openPopups(): void {
+    if (this._popups.length > 0) {
+      setTimeout((): void => {
+        this._popups.forEach((popup: Popup): void => {
+          popup.marker.bindPopup(popup.name, { closeButton: false, closeOnClick: false }).openPopup();
+        });
+      }, SCROLL_DELAY_IN_MILLISECONDS);
+    }
+  }
+
+  private setPopup(properties: PointOfInterestMarkerProperties, position: LatLng, eventedMarker: LeafletMarker): void {
+    const label: string = (properties as { name: string | null }).name ?? '';
+    if (properties.highlight === true) {
+      this._popups = [
+        {
+          coordinates: position,
+          marker: eventedMarker,
+          name: `<span class="fr-text--bold">${label}</span>`
+        }
+      ];
+    }
+  }
+
   private setView(centerView: CenterView): void {
     this._map.setView({ lat: centerView.coordinates.latitude, lng: centerView.coordinates.longitude }, centerView.zoomLevel, {
       animate: true,
@@ -168,7 +213,7 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
     });
   }
 
-  public findMarker<T extends Feature<Point, PointOfInterestMarkerProperties>>(
+  public findMarker<P, T extends Feature<Point, MarkerProperties<P>>>(
     markerType: Marker | Marker[],
     predicate: (marker: T) => boolean
   ): TypedLeafletMarker<T> | undefined {
@@ -182,6 +227,7 @@ export class LeafletMapComponent implements AfterViewChecked, OnChanges {
     if (this._map.hasLayer(this._markersLayer)) this._map.removeLayer(this._markersLayer);
     this._markersLayer = geoJSON(this.markers, { pointToLayer: this.featureToMarker });
     this._map.addLayer(this._markersLayer);
+    this.openPopups();
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
