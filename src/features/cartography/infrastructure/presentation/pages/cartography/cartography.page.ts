@@ -21,7 +21,7 @@ import { Coordinates } from '../../../../core';
 import { ViewportAndZoom, ViewReset } from '../../directives/leaflet-map-state-change';
 import { CartographyConfiguration, CARTOGRAPHY_TOKEN, Marker } from '../../../configuration';
 import { Feature, FeatureCollection, Point } from 'geojson';
-import { catchError, combineLatestWith, map, startWith } from 'rxjs/operators';
+import { combineLatestWith, map, startWith } from 'rxjs/operators';
 import { CITY_ZOOM_LEVEL, DEPARTMENT_ZOOM_LEVEL } from '../../helpers/map-constants';
 
 // TODO Inject though configuration token
@@ -77,8 +77,6 @@ export class CartographyPage {
 
   public displayMap: boolean = false;
 
-  public hasAddressError: boolean = false;
-
   public highlightedStructureId$: Observable<string | null> = this._highlightedStructureId$.asObservable().pipe(delay(0));
 
   public structuresList$: Observable<StructurePresentation[]> = this.presenter.structuresList$(this._mapViewportAndZoom$);
@@ -91,11 +89,7 @@ export class CartographyPage {
     tap((usagerCoordinates: Coordinates): void => {
       this._centerView$.next(coordinatesToCenterView(usagerCoordinates, CITY_ZOOM_LEVEL));
     }),
-    startWith(null),
-    catchError((): Observable<null> => {
-      this.hasAddressError = true;
-      return of(null);
-    })
+    startWith(null)
   );
 
   public readonly visibleMarkersWithUsager$: Observable<

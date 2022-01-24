@@ -24,7 +24,7 @@ import {
 } from '../../../../use-cases';
 import { Feature, Point } from 'geojson';
 import { MapViewCullingService } from '../../services/map-view-culling.service';
-import { combineLatestWith, mergeMap, share } from 'rxjs/operators';
+import { catchError, combineLatestWith, mergeMap, share } from 'rxjs/operators';
 import { ViewportAndZoom } from '../../directives/leaflet-map-state-change';
 import { cnfsPermanencesToStructurePresentations } from '../../models/structure/structure.presentation-mapper';
 import { Marker } from '../../../configuration';
@@ -200,7 +200,12 @@ export class CartographyPresenter {
 
   public geocodeAddress$(addressToGeocode$: Observable<string>): Observable<Coordinates> {
     return addressToGeocode$.pipe(
-      switchMap((address: string): Observable<Coordinates> => this.geocodeAddressUseCase.execute$(address))
+      switchMap(
+        (address: string): Observable<Coordinates> =>
+          this.geocodeAddressUseCase.execute$(address).pipe(
+            catchError((): Observable<never> => EMPTY)
+          )
+      )
     );
   }
 
