@@ -2,7 +2,8 @@ import { EnvironmentType } from './enum/environement';
 import { ApiConfiguration } from '../app/tokens';
 
 export enum Api {
-  ConseillerNumerique = '@conseillerNumerique'
+  ConseillerNumerique = '@conseillerNumerique',
+  AdresseDataGouv = '@adresseDataGouv'
 }
 
 export interface EnvironmentModel {
