@@ -1,1 +1,1 @@
-export * from './coordinates.rest';
+export * from './address.rest';
