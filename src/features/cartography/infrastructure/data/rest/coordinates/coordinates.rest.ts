@@ -14,7 +14,7 @@ export class CoordinatesRest extends CoordinatesRepository {
 
   public geocodeAddress$(address: string): Observable<Coordinates> {
     return this.httpClient
-      .get<CoordinatesTransfer>(`${Api.ConseillerNumerique}/geocode/${encodeURIComponent(address)}`)
+      .get<CoordinatesTransfer>(`${Api.ConseillerNumerique}/geocode/${address}`)
       .pipe(map(coordinatesTransferToFirstCoordinates));
   }
 }

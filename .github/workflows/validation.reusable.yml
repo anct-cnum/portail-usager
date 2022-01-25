@@ -1,0 +1,36 @@
+name: Destroy clevercloud demo application on feature or fix branch deletion
+
+on:
+  workflow_call:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Retrieve dependencies
+        uses: actions/cache@v2
+        with:
+          key: node_modules-${{ hashFiles('yarn.lock') }}
+          path: node_modules
+
+      - name: Execute tests
+        run: node_modules/.bin/ng test
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Retrieve dependencies
+        uses: actions/cache@v2
+        with:
+          key: node_modules-${{ hashFiles('yarn.lock') }}
+          path: node_modules
+
+      - name: eslint
+        run: node_modules/.bin/ng lint
+
+      - name: stylelint
+        run: yarn run stylelint

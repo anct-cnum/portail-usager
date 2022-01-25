@@ -1,0 +1,37 @@
+name: Feature continuous integration / deployment on clevercloud
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/*
+      - fix/*
+env:
+  app-name: 'portail-usager'
+  branch: ${GITHUB_REF##*/}
+  application-full-name: ${{ format('{0}-{1}', env.app-name, env.branch) }}
+
+jobs:
+  dependencies:
+    uses: ./.github/workflows/dependencies.reusable.yml
+
+    with:
+      node-version: '16.13.1'
+
+  build:
+    needs: dependencies
+    uses: ./.github/workflows/buildreusable.reusable.yml
+    with:
+      build-directory-path: 'dist/portail-usager'
+
+  validation:
+    needs: dependencies
+    uses: ./.github/workflows/validation.reusable.yml
+
+  deploy:
+    needs: [ build, validation]
+    uses: ./.github/workflows/deploy-static-application-to-clevercloud.reusable.yml
+    with:
+      application-full-name: ${{ env.application-full-name }}
+
+
