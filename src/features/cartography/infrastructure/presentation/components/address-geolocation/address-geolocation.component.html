@@ -16,7 +16,7 @@
           autocomplete="off"
           aria-haspopup="true"
           aria-expanded="false"
-          (input)="search(addressInput.value); dropdownPane.expand()"
+          (input)="search(addressInput.value); addressInput.value.length <= 3 ? dropdownPane.reduce() : dropdownPane.expand()"
           (focus)="dropdownPane.expand()"
           (keyup.escape)="dropdownPane.reduce()" />
         <div
