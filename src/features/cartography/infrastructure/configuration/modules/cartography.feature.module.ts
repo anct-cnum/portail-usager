@@ -6,7 +6,8 @@ import {
   GeocodeAddressUseCase,
   ListCnfsByDepartmentUseCase,
   ListCnfsByRegionUseCase,
-  ListCnfsUseCase
+  ListCnfsUseCase,
+  SearchAddressUseCase
 } from '../../../use-cases';
 import { CnfsRepository, Coordinates, AddressRepository } from '../../../core';
 import { CARTOGRAPHY_TOKEN, MARKERS, MARKERS_TOKEN } from '../tokens';
@@ -85,6 +86,11 @@ const METROPOLITAN_FRANCE_CENTER_LATITUDE: number = 46.28146057911664;
       deps: [AddressRest],
       provide: GeocodeAddressUseCase,
       useFactory: (addressRepository: AddressRepository): GeocodeAddressUseCase => new GeocodeAddressUseCase(addressRepository)
+    },
+    {
+      deps: [AddressRest],
+      provide: SearchAddressUseCase,
+      useFactory: (addressRepository: AddressRepository): SearchAddressUseCase => new SearchAddressUseCase(addressRepository)
     }
   ]
 })

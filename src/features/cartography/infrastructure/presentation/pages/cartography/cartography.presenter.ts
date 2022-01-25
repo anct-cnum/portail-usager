@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import {
+  AddressFoundPresentation,
   cnfsByDepartmentToPresentation,
   cnfsCoreToCnfsPermanenceFeatures,
   CnfsDetailsPresentation,
@@ -20,7 +21,8 @@ import {
   GeocodeAddressUseCase,
   ListCnfsByDepartmentUseCase,
   ListCnfsByRegionUseCase,
-  ListCnfsUseCase
+  ListCnfsUseCase,
+  SearchAddressUseCase
 } from '../../../../use-cases';
 import { Feature, Point } from 'geojson';
 import { MapViewCullingService } from '../../services/map-view-culling.service';
@@ -94,6 +96,7 @@ export class CartographyPresenter {
     @Inject(ListCnfsByDepartmentUseCase) private readonly listCnfsByDepartmentUseCase: ListCnfsByDepartmentUseCase,
     @Inject(ListCnfsUseCase) private readonly listCnfsPositionUseCase: ListCnfsUseCase,
     @Inject(GeocodeAddressUseCase) private readonly geocodeAddressUseCase: GeocodeAddressUseCase,
+    @Inject(SearchAddressUseCase) private readonly searchAddressUseCase: SearchAddressUseCase,
     @Inject(MapViewCullingService) private readonly mapViewCullingService: MapViewCullingService
   ) {}
 
@@ -207,6 +210,10 @@ export class CartographyPresenter {
           )
       )
     );
+  }
+
+  public searchAddress$(searchTerm: string): Observable<AddressFoundPresentation[]> {
+    return this.searchAddressUseCase.execute$(searchTerm);
   }
 
   public structuresList$(viewportAndZoom$: Observable<ViewportAndZoom>): Observable<StructurePresentation[]> {

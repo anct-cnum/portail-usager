@@ -4,12 +4,14 @@ import {
   GeocodeAddressUseCase,
   ListCnfsByDepartmentUseCase,
   ListCnfsByRegionUseCase,
-  ListCnfsUseCase
+  ListCnfsUseCase,
+  SearchAddressUseCase
 } from '../../../../use-cases';
 import { MapViewCullingService } from '../../services/map-view-culling.service';
 import { firstValueFrom, Observable, of, Subject, throwError } from 'rxjs';
 import { Feature, Point } from 'geojson';
 import {
+  AddressFound,
   Cnfs,
   CnfsByDepartment,
   CnfsByDepartmentProperties,
@@ -20,6 +22,7 @@ import {
   StructureContact
 } from '../../../../core';
 import {
+  AddressFoundPresentation,
   CnfsDetailsPresentation,
   CnfsPermanenceProperties,
   DayPresentation,
@@ -147,6 +150,7 @@ describe('cartography presenter', (): void => {
         LIST_CNFS_BY_DEPARTMENT_USE_CASE,
         LIST_CNFS_USE_CASE,
         {} as GeocodeAddressUseCase,
+        {} as SearchAddressUseCase,
         {} as MapViewCullingService
       );
 
@@ -170,6 +174,7 @@ describe('cartography presenter', (): void => {
           execute$: (): Observable<Cnfs[]> => of([])
         } as unknown as ListCnfsUseCase,
         {} as GeocodeAddressUseCase,
+        {} as SearchAddressUseCase,
         {} as MapViewCullingService
       );
 
@@ -218,6 +223,7 @@ describe('cartography presenter', (): void => {
         } as unknown as ListCnfsByDepartmentUseCase,
         LIST_CNFS_USE_CASE,
         {} as GeocodeAddressUseCase,
+        {} as SearchAddressUseCase,
         new MapViewCullingService()
       );
 
@@ -272,6 +278,7 @@ describe('cartography presenter', (): void => {
         LIST_CNFS_BY_DEPARTMENT_USE_CASE,
         LIST_CNFS_USE_CASE,
         {} as GeocodeAddressUseCase,
+        {} as SearchAddressUseCase,
         {} as MapViewCullingService
       );
 
@@ -320,6 +327,7 @@ describe('cartography presenter', (): void => {
         LIST_CNFS_BY_DEPARTMENT_USE_CASE,
         LIST_CNFS_USE_CASE,
         {} as GeocodeAddressUseCase,
+        {} as SearchAddressUseCase,
         {} as MapViewCullingService
       );
 
@@ -387,6 +395,7 @@ describe('cartography presenter', (): void => {
         listCnfsByDepartmentUseCase,
         listCnfsUseCase,
         {} as GeocodeAddressUseCase,
+        {} as SearchAddressUseCase,
         new MapViewCullingService()
       );
 
@@ -457,6 +466,7 @@ describe('cartography presenter', (): void => {
         listCnfsByDepartmentUseCase,
         listCnfsUseCase,
         {} as GeocodeAddressUseCase,
+        {} as SearchAddressUseCase,
         new MapViewCullingService()
       );
 
@@ -483,6 +493,7 @@ describe('cartography presenter', (): void => {
         LIST_CNFS_BY_DEPARTMENT_USE_CASE,
         LIST_CNFS_USE_CASE,
         {} as GeocodeAddressUseCase,
+        {} as SearchAddressUseCase,
         new MapViewCullingService()
       );
 
@@ -537,6 +548,7 @@ describe('cartography presenter', (): void => {
         LIST_CNFS_BY_DEPARTMENT_USE_CASE,
         LIST_CNFS_USE_CASE,
         {} as GeocodeAddressUseCase,
+        {} as SearchAddressUseCase,
         new MapViewCullingService()
       );
 
@@ -607,6 +619,7 @@ describe('cartography presenter', (): void => {
         {
           execute$: mockThrowErrorThenReturnCoordinateFunction
         } as unknown as GeocodeAddressUseCase,
+        {} as SearchAddressUseCase,
         {} as MapViewCullingService
       );
 
@@ -624,6 +637,41 @@ describe('cartography presenter', (): void => {
 
       addressInput$.next('invalid address');
       addressInput$.next('valid address');
+    });
+  });
+
+  describe('search address', (): void => {
+    it('should get a list of address suggestions from an address search term', async (): Promise<void> => {
+      const searchTerm: string = 'Paris';
+      const searchAddressUseCase: SearchAddressUseCase = {
+        execute$(): Observable<AddressFound[]> {
+          return of([
+            {
+              context: '75, Paris, Île-de-France',
+              label: 'Paris'
+            }
+          ]);
+        }
+      } as unknown as SearchAddressUseCase;
+
+      const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+        {} as CnfsDetailsUseCase,
+        LIST_CNFS_BY_REGION_USE_CASE,
+        LIST_CNFS_BY_DEPARTMENT_USE_CASE,
+        LIST_CNFS_USE_CASE,
+        {} as GeocodeAddressUseCase,
+        searchAddressUseCase,
+        new MapViewCullingService()
+      );
+
+      const addressesFound: AddressFoundPresentation[] = await firstValueFrom(cartographyPresenter.searchAddress$(searchTerm));
+
+      expect(addressesFound).toStrictEqual([
+        {
+          context: '75, Paris, Île-de-France',
+          label: 'Paris'
+        }
+      ]);
     });
   });
 });

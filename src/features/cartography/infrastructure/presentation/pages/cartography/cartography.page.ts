@@ -13,7 +13,8 @@ import {
   MarkerProperties,
   CnfsPermanenceProperties,
   BoundedMarkers,
-  permanenceMarkerEventToCenterView
+  permanenceMarkerEventToCenterView,
+  AddressFoundPresentation
 } from '../../models';
 import { isGuyaneBoundedMarker, addUsagerFeatureToMarkers, CartographyPresenter } from './cartography.presenter';
 import { BehaviorSubject, delay, merge, Observable, of, Subject, switchMap, tap } from 'rxjs';
@@ -53,6 +54,8 @@ export class CartographyPage {
     DEFAULT_MAP_VIEWPORT_AND_ZOOM
   );
 
+  private readonly _searchTerm$: Subject<string> = new Subject<string>();
+
   private readonly _usagerCoordinates$: Subject<Coordinates> = new Subject<Coordinates>();
 
   private readonly _visibleMapPointsOfInterest$: Observable<Feature<Point, PointOfInterestMarkerProperties>[]> = this.presenter
@@ -62,6 +65,10 @@ export class CartographyPage {
       this._highlightedStructureId$.asObservable()
     )
     .pipe(startWith([]));
+
+  public addressesFound$: Observable<AddressFoundPresentation[]> = this._searchTerm$.pipe(
+    switchMap((searchTerm: string): Observable<AddressFoundPresentation[]> => this.presenter.searchAddress$(searchTerm))
+  );
 
   public centerView$: Observable<CenterView> = this._centerView$.asObservable();
 
@@ -186,6 +193,10 @@ export class CartographyPage {
 
   public onMapViewChanged($event: ViewReset): void {
     this._mapViewportAndZoom$.next({ viewport: $event.viewport, zoomLevel: $event.zoomLevel });
+  }
+
+  public onSearchAddress(searchTerm: string): void {
+    this._searchTerm$.next(searchTerm);
   }
 
   public onZoomOut(): void {

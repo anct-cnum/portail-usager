@@ -1,3 +1,4 @@
+export * from './address';
 export * from './center-view';
 export * from './cnfs';
 export * from './cnfs-by-department';
