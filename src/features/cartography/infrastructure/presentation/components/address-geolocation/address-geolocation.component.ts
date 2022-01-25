@@ -11,8 +11,6 @@ import { AddressFoundPresentation } from '../../models';
   templateUrl: './address-geolocation.component.html'
 })
 export class AddressGeolocationComponent {
-  public currentAddressIndex: number = 0;
-
   public readonly searchForm: FormGroup = new FormGroup({
     address: new FormControl('')
   });
