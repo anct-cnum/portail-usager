@@ -4,13 +4,35 @@
       Entrez un code postal, une ville, une adresse&nbsp;:
     </label>
     <div class="fr-search-bar fr-search-bar--lg" role="search">
-      <input
-        formControlName="address"
-        class="fr-input"
-        placeholder="Code postal, ville, adresse"
-        type="search"
-        id="address"
-        name="address" />
+      <div class="fr-dropdown">
+        <input
+          #addressInput
+          formControlName="address"
+          class="fr-input"
+          placeholder="Code postal, ville, adresse"
+          type="search"
+          id="address"
+          name="address"
+          autocomplete="off"
+          aria-haspopup="true"
+          aria-expanded="false"
+          (input)="search(addressInput.value)" />
+        <div class="fr-dropdown__pane" aria-labelledby="address">
+          <div class="fr-list-group">
+            <button
+              *ngFor="let address of addressSuggestions; index as addressIndex; trackBy: trackByAddressName"
+              type="button"
+              class="fr-list-group__item fr-list-group__item--action"
+              [class.fr-list-group__item--active]="addressIndex === currentAddressIndex"
+              [attr.aria-current]="addressIndex === currentAddressIndex ? true : null"
+              (click)="setAddressSuggestion(address.label)">
+              <b>{{ address.label }}</b>
+              <br />
+              <small>{{ address.context }}</small>
+            </button>
+          </div>
+        </div>
+      </div>
       <button class="fr-btn">Rechercher</button>
     </div>
   </form>

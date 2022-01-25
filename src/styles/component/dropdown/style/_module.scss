@@ -1,0 +1,15 @@
+////
+/// Dropdown Module
+/// @group dropdown
+////
+
+#{ns(dropdown)} {
+  width: 100%;
+
+  &__pane {
+    position: absolute;
+    background-color: var(--background-default-white);
+    @include z-index(menu);
+    @include shadow(md);
+  }
+}

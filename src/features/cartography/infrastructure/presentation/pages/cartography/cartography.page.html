@@ -14,8 +14,10 @@
       (backToList)="hideCnfsDetails()"></cnfs-details>
     <ng-template #displayCnfsList>
       <address-geolocation
+        [addressSuggestions]="(addressesFound$ | async) ?? []"
         (usagerAutolocate)="onAutoLocateUsagerRequest($event)"
-        (addressToGeocode)="onGeocodeUsagerRequest($event)"></address-geolocation>
+        (addressToGeocode)="onGeocodeUsagerRequest($event)"
+        (searchAddress)="onSearchAddress($event)"></address-geolocation>
       <ng-container *ngIf="structuresList$ | async as structuresList">
         <small class="fr-px-3w fr-background-contrast--blue-cumulus" *ngIf="structuresList.length > 0">
           {{ structuresList.length }} structures trouvées
