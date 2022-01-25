@@ -25,7 +25,7 @@ export class AddressRest extends AddressRepository {
 
   public search$(searchTerm: string): Observable<AddressFound[]> {
     return this.httpClient
-      .get<AddressFoundTransfer[]>(`${Api.AdresseDataGouv}/search/?q=${encodeURIComponent(searchTerm)}&type=&autocomplete=1`)
+      .get<AddressFoundTransfer>(`${Api.AdresseDataGouv}/search/?q=${encodeURIComponent(searchTerm)}&type=&autocomplete=1`)
       .pipe(map(addressFoundTransferToCore));
   }
 }

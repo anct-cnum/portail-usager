@@ -40,24 +40,39 @@ describe('address rest', (): void => {
     ];
 
     const httpClient: HttpClient = {
-      get: (): Observable<AddressFoundTransfer[]> =>
-        of([
-          {
-            city: 'Paris',
-            citycode: '75056',
-            context: '75, Paris, Île-de-France',
-            id: '75056',
-            importance: 0.67505,
-            label: 'Paris',
-            name: 'Paris',
-            population: 2190327,
-            postcode: '75001',
-            score: 0.9704590909090908,
-            type: 'municipality',
-            x: 652089.7,
-            y: 6862305.26
-          }
-        ])
+      get: (): Observable<AddressFoundTransfer> =>
+        of({
+          attribution: 'BAN',
+          features: [
+            {
+              geometry: {
+                coordinates: [2.347, 48.859],
+                type: 'Point'
+              },
+              properties: {
+                city: 'Paris',
+                citycode: '75056',
+                context: '75, Paris, Île-de-France',
+                id: '75056',
+                importance: 0.67505,
+                label: 'Paris',
+                name: 'Paris',
+                population: 2190327,
+                postcode: '75001',
+                score: 0.9704590909090908,
+                type: 'municipality',
+                x: 652089.7,
+                y: 6862305.26
+              },
+              type: 'Feature'
+            }
+          ],
+          licence: 'ETALAB-2.0',
+          limit: 1,
+          query: 'paris',
+          type: 'FeatureCollection',
+          version: 'draft'
+        })
     } as unknown as HttpClient;
 
     const addressRest: AddressRest = new AddressRest(httpClient);
