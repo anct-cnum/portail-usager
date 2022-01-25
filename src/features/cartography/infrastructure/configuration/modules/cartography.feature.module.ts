@@ -26,6 +26,7 @@ import { CnfsRest } from '../../data/rest';
 import { AddressRest } from '../../data/rest/coordinates';
 import { LeafletMapStateChangeDirective } from '../../presentation/directives/leaflet-map-state-change';
 import { MapViewCullingService } from '../../presentation/services/map-view-culling.service';
+import { DropdownPaneComponent } from '../../../../../app/components';
 
 const METROPOLITAN_FRANCE_CENTER_LONGITUDE: number = 4.468874066180609;
 const METROPOLITAN_FRANCE_CENTER_LATITUDE: number = 46.28146057911664;
@@ -38,6 +39,7 @@ const METROPOLITAN_FRANCE_CENTER_LATITUDE: number = 46.28146057911664;
     CnfsDetailsContactComponent,
     CnfsListComponent,
     DisplayMapComponent,
+    DropdownPaneComponent,
     LeafletMapComponent,
     LeafletMapStateChangeDirective,
     PermanenceMapComponent

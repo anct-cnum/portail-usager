@@ -4,9 +4,10 @@ import { HeaderStubComponent } from '../components/header/header.component.stub'
 import { MenuStubComponent } from '../components/main-navigation/menu/menu.component.stub';
 import { SlugifyStubPipe } from '../pipes/slugify/slugify.pipe.stub';
 import { FooterStubComponent } from '../components/footer/footer.component.stub';
+import { DropdownPaneStubComponent } from '../components/dropdown-pane/dropdown-pane.component.stub';
 
 @NgModule({
-  declarations: [FooterStubComponent, HeaderStubComponent, MenuStubComponent, SlugifyStubPipe],
+  declarations: [DropdownPaneStubComponent, FooterStubComponent, HeaderStubComponent, MenuStubComponent, SlugifyStubPipe],
   imports: [CommonModule],
   providers: []
 })
