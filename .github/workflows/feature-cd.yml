@@ -141,6 +141,8 @@ jobs:
       env:
         CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
         CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
+    outputs:
+      deployed-domain:  ${{ steps.deployed-domain.outputs.domain }}
     steps:
       - name: Retrieve site bundle
         uses: actions/download-artifact@v2
@@ -164,7 +166,16 @@ jobs:
         run:  clever deploy --force
 
       - name: Retrieve the deployment url
-        run: clever domain
+        id: deployed-domain
+        run: echo "::set-output name=domain::$(clever domain)"
+
+  mattermost-notify-instance-url:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - name: Notify canal conseiller-numerique-alertes
+        run: |
+          curl --header "Content-Type:application/json" -d "{\"text\":\"Une nouvelle version pour: ${{ format('{0}-{1}', env.app-name, env.branch) }} est disponible ici: ${{needs.deploy.outputs.deployed-domain}} \"}" ${{ secrets.MATTERMOST_NOTIFY_HOOK_URL }}
 
   pages:
     needs: [test, build]
