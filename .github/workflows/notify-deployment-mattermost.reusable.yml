@@ -1,0 +1,19 @@
+name: Reusable Static Application Clevercloud Deployer Workflow
+
+on:
+  workflow_call:
+    inputs:
+      deployed-domain:
+        required: true
+        type: string
+    secrets:
+      MATTERMOST_NOTIFY_HOOK_URL:
+        required: true
+
+jobs:
+  mattermost-notify-instance-url:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify canal conseiller-numerique-alertes
+        run: |
+          curl --header "Content-Type:application/json" -d "{\"text\":\"Une nouvelle version pour: ${{ inputs.application-full-name }} est disponible ici: ${{inputs.deployed-domain}} \"}" ${{ secrets.MATTERMOST_NOTIFY_HOOK_URL }}
