@@ -142,7 +142,7 @@ jobs:
         CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
         CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
     outputs:
-      deployed-domain:  ${{ steps.deployed-domain.outputs.domain }}
+      deployed-domain: ${{ steps.deployed-domain.outputs.domain }}
     steps:
       - name: Retrieve site bundle
         uses: actions/download-artifact@v2
@@ -163,7 +163,7 @@ jobs:
           sleep 10
 
       - name: Deploy the linked application
-        run:  clever deploy --force
+        run: clever deploy --force
 
       - name: Retrieve the deployment url
         id: deployed-domain

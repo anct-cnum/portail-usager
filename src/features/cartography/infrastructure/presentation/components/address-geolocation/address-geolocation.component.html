@@ -15,13 +15,12 @@
           name="address"
           autocomplete="off"
           aria-haspopup="true"
-          aria-expanded="false"
+          [attr.aria-expanded]="dropdownPane.expanded$ | async"
           (input)="search(addressInput.value); addressInput.value.length <= 3 ? dropdownPane.reduce() : dropdownPane.expand()"
-          (focus)="dropdownPane.expand()"
+          (focus)="addressInput.value.length <= 3 ? dropdownPane.reduce() : dropdownPane.expand()"
           (keyup.escape)="dropdownPane.reduce()" />
         <div
           #dropdownPane="dropdownPane"
-          [expanded]="true"
           [dropdownControl]="addressInput"
           class="fr-dropdown__pane"
           aria-labelledby="address"

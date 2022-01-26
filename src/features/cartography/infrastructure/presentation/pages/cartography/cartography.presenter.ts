@@ -205,9 +205,7 @@ export class CartographyPresenter {
     return addressToGeocode$.pipe(
       switchMap(
         (address: string): Observable<Coordinates> =>
-          this.geocodeAddressUseCase.execute$(address).pipe(
-            catchError((): Observable<never> => EMPTY)
-          )
+          this.geocodeAddressUseCase.execute$(address).pipe(catchError((): Observable<never> => EMPTY))
       )
     );
   }

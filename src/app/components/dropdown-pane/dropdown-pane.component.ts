@@ -10,7 +10,7 @@ const DEFAULT_INDEX: number = -1;
   templateUrl: './dropdown-pane.component.html'
 })
 export class DropdownPaneComponent {
-  private _expanded: boolean = true;
+  private _expanded: boolean = false;
 
   private readonly _expanded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(this._expanded);
 
