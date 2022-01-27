@@ -1,4 +1,4 @@
-name: Reusable Build Static Application Workflow
+name: Reusable Build Static Angular Application Workflow
 
 on:
   workflow_call:
@@ -8,7 +8,7 @@ on:
         type: string
 
 jobs:
-  build-static:
+  build-static-angular:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

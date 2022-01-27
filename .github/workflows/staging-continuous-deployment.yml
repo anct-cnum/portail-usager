@@ -16,7 +16,7 @@ jobs:
 
   build:
     needs: dependencies
-    uses: ./.github/workflows/build.reusable.yml
+    uses: ./.github/workflows/build-angular.reusable.yml
     with:
       build-directory-path: 'dist/portail-usager'
 
@@ -30,7 +30,7 @@ jobs:
       - validation
     uses: ./.github/workflows/deploy-static-application-to-clevercloud.reusable.yml
     with:
-      application-full-name: "portail-usager-staging"
+      application-full-name: 'portail-usager-carto-staging'
     secrets:
       CLEVER_ORG_ID: ${{ secrets.CLEVER_ORG_ID }}
       CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
@@ -41,6 +41,7 @@ jobs:
       - deploy
     uses: ./.github/workflows/notify-deployment-mattermost.reusable.yml
     with:
-      deployed-domain: ${{ needs.deploy.deployed-domain }}
+      application-full-name: 'portail-usager-carto-staging'
+      deployed-domain: ${{ needs.deploy.outputs.deployed-domain }}
     secrets:
       MATTERMOST_NOTIFY_HOOK_URL: ${{ secrets.MATTERMOST_NOTIFY_HOOK_URL }}

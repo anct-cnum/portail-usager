@@ -12,7 +12,7 @@ jobs:
   get-deleted-branch-ref:
     runs-on: ubuntu-latest
     outputs:
-      deleted-branch-ref:  ${{ steps.deleted-branch-ref.outputs.branch-ref }}
+      deleted-branch-ref: ${{ steps.deleted-branch-ref.outputs.branch-ref }}
     steps:
       - name: Get the deleted branch reference without the feature|fix
         id: deleted-branch-ref
