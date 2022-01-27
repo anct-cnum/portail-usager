@@ -44,6 +44,3 @@ jobs:
       deployed-domain: ${{ needs.deploy.deployed-domain }}
     secrets:
       MATTERMOST_NOTIFY_HOOK_URL: ${{ secrets.MATTERMOST_NOTIFY_HOOK_URL }}
-
-
-

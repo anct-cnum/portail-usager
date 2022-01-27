@@ -1,4 +1,4 @@
-name: Reusable Static Application Clevercloud Deployer Workflow
+name: Reusable Static Mattermost deployment Notify Workflow
 
 on:
   workflow_call:

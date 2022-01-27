@@ -22,7 +22,7 @@ jobs:
       - build
     uses: ./.github/workflows/deploy-static-application-to-clevercloud.reusable.yml
     with:
-      application-full-name: "portail-usager-staging"
+      application-full-name: "portail-usager-production"
     secrets:
       CLEVER_ORG_ID: ${{ secrets.CLEVER_ORG_ID }}
       CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
