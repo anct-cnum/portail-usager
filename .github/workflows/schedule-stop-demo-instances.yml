@@ -1,0 +1,48 @@
+name: Cron - Stop all portail usager demo environments every day around 7pm UTC (8pm GMT)
+
+on:
+  workflow_dispatch:
+  schedule:
+    #All days around 20:00 UTC (not using exact hours helps with runners availability)
+    - cron:  '58 19 * * *'
+
+
+env:
+  app-name: 'portail-usager'
+
+jobs:
+  enumerate:
+    runs-on: ubuntu-latest
+    outputs:
+      targets-branches: ${{ steps.all-branches.outputs.branches }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Enumerate all branches that match a demo application
+        id: all-branches
+        run: |
+          FEATURES_BRANCHES=$(git branch -r | gawk 'match($0, /feature\/(.+)/, captureGroup) { printf "\"%s\",",captureGroup[1]} ')
+          FIX_BRANCHES=$(git branch -r | gawk 'match($0, /fix\/(.+)/, captureGroup) { printf "\"%s\",",captureGroup[1]} ')
+          ALL_BRANCHES=$FEATURES_BRANCHES$FIX_BRANCHES
+          ALL_BRANCHES=${ALL_BRANCHES:0:-1}
+          echo '::set-output name=branches::['$ALL_BRANCHES']'
+
+  stop-target-applications:
+    needs:
+      - enumerate
+    runs-on: ubuntu-latest
+    container:
+      image: clevercloud/clever-tools
+      env:
+        CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
+        CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
+    strategy:
+      matrix:
+        value: ${{ fromJSON(needs.enumerate.outputs.targets-branches) }}
+    steps:
+      - name: Link and stop a clevercloud application
+        continue-on-error: true
+        run: |
+          clever link ${{ format('{0}-{1}', env.app-name, matrix.value) }} --org ${{ secrets.CLEVER_ORG_ID }}
+          clever stop

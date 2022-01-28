@@ -87,7 +87,7 @@ jobs:
         run: |
           clever create --type static-apache ${{ inputs.application-full-name }} --alias ${{ inputs.application-full-name }} --org ${{ secrets.CLEVER_ORG_ID }} --region par
           clever scale --flavor nano
-          sleep 15
+          sleep 10
           clever link ${{ inputs.application-full-name }} --org ${{ secrets.CLEVER_ORG_ID }}
 
       # Pas de meilleur moyen pour l'instant : https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
@@ -99,7 +99,9 @@ jobs:
       - name: Deploy the linked application (attempt 2/2)
         timeout-minutes: 3
         if: steps.deploy-attempt-1.outcome=='failure'
-        run: clever restart
+        run: |
+          clever cancel-deploy
+          clever deploy --force
 
       - name: Retrieve the deployment url (without leading whitespaces)
         id: deployed-domain
