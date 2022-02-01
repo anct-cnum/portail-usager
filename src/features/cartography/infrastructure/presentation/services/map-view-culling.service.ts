@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import Supercluster from 'supercluster';
-import { ViewportAndZoom } from '../directives/leaflet-map-state-change';
 import { Feature, Point } from 'geojson';
 import { CnfsPermanenceProperties, MarkerProperties } from '../models';
+import { ViewportAndZoom } from '../directives';
 
 const CLUSTER_RADIUS: number = 1;
 

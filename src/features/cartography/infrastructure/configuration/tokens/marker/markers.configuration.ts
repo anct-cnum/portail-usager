@@ -1,11 +1,6 @@
-import { DivIconMarkerFactory, IconMarkerFactory } from './markers.factories';
-import { Marker } from './markers.token';
-import { CnfsByDepartmentProperties, CnfsByRegionProperties } from '../../../../core';
-import { CnfsPermanenceMarkerProperties } from '../../../presentation/models';
+import { MarkerProperties } from '../../../presentation/models';
+import { DivIcon, Icon } from 'leaflet';
 
-type IconFactory =
-  | DivIconMarkerFactory<CnfsByDepartmentProperties>
-  | DivIconMarkerFactory<CnfsByRegionProperties>
-  | IconMarkerFactory
-  | IconMarkerFactory<CnfsPermanenceMarkerProperties>;
-export type MarkersConfiguration = Record<Marker, IconFactory>;
+export type MarkerFactory<TProperty, TIcon extends DivIcon | Icon> = (properties: MarkerProperties<TProperty>) => TIcon;
+
+export type MarkersConfiguration<TProperty, TIcon extends DivIcon | Icon> = Record<string, MarkerFactory<TProperty, TIcon>>;

@@ -32,10 +32,7 @@
               "node_modules/leaflet/dist/leaflet.css",
               "node_modules/@gouvfr/dsfr/dist/dsfr/dsfr.css"
             ],
-            "scripts": [
-              "node_modules/leaflet/dist/leaflet.js",
-              "src/scripts/tracker.js"
-            ]
+            "scripts": ["src/scripts/tracker.js"]
           },
           "configurations": {
             "production": {

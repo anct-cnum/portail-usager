@@ -2,7 +2,7 @@ import { Cnfs } from '../../../../core';
 import { Feature, Point } from 'geojson';
 import { CnfsPermanenceProperties } from './cnfs-permanence.presentation';
 import { MarkerProperties } from '../markers';
-import { Marker } from '../../../configuration';
+import { MarkerKey } from '../../../configuration';
 
 export const cnfsCoreToCnfsPermanenceFeatures = (cnfs: Cnfs[]): Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[] =>
   cnfs.map(
@@ -12,7 +12,7 @@ export const cnfsCoreToCnfsPermanenceFeatures = (cnfs: Cnfs[]): Feature<Point, M
         type: 'Point'
       },
       properties: {
-        markerType: Marker.CnfsPermanence,
+        markerType: MarkerKey.CnfsPermanence,
         ...singleCnfs.properties
       },
       type: 'Feature'

@@ -1,7 +1,6 @@
 import { AfterViewInit, Directive, EventEmitter, OnDestroy, Output } from '@angular/core';
 import { BBox } from 'geojson';
 import { LatLng, LatLngBounds } from 'leaflet';
-
 import { LeafletMapComponent } from '../../components';
 
 export interface ViewportAndZoom {
@@ -28,24 +27,26 @@ export class LeafletMapStateChangeDirective implements AfterViewInit, OnDestroy 
   public constructor(public readonly mapComponent: LeafletMapComponent) {}
 
   private bindMoveEnd(): void {
-    this.mapComponent.map.on('moveend', (): void => {
+    this.mapComponent.map?.on('moveend', (): void => {
       this.emitStateChange();
     });
   }
 
   private bindViewReset(): void {
-    this.mapComponent.map.on('viewreset', (): void => {
+    this.mapComponent.map?.on('viewreset', (): void => {
       this.emitStateChange();
     });
   }
 
   private bindZoomEnd(): void {
-    this.mapComponent.map.on('zoomend', (): void => {
+    this.mapComponent.map?.on('zoomend', (): void => {
       this.emitStateChange();
     });
   }
 
   private emitStateChange(): void {
+    if (this.mapComponent.map == null) return;
+
     const zoomLevel: number = this.mapComponent.map.getZoom();
     this.stateChange.emit({
       center: this.mapComponent.map.getCenter(),
@@ -67,19 +68,19 @@ export class LeafletMapStateChangeDirective implements AfterViewInit, OnDestroy 
   }
 
   private unbindMoveEnd(): void {
-    this.mapComponent.map.off('moveend', (): void => {
+    this.mapComponent.map?.off('moveend', (): void => {
       this.emitStateChange();
     });
   }
 
   private unbindViewReset(): void {
-    this.mapComponent.map.off('viewreset', (): void => {
+    this.mapComponent.map?.off('viewreset', (): void => {
       this.emitStateChange();
     });
   }
 
   private unbindZoomEnd(): void {
-    this.mapComponent.map.off('zoomend', (): void => {
+    this.mapComponent.map?.off('zoomend', (): void => {
       this.emitStateChange();
     });
   }

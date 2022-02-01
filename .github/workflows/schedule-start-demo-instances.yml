@@ -4,8 +4,7 @@ on:
   workflow_dispatch:
   schedule:
     #Every day but Saturday around 7:00 UTC (not using exact hours helps with runners availability)
-    - cron:  '58 6 * * 0,1,2,3,4,5'
-
+    - cron: '58 6 * * 0,1,2,3,4,5'
 
 env:
   app-name: 'portail-usager'

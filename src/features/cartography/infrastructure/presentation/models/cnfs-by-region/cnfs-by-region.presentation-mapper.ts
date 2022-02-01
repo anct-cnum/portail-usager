@@ -1,14 +1,14 @@
 import { Feature, Point } from 'geojson';
 import { CnfsByRegion, CnfsByRegionProperties } from '../../../../core';
 import { MarkerProperties } from '../markers';
-import { Marker } from '../../../configuration';
+import { MarkerKey } from '../../../configuration';
 
 const cnfsByRegionPropertiesToPresentationProperties = ({
   properties
 }: CnfsByRegion): MarkerProperties<CnfsByRegionProperties> => ({
   boundingZoom: properties.boundingZoom,
   count: properties.count,
-  markerType: Marker.CnfsByRegion,
+  markerType: MarkerKey.CnfsByRegion,
   region: properties.region
 });
 

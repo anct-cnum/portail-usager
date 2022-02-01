@@ -1,7 +1,7 @@
 import { DivIcon, icon, Icon, Point as LeafletPoint } from 'leaflet';
 import { CnfsPermanenceMarkerProperties, MarkerProperties } from '../../../presentation/models';
-import { Feature, Point } from 'geojson';
 import { CnfsByDepartmentProperties, CnfsByRegionProperties } from '../../../../core';
+import { MarkerFactory } from './markers.configuration';
 
 const PIN_CNFS_BASE_64: string =
   'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyOC41MiA0OCI+PHBhdGggZD0iTTE0LjI2IDBMMCA4LjIzVjI0LjdMMTMuNSA0OGgxLjUybDEzLjUtMjMuM1Y4LjIzeiIgZmlsbD0iI2UxMDAwZiIvPjxwYXRoIGQ9Ik0xOC4zNCAxNC4xMWg1LjQxdi0zLjEybC05LjQ5LTUuNDctOS40OCA1LjQ3djEwLjk1bDkuNDggNS40OCA5LjQ5LTUuNDh2LTMuMTJoLTUuNDF6IiBmaWxsPSIjZmZmIi8+PHBhdGggZD0iTTE4LjM0IDE4Ljgydi00LjcxbC00LjA4LTIuMzUtNC4wOCAyLjM1djQuNzFsNC4wOCAyLjM2eiIgZmlsbD0iIzAwMDA5MSIvPjwvc3ZnPg==';
@@ -49,19 +49,20 @@ const USAGER_MARKER_DIMENSIONS: LeafletPoint = new LeafletPoint(
   ROUND_FALSE
 );
 
-export type IconMarkerFactory<T = null> = (feature: Feature<Point, MarkerProperties<T>>) => Icon;
-export type DivIconMarkerFactory<T> = (feature: Feature<Point, MarkerProperties<T>>) => DivIcon;
+export type IconMarkerFactory<T = null> = MarkerFactory<T, Icon>;
+
+export type DivIconMarkerFactory<T> = MarkerFactory<T, DivIcon>;
 
 export const cnfsMarkerFactory: IconMarkerFactory<CnfsPermanenceMarkerProperties> = (
-  feature: Feature<Point, MarkerProperties<CnfsPermanenceMarkerProperties>>
+  properties: MarkerProperties<CnfsPermanenceMarkerProperties>
 ): Icon => {
   const cnfsMarkerDimensions: LeafletPoint =
-    feature.properties.highlight === true ? CNFS_MARKER_HIGHLIGHT_DIMENSIONS : CNFS_MARKER_DIMENSIONS;
+    properties.highlight === true ? CNFS_MARKER_HIGHLIGHT_DIMENSIONS : CNFS_MARKER_DIMENSIONS;
   return icon({
     iconAnchor: new LeafletPoint(cnfsMarkerDimensions.x * HALF, cnfsMarkerDimensions.y),
     iconSize: cnfsMarkerDimensions,
     iconUrl: PIN_CNFS_BASE_64,
-    popupAnchor: [0, -cnfsMarkerDimensions.y]
+    popupAnchor: [0, -CNFS_MARKER_HIGHLIGHT_DIMENSIONS.y]
   });
 };
 
@@ -72,39 +73,39 @@ export const usagerMarkerFactory: IconMarkerFactory = (): Icon =>
     iconUrl: 'assets/map/pin-usager.svg'
   });
 
-const cnfsByRegionMarkerHtmlTemplate = (feature: Feature<Point, MarkerProperties<CnfsByRegionProperties>>): string => `
+const cnfsByRegionMarkerHtmlTemplate = (properties: MarkerProperties<CnfsByRegionProperties>): string => `
 <div class="fr-marker fr-marker--cnfs-by-region">
   <img style="height: 32px; width: 19px" alt="" src="${PIN_CNFS_BASE_64}"/>
   <div class="fr-marker__label">
-    ${feature.properties.count}
+    ${properties.count}
   </div>
 </div>`;
 
 export const cnfsByRegionMarkerFactory: DivIconMarkerFactory<CnfsByRegionProperties> = (
-  feature: Feature<Point, MarkerProperties<CnfsByRegionProperties>>
+  properties: MarkerProperties<CnfsByRegionProperties>
 ): DivIcon =>
   new DivIcon({
     className: '',
-    html: cnfsByRegionMarkerHtmlTemplate(feature),
+    html: cnfsByRegionMarkerHtmlTemplate(properties),
     iconAnchor: new LeafletPoint(CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS.x * HALF, CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS.y),
     iconSize: CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS,
     popupAnchor: [0, -CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS.y]
   });
 
-const cnfsByDepartmentMarkerHtmlTemplate = (feature: Feature<Point, MarkerProperties<CnfsByDepartmentProperties>>): string => `
+const cnfsByDepartmentMarkerHtmlTemplate = (properties: CnfsByDepartmentProperties): string => `
   <div class="fr-marker fr-marker--cnfs-by-department">
     <img style="height: 32px; width: 19px" alt="" src="${PIN_CNFS_BASE_64}"/>
     <div class="fr-marker__label">
-      ${feature.properties.count}
+      ${properties.count}
     </div>
   </div>`;
 
 export const cnfsByDepartmentMarkerFactory: DivIconMarkerFactory<CnfsByDepartmentProperties> = (
-  feature: Feature<Point, MarkerProperties<CnfsByDepartmentProperties>>
+  properties: MarkerProperties<CnfsByDepartmentProperties>
 ): DivIcon =>
   new DivIcon({
     className: '',
-    html: cnfsByDepartmentMarkerHtmlTemplate(feature),
+    html: cnfsByDepartmentMarkerHtmlTemplate(properties),
     iconAnchor: new LeafletPoint(
       CNFS_MARKER_CNFS_BY_DEPARTMENT_DIMENSIONS.x * HALF,
       CNFS_MARKER_CNFS_BY_DEPARTMENT_DIMENSIONS.y

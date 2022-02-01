@@ -3,20 +3,18 @@ import {
   CenterView,
   CnfsDetailsPresentation,
   MarkerEvent,
-  PointOfInterestMarkerProperties,
   StructurePresentation,
-  TypedMarker,
-  boundedMarkerEventToCenterView,
   coordinatesToCenterView,
   CnfsLocalityMarkerProperties,
   CnfsPermanenceMarkerProperties,
-  MarkerProperties,
-  CnfsPermanenceProperties,
-  BoundedMarkers,
   permanenceMarkerEventToCenterView,
-  AddressFoundPresentation
+  AddressFoundPresentation,
+  CnfsByRegionMarkerProperties,
+  CnfsByDepartmentMarkerProperties,
+  boundedMarkerEventToCenterView,
+  UsagerMarkerProperties
 } from '../../models';
-import { isGuyaneBoundedMarker, addUsagerFeatureToMarkers, CartographyPresenter } from './cartography.presenter';
+import { CartographyPresenter, isGuyaneBoundedMarker } from './cartography.presenter';
 import {
   BehaviorSubject,
   debounceTime,
@@ -31,11 +29,12 @@ import {
   tap
 } from 'rxjs';
 import { Coordinates } from '../../../../core';
-import { ViewportAndZoom, ViewReset } from '../../directives/leaflet-map-state-change';
-import { CartographyConfiguration, CARTOGRAPHY_TOKEN, Marker } from '../../../configuration';
+import { CartographyConfiguration, CARTOGRAPHY_TOKEN } from '../../../configuration';
 import { Feature, FeatureCollection, Point } from 'geojson';
-import { combineLatestWith, map, startWith } from 'rxjs/operators';
-import { CITY_ZOOM_LEVEL, DEPARTMENT_ZOOM_LEVEL } from '../../helpers/map-constants';
+import { map } from 'rxjs/operators';
+import { CITY_ZOOM_LEVEL } from '../../helpers/map-constants';
+import { ViewportAndZoom, ViewReset } from '../../directives';
+import { usagerFeatureFromCoordinates } from '../../helpers';
 
 // TODO Inject though configuration token
 const DEFAULT_MAP_VIEWPORT_AND_ZOOM: ViewportAndZoom = {
@@ -74,14 +73,6 @@ export class CartographyPage {
 
   private readonly _usagerCoordinates$: Subject<Coordinates> = new Subject<Coordinates>();
 
-  private readonly _visibleMapPointsOfInterest$: Observable<Feature<Point, PointOfInterestMarkerProperties>[]> = this.presenter
-    .visibleMapPointsOfInterestThroughViewportAtZoomLevel$(
-      this._mapViewportAndZoom$,
-      this._forceCnfsPermanence$.asObservable(),
-      this._highlightedStructureId$.asObservable()
-    )
-    .pipe(startWith([]));
-
   public addressesFound$: Observable<AddressFoundPresentation[]> = this._searchTerm$.pipe(
     map((searchTerm: string): string => searchTerm.trim()),
     filter((searchTerm: string): boolean => searchTerm.length >= MIN_SEARCH_TERM_LENGTH),
@@ -100,79 +91,71 @@ export class CartographyPage {
     )
   );
 
+  public readonly departementMarkers$: Observable<FeatureCollection<Point, CnfsByDepartmentMarkerProperties>> = this.presenter
+    .visibleMapCnfsByDepartmentAtZoomLevel$(this._mapViewportAndZoom$, this._forceCnfsPermanence$.asObservable())
+    .pipe(
+      map(
+        (
+          cnfsByDepartementFeatures: Feature<Point, CnfsByDepartmentMarkerProperties>[]
+        ): FeatureCollection<Point, CnfsByDepartmentMarkerProperties> => ({
+          features: cnfsByDepartementFeatures,
+          type: 'FeatureCollection'
+        })
+      )
+    );
+
   public displayDetailsStructureId: string | null = null;
 
   public displayMap: boolean = false;
 
   public highlightedStructureId$: Observable<string | null> = this._highlightedStructureId$.asObservable().pipe(delay(0));
 
+  public readonly permanenceMarkers$: Observable<FeatureCollection<Point, CnfsPermanenceMarkerProperties>> = this.presenter
+    .visibleMapCnfsPermanencesThroughViewportAtZoomLevel$(this._mapViewportAndZoom$, this._forceCnfsPermanence$.asObservable())
+    .pipe(
+      map(
+        (
+          cnfsPermanencesFeatures: Feature<Point, CnfsPermanenceMarkerProperties>[]
+        ): FeatureCollection<Point, CnfsPermanenceMarkerProperties> => ({
+          features: cnfsPermanencesFeatures,
+          type: 'FeatureCollection'
+        })
+      )
+    );
+
+  public readonly regionMarkers$: Observable<FeatureCollection<Point, CnfsByRegionMarkerProperties>> = this.presenter
+    .visibleMapCnfsByRegionAtZoomLevel$(this._mapViewportAndZoom$, this._forceCnfsPermanence$.asObservable())
+    .pipe(
+      map(
+        (
+          cnfsByRegionFeatures: Feature<Point, CnfsByRegionMarkerProperties>[]
+        ): FeatureCollection<Point, CnfsByRegionMarkerProperties> => ({
+          features: cnfsByRegionFeatures,
+          type: 'FeatureCollection'
+        })
+      )
+    );
+
   public structuresList$: Observable<StructurePresentation[]> = this.presenter.structuresList$(this._mapViewportAndZoom$);
 
   // TODO On peut merger ça plus haut pour éviter le null
-  public readonly usagerCoordinates$: Observable<Coordinates | null> = merge(
+  public readonly usagerMarker$: Observable<Feature<Point, UsagerMarkerProperties>> = merge(
     this.presenter.geocodeAddress$(this._addressToGeocode$),
     this._usagerCoordinates$
   ).pipe(
     tap((usagerCoordinates: Coordinates): void => {
       this._centerView$.next(coordinatesToCenterView(usagerCoordinates, CITY_ZOOM_LEVEL));
     }),
-    startWith(null)
-  );
-
-  public readonly visibleMarkersWithUsager$: Observable<
-    FeatureCollection<Point, PointOfInterestMarkerProperties | TypedMarker>
-  > = this._visibleMapPointsOfInterest$.pipe(
-    combineLatestWith(this.usagerCoordinates$),
     map(
-      ([visibleMapPointsOfInterest, usagerCoordinates]: [
-        Feature<Point, PointOfInterestMarkerProperties>[],
-        Coordinates | null
-      ]): FeatureCollection<Point, PointOfInterestMarkerProperties | TypedMarker> => ({
-        features: addUsagerFeatureToMarkers(visibleMapPointsOfInterest, usagerCoordinates),
-        type: 'FeatureCollection'
-      })
-    ),
-    // TODO Trouver une manière plus élégante de faire un dezoom si aucune CnfsPermanence n'est affiché lors de la location automatique
-    tap((featureCollection: FeatureCollection<Point, PointOfInterestMarkerProperties | TypedMarker>): void => {
-      if (this.hasNoCnfsPermanenceFollowingGeocodeOrAutolocate(featureCollection))
-        this.zoomOutUpToDepartmentLevel(featureCollection);
-
-      this._automaticLocationInProgress = false;
-    })
+      (usagerCoordinates: Coordinates): Feature<Point, UsagerMarkerProperties> =>
+        usagerFeatureFromCoordinates(usagerCoordinates)
+    )
   );
 
   public constructor(
     private readonly presenter: CartographyPresenter,
     @Inject(CARTOGRAPHY_TOKEN) private readonly cartographyConfiguration: CartographyConfiguration
   ) {}
-
-  private handleBoundedMarkerEvents(markerEvent: MarkerEvent<PointOfInterestMarkerProperties>): void {
-    this._forceCnfsPermanence$.next(isGuyaneBoundedMarker(markerEvent));
-    this._centerView$.next(boundedMarkerEventToCenterView(markerEvent as MarkerEvent<MarkerProperties<BoundedMarkers>>));
-  }
-
-  private handleCnfsPermanenceMarkerEvents(markerEvent: MarkerEvent<PointOfInterestMarkerProperties>): void {
-    this._centerView$.next(
-      permanenceMarkerEventToCenterView(markerEvent as MarkerEvent<MarkerProperties<CnfsPermanenceProperties>>)
-    );
-  }
-
-  private hasNoCnfsPermanenceFollowingGeocodeOrAutolocate(
-    featureCollection: FeatureCollection<Point, PointOfInterestMarkerProperties | TypedMarker>
-  ): boolean {
-    return (
-      this._automaticLocationInProgress &&
-      featureCollection.features.length === 1 &&
-      featureCollection.features[0].properties.markerType === Marker.Usager
-    );
-  }
-
-  private zoomOutUpToDepartmentLevel(
-    featureCollection: FeatureCollection<Point, PointOfInterestMarkerProperties | TypedMarker>
-  ): void {
-    const coordinates: Coordinates = Coordinates.fromGeoJsonFeature(featureCollection.features[0]);
-    this._centerView$.next(coordinatesToCenterView(coordinates, DEPARTMENT_ZOOM_LEVEL + 1));
-  }
 
   public displayCnfsDetails(id: string): void {
     this._cnfsDetails$.next(id);
@@ -192,7 +175,7 @@ export class CartographyPage {
   }
 
   public onCnfsLocalityMarkerChange(markerEvent: MarkerEvent<CnfsLocalityMarkerProperties>): void {
-    this._forceCnfsPermanence$.next(isGuyaneBoundedMarker(markerEvent));
+    this._forceCnfsPermanence$.next(isGuyaneBoundedMarker(markerEvent.markerProperties));
     this._centerView$.next(boundedMarkerEventToCenterView(markerEvent));
   }
 

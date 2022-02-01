@@ -3,7 +3,7 @@ import { Feature, Point } from 'geojson';
 import { cnfsCoreToCnfsPermanenceFeatures } from './cnfs-permanence.presentation-mapper';
 import { CnfsPermanenceProperties } from './cnfs-permanence.presentation';
 import { MarkerProperties } from '../markers';
-import { Marker } from '../../../configuration';
+import { MarkerKey } from '../../../configuration';
 
 describe('cnfs presentation mapper', (): void => {
   it('should map core model array to presentation model feature collection', (): void => {
@@ -32,7 +32,7 @@ describe('cnfs presentation mapper', (): void => {
           address: '6 RUE DU TOURNIQUET, MAIRIE, 85500 LES HERBIERS',
           id: '4c38ebc9a06fdd532bf9d7be',
           isLabeledFranceServices: false,
-          markerType: Marker.CnfsPermanence,
+          markerType: MarkerKey.CnfsPermanence,
           name: 'CCAS des HERBIERS'
         },
         type: 'Feature'
@@ -46,7 +46,7 @@ describe('cnfs presentation mapper', (): void => {
           address: '2 RUE DES ROCHERS, 17100 SAINTES',
           id: '88bc36fb0db191928330b1e6',
           isLabeledFranceServices: false,
-          markerType: Marker.CnfsPermanence,
+          markerType: MarkerKey.CnfsPermanence,
           name: 'SOLURIS  (SOLUTIONS NUMERIQUES TERRITORIALES INNOVANTES)'
         },
         type: 'Feature'

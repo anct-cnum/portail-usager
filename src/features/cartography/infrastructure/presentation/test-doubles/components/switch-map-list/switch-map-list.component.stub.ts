@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angul
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'display-map',
+  selector: 'switch-map-list',
   template: ''
 })
-export class DisplayMapStubComponent {
+export class SwitchMapListStubComponent {
   @Output() public readonly displayMap: EventEmitter<boolean> = new EventEmitter<boolean>();
 }

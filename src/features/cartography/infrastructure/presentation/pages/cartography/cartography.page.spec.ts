@@ -9,7 +9,7 @@ import { Observable, of } from 'rxjs';
 import {
   AddressGeolocationStubComponent,
   CnfsListStubComponent,
-  DisplayMapStubComponent,
+  SwitchMapListStubComponent,
   PermanenceMapStubComponent
 } from '../../test-doubles';
 import { CARTOGRAPHY_TOKEN } from '../../../configuration';
@@ -28,7 +28,15 @@ class CartographyPresenterStub {
     return of(null);
   }
 
-  public visibleMapPointsOfInterestThroughViewportAtZoomLevel$(): Observable<null> {
+  public visibleMapCnfsByDepartmentAtZoomLevel$(): Observable<null> {
+    return of(null);
+  }
+
+  public visibleMapCnfsByRegionAtZoomLevel$(): Observable<null> {
+    return of(null);
+  }
+
+  public visibleMapCnfsPermanencesThroughViewportAtZoomLevel$(): Observable<null> {
     return of(null);
   }
 }
@@ -41,7 +49,7 @@ describe('cartography page', (): void => {
         AddressGeolocationStubComponent,
         CartographyPage,
         CnfsListStubComponent,
-        DisplayMapStubComponent,
+        SwitchMapListStubComponent,
         PermanenceMapStubComponent
       ],
       imports: [],

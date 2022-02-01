@@ -1,29 +1,17 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChange,
-  SimpleChanges,
-  ViewChild
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import {
   CenterView,
-  CnfsLocalityMarkerProperties,
+  CnfsByDepartmentMarkerProperties,
+  CnfsByRegionMarkerProperties,
   CnfsPermanenceMarkerProperties,
   MarkerEvent,
-  PointOfInterestMarkerProperties,
-  TypedMarker
+  UsagerMarkerProperties
 } from '../../models';
-import { ViewReset } from '../../directives/leaflet-map-state-change';
 import { Feature, FeatureCollection, Point } from 'geojson';
-import { Marker } from '../../../configuration';
-import { LeafletMapComponent, TypedLeafletMarker } from '../leaflet-map/leaflet-map.component';
 import { Coordinates } from '../../../../core';
-import { CITY_ZOOM_LEVEL } from '../../helpers/map-constants';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { ViewReset } from '../../directives';
+import { MARKERS, MARKERS_TOKEN } from '../../../configuration';
 
 // TODO Convert configuration to injected token for default options then remove
 const DEFAULT_LONGITUDE: number = 4.468874066180609;
@@ -32,11 +20,6 @@ const DEFAULT_LATITUDE: number = 46.28146057911664;
 // TODO Convert configuration to injected token for default options then remove
 const DEFAULT_ZOOM_LEVEL: number = 6;
 
-const shouldHighlight = (featuredStructureIdChange: SimpleChange | undefined): boolean =>
-  !(featuredStructureIdChange?.firstChange ?? true);
-
-const currentValue = <T>(simpleChange: SimpleChange | undefined): T => simpleChange?.currentValue as T;
-
 const DEFAULT_CENTER_VIEW: CenterView = {
   coordinates: new Coordinates(DEFAULT_LATITUDE, DEFAULT_LONGITUDE),
   zoomLevel: DEFAULT_ZOOM_LEVEL
@@ -44,30 +27,46 @@ const DEFAULT_CENTER_VIEW: CenterView = {
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    {
+      provide: MARKERS_TOKEN,
+      useValue: MARKERS
+    }
+  ],
   selector: 'permanence-map',
   templateUrl: './permanence-map.component.html'
 })
-export class PermanenceMapComponent implements OnChanges {
+export class PermanenceMapComponent {
   private readonly _centerView$: BehaviorSubject<CenterView> = new BehaviorSubject<CenterView>(DEFAULT_CENTER_VIEW);
-
-  public centerView$: Observable<CenterView> = this._centerView$.asObservable();
 
   public defaultCenterView: CenterView = {
     coordinates: new Coordinates(DEFAULT_LATITUDE, DEFAULT_LONGITUDE),
     zoomLevel: DEFAULT_ZOOM_LEVEL
   };
 
-  @Output() public readonly cnfsLocalityMarkerChange: EventEmitter<MarkerEvent<CnfsLocalityMarkerProperties>> =
-    new EventEmitter<MarkerEvent<CnfsLocalityMarkerProperties>>();
+  // TODO Utiliser startwith pour éviter la valeur par défault.
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  public centerView$: Observable<CenterView> = this._centerView$.asObservable();
+
+  @Output() public readonly cnfsDepartementMarkerChange: EventEmitter<MarkerEvent<CnfsByDepartmentMarkerProperties>> =
+    new EventEmitter<MarkerEvent<CnfsByDepartmentMarkerProperties>>();
+
+  @Input() public cnfsDepartementMarkers: FeatureCollection<Point, CnfsByDepartmentMarkerProperties> | null = null;
 
   @Output() public readonly cnfsPermanenceMarkerChange: EventEmitter<MarkerEvent<CnfsPermanenceMarkerProperties>> =
     new EventEmitter<MarkerEvent<CnfsPermanenceMarkerProperties>>();
 
+  @Input() public cnfsPermanenceMarkers: FeatureCollection<Point, CnfsPermanenceMarkerProperties> | null = null;
+
+  @Output() public readonly cnfsRegionMarkerChange: EventEmitter<MarkerEvent<CnfsByRegionMarkerProperties>> = new EventEmitter<
+    MarkerEvent<CnfsByRegionMarkerProperties>
+  >();
+
+  @Input() public cnfsRegionMarkers: FeatureCollection<Point, CnfsByRegionMarkerProperties> | null = null;
+
+  @Input() public usagerMarker: Feature<Point, UsagerMarkerProperties> | null = null;
+
   @Input() public highlightedStructureId: string | null = null;
-
-  @ViewChild(LeafletMapComponent) public leafletMap!: LeafletMapComponent;
-
-  @Input() public markers: FeatureCollection<Point, PointOfInterestMarkerProperties | TypedMarker> | null = null;
 
   @Output() public readonly stateChange: EventEmitter<ViewReset> = new EventEmitter<ViewReset>();
 
@@ -77,41 +76,31 @@ export class PermanenceMapComponent implements OnChanges {
     this._centerView$.next(centerView);
   }
 
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  private readonly _markerChangedMap: Map<Marker, EventEmitter<MarkerEvent<PointOfInterestMarkerProperties>>> = new Map<
-    Marker,
-    EventEmitter<MarkerEvent<PointOfInterestMarkerProperties>>
-  >([
-    [Marker.CnfsPermanence, this.cnfsPermanenceMarkerChange as EventEmitter<MarkerEvent<PointOfInterestMarkerProperties>>],
-    [Marker.CnfsByRegion, this.cnfsLocalityMarkerChange as EventEmitter<MarkerEvent<PointOfInterestMarkerProperties>>],
-    [Marker.CnfsByDepartment, this.cnfsLocalityMarkerChange as EventEmitter<MarkerEvent<PointOfInterestMarkerProperties>>]
-  ]);
-
-  private highlight(structureId: string): void {
-    const markerFound: TypedLeafletMarker<Feature<Point, CnfsPermanenceMarkerProperties>> | undefined =
-      this.leafletMap.findMarker(
-        Marker.CnfsPermanence,
-        (permMarker: Feature<Point, CnfsPermanenceMarkerProperties>): boolean => permMarker.properties.id === structureId
-      );
-
-    if (markerFound == null) return;
-
-    this._centerView$.next({
-      coordinates: Coordinates.fromGeoJsonFeature(markerFound.feature),
-      zoomLevel: CITY_ZOOM_LEVEL
-    });
+  public onDepartementClick(cnfsByDepartementMarkerEvent: MarkerEvent<CnfsByDepartmentMarkerProperties>): void {
+    this.cnfsDepartementMarkerChange.emit(cnfsByDepartementMarkerEvent);
   }
 
-  public ngOnChanges(changes: SimpleChanges): void {
-    shouldHighlight(changes['highlightedStructureId']) &&
-      this.highlight(currentValue<string>(changes['highlightedStructureId']));
+  public onPermanenceClick(cnfsPermanenceMarkerEvent: MarkerEvent<CnfsPermanenceMarkerProperties>): void {
+    this.cnfsPermanenceMarkerChange.emit(cnfsPermanenceMarkerEvent);
   }
 
-  public onMarkerChanged(markerEvent: MarkerEvent<PointOfInterestMarkerProperties>): void {
-    this._markerChangedMap.get(markerEvent.markerProperties.markerType)?.emit(markerEvent);
+  public onRegionClick(cnfsByRegionMarkerEvent: MarkerEvent<CnfsByRegionMarkerProperties>): void {
+    this.cnfsRegionMarkerChange.emit(cnfsByRegionMarkerEvent);
   }
 
   public onStateChanged(viewReset: ViewReset): void {
     this.stateChange.emit(viewReset);
+  }
+
+  public trackByPermanenceId(_: number, cnfsPermanenceFeature: Feature<Point, CnfsPermanenceMarkerProperties>): string {
+    return cnfsPermanenceFeature.properties.id;
+  }
+
+  public trackByRegionName(_: number, cnfsPermanenceFeature: Feature<Point, CnfsByRegionMarkerProperties>): string {
+    return cnfsPermanenceFeature.properties.region;
+  }
+
+  public trackByDepartementName(_: number, cnfsPermanenceFeature: Feature<Point, CnfsByDepartmentMarkerProperties>): string {
+    return cnfsPermanenceFeature.properties.code;
   }
 }

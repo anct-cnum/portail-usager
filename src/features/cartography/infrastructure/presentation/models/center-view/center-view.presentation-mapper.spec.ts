@@ -1,6 +1,6 @@
 import { CnfsByRegionProperties, Coordinates } from '../../../../core';
 import { MarkerEvent, MarkerProperties } from '../markers';
-import { Marker } from '../../../configuration';
+import { MarkerKey } from '../../../configuration';
 import { CenterView } from './center-view.presentation';
 import {
   boundedMarkerEventToCenterView,
@@ -20,7 +20,7 @@ describe('center view', (): void => {
       markerProperties: {
         boundingZoom: 8,
         count: 6,
-        markerType: Marker.CnfsByRegion,
+        markerType: MarkerKey.CnfsByRegion,
         region: 'Auvergne'
       }
     };
@@ -43,7 +43,7 @@ describe('center view', (): void => {
         address: '12 rue des Acacias, 69002 Lyon',
         id: '4c38ebc9a06fdd532bf9d7be',
         isLabeledFranceServices: false,
-        markerType: Marker.CnfsPermanence,
+        markerType: MarkerKey.CnfsPermanence,
         name: 'Association des centres sociaux et culturels de Lyon'
       }
     };

@@ -1,5 +1,5 @@
 import { CnfsByDepartmentProperties, CnfsByRegionProperties, Coordinates } from '../../../../core';
-import { Marker } from '../../../configuration';
+import { MarkerKey } from '../../../configuration';
 import { CnfsPermanenceProperties } from '../cnfs-permanence';
 
 export type BoundedMarkers = CnfsByDepartmentProperties | CnfsByRegionProperties;
@@ -10,12 +10,14 @@ export type CnfsPermanenceMarkerProperties = MarkerProperties<CnfsPermanenceProp
 
 export type CnfsByRegionMarkerProperties = MarkerProperties<CnfsByRegionProperties>;
 
+export type UsagerMarkerProperties = TypedMarker;
+
 export type CnfsLocalityMarkerProperties = CnfsByDepartmentMarkerProperties | CnfsByRegionMarkerProperties;
 
 export type PointOfInterestMarkerProperties = CnfsLocalityMarkerProperties | CnfsPermanenceMarkerProperties;
 
 export interface TypedMarker {
-  markerType: Marker;
+  markerType: MarkerKey;
   zIndexOffset?: number;
   highlight?: boolean;
 }

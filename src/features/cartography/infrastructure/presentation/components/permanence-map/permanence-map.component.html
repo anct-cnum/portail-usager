@@ -1,8 +1,47 @@
-<ng-container *ngIf="markers">
-  <leaflet-map
-    [centerView]="(centerView$ | async) ?? defaultCenterView"
-    [markers]="markers"
-    (markerChange)="onMarkerChanged($event)"
-    (stateChange)="onStateChanged($event)"
-    (zoomOut)="zoomOut.emit()"></leaflet-map>
-</ng-container>
+<!--eslint-disable @angular-eslint/template/cyclomatic-complexity-->
+<leaflet-map
+  [centerView]="(centerView$ | async) ?? defaultCenterView"
+  (stateChange)="onStateChanged($event)"
+  (zoomOut)="zoomOut.emit()">
+  <ng-container *ngIf="cnfsRegionMarkers">
+    <leaflet-map-marker
+      *ngFor="let regionMarkerFeature of cnfsRegionMarkers.features; trackBy: trackByRegionName"
+      [latitude]="regionMarkerFeature.geometry.coordinates[1]"
+      [longitude]="regionMarkerFeature.geometry.coordinates[0]"
+      [properties]="regionMarkerFeature.properties"
+      markerFactoryKey="cnfsByRegion"
+      (markerClick)="onRegionClick($event)"></leaflet-map-marker>
+  </ng-container>
+  <ng-container *ngIf="cnfsDepartementMarkers">
+    <leaflet-map-marker
+      *ngFor="let departementMarkersFeature of cnfsDepartementMarkers.features; trackBy: trackByDepartementName"
+      [latitude]="departementMarkersFeature.geometry.coordinates[1]"
+      [longitude]="departementMarkersFeature.geometry.coordinates[0]"
+      [properties]="departementMarkersFeature.properties"
+      markerFactoryKey="cnfsByDepartment"
+      (markerClick)="onDepartementClick($event)"></leaflet-map-marker>
+  </ng-container>
+  <ng-container *ngIf="cnfsPermanenceMarkers">
+    <leaflet-map-marker
+      *ngFor="let permanenceMarkersFeature of cnfsPermanenceMarkers.features; trackBy: trackByPermanenceId"
+      [latitude]="permanenceMarkersFeature.geometry.coordinates[1]"
+      [longitude]="permanenceMarkersFeature.geometry.coordinates[0]"
+      [properties]="permanenceMarkersFeature.properties"
+      [highlight]="highlightedStructureId === permanenceMarkersFeature.properties.id"
+      markerFactoryKey="cnfsPermanence"
+      (markerClick)="onPermanenceClick($event)">
+      <!-- todo: opened by default when highlighted -->
+      <leaflet-map-popup
+        [content]="'<b>' + permanenceMarkersFeature.properties.name + '</b>'"
+        [closeOnClick]="false"
+        [closeButton]="false"
+        [isOpen]="highlightedStructureId === permanenceMarkersFeature.properties.id"></leaflet-map-popup>
+    </leaflet-map-marker>
+  </ng-container>
+  <ng-container *ngIf="usagerMarker">
+    <leaflet-map-marker
+      [latitude]="usagerMarker.geometry.coordinates[1]"
+      [longitude]="usagerMarker.geometry.coordinates[0]"
+      markerFactoryKey="usager"></leaflet-map-marker>
+  </ng-container>
+</leaflet-map>

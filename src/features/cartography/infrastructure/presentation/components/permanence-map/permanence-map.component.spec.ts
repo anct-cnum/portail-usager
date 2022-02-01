@@ -2,11 +2,12 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PermanenceMapComponent } from './permanence-map.component';
 import { FailedToCompileError } from '@angular-common/errors';
 import { MARKERS_TOKEN } from '../../../configuration';
+import { LeafletMapStubComponent } from '../../test-doubles';
 
 describe('Permanence-map component', (): void => {
   beforeEach(async (): Promise<void> => {
     await TestBed.configureTestingModule({
-      declarations: [PermanenceMapComponent],
+      declarations: [PermanenceMapComponent, LeafletMapStubComponent],
       imports: [],
       providers: [
         {

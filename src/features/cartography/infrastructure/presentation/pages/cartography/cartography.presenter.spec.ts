@@ -30,9 +30,9 @@ import {
   PointOfInterestMarkerProperties,
   StructurePresentation
 } from '../../models';
-import { ViewportAndZoom } from '../../directives/leaflet-map-state-change';
-import { Marker } from '../../../configuration';
+import { MarkerKey } from '../../../configuration';
 import { DEPARTMENT_ZOOM_LEVEL, REGION_ZOOM_LEVEL } from '../../helpers/map-constants';
+import { ViewportAndZoom } from '../../directives';
 
 const LIST_CNFS_BY_REGION_USE_CASE: ListCnfsByRegionUseCase = {
   execute$(): Observable<CnfsByRegion[]> {
@@ -246,7 +246,7 @@ describe('cartography presenter', (): void => {
           properties: {
             boundingZoom: 8,
             count: 2,
-            markerType: Marker.CnfsByRegion,
+            markerType: MarkerKey.CnfsByRegion,
             region: "Provence-Alpes-Côte d'Azur"
           },
           type: 'Feature'
@@ -259,7 +259,7 @@ describe('cartography presenter', (): void => {
           properties: {
             boundingZoom: 8,
             count: 7,
-            markerType: Marker.CnfsByRegion,
+            markerType: MarkerKey.CnfsByRegion,
             region: 'Hauts-de-France'
           },
           type: 'Feature'
@@ -283,7 +283,7 @@ describe('cartography presenter', (): void => {
       );
 
       const visibleMapPointsOfInterest: Feature<Point, PointOfInterestMarkerProperties>[] = await firstValueFrom(
-        cartographyPresenter.visibleMapPointsOfInterestThroughViewportAtZoomLevel$(viewportAndZoom$)
+        cartographyPresenter.visibleMapCnfsByRegionAtZoomLevel$(viewportAndZoom$)
       );
 
       expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsByRegionFeatures);
@@ -301,7 +301,7 @@ describe('cartography presenter', (): void => {
             code: '01',
             count: 12,
             department: 'Ain',
-            markerType: Marker.CnfsByDepartment
+            markerType: MarkerKey.CnfsByDepartment
           },
           type: 'Feature'
         },
@@ -315,7 +315,7 @@ describe('cartography presenter', (): void => {
             code: '976',
             count: 27,
             department: 'Mayotte',
-            markerType: Marker.CnfsByDepartment
+            markerType: MarkerKey.CnfsByDepartment
           },
           type: 'Feature'
         }
@@ -338,7 +338,7 @@ describe('cartography presenter', (): void => {
       });
 
       const visibleMapPointsOfInterest: Feature<Point, PointOfInterestMarkerProperties>[] = await firstValueFrom(
-        cartographyPresenter.visibleMapPointsOfInterestThroughViewportAtZoomLevel$(viewportAndZoom$)
+        cartographyPresenter.visibleMapCnfsByDepartmentAtZoomLevel$(viewportAndZoom$)
       );
 
       expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsByDepartmentFeatures);
@@ -382,7 +382,7 @@ describe('cartography presenter', (): void => {
             address: '31 Avenue de la mer, 13003 Cayenne',
             id: '4c38ebc9a06fdd532bf9d7be',
             isLabeledFranceServices: true,
-            markerType: Marker.CnfsPermanence,
+            markerType: MarkerKey.CnfsPermanence,
             name: 'Médiathèque de la mer'
           },
           type: 'Feature'
@@ -406,10 +406,7 @@ describe('cartography presenter', (): void => {
       });
 
       const visibleMapPointsOfInterest: Feature<Point, PointOfInterestMarkerProperties>[] = await firstValueFrom(
-        cartographyPresenter.visibleMapPointsOfInterestThroughViewportAtZoomLevel$(
-          viewportAndZoom$,
-          forceCnfsPermanenceDisplay$
-        )
+        cartographyPresenter.visibleMapCnfsPermanencesThroughViewportAtZoomLevel$(viewportAndZoom$, forceCnfsPermanenceDisplay$)
       );
 
       expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsPermanenceMarkersFeatures);
@@ -454,7 +451,7 @@ describe('cartography presenter', (): void => {
             code: '973',
             count: 27,
             department: 'Guyane',
-            markerType: Marker.CnfsByDepartment
+            markerType: MarkerKey.CnfsByDepartment
           },
           type: 'Feature'
         }
@@ -477,10 +474,7 @@ describe('cartography presenter', (): void => {
       });
 
       const visibleMapPointsOfInterest: Feature<Point, PointOfInterestMarkerProperties>[] = await firstValueFrom(
-        cartographyPresenter.visibleMapPointsOfInterestThroughViewportAtZoomLevel$(
-          viewportAndZoom$,
-          forceCnfsPermanenceDisplay$
-        )
+        cartographyPresenter.visibleMapCnfsByDepartmentAtZoomLevel$(viewportAndZoom$, forceCnfsPermanenceDisplay$)
       );
 
       expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsByDepartmentMarkersFeatures);
@@ -507,7 +501,7 @@ describe('cartography presenter', (): void => {
             address: '12 rue des Acacias, 69002 Lyon',
             id: '4c38ebc9a06fdd532bf9d7be',
             isLabeledFranceServices: false,
-            markerType: Marker.CnfsPermanence,
+            markerType: MarkerKey.CnfsPermanence,
             name: 'Association des centres sociaux et culturels de Lyon'
           },
           type: 'Feature'
@@ -521,7 +515,7 @@ describe('cartography presenter', (): void => {
             address: '31 Avenue de la mer, 13003 Marseille',
             id: '88bc36fb0db191928330b1e6',
             isLabeledFranceServices: true,
-            markerType: Marker.CnfsPermanence,
+            markerType: MarkerKey.CnfsPermanence,
             name: 'Médiathèque de la mer'
           },
           type: 'Feature'
@@ -535,7 +529,7 @@ describe('cartography presenter', (): void => {
       });
 
       const visibleMapPointsOfInterest: Feature<Point, PointOfInterestMarkerProperties>[] = await firstValueFrom(
-        cartographyPresenter.visibleMapPointsOfInterestThroughViewportAtZoomLevel$(viewportAndZoom$)
+        cartographyPresenter.visibleMapCnfsPermanencesThroughViewportAtZoomLevel$(viewportAndZoom$)
       );
 
       expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsPermanenceMarkersFeatures);
@@ -563,7 +557,7 @@ describe('cartography presenter', (): void => {
             highlight: true,
             id: '4c38ebc9a06fdd532bf9d7be',
             isLabeledFranceServices: false,
-            markerType: Marker.CnfsPermanence,
+            markerType: MarkerKey.CnfsPermanence,
             name: 'Association des centres sociaux et culturels de Lyon'
           },
           type: 'Feature'
@@ -577,7 +571,7 @@ describe('cartography presenter', (): void => {
             address: '31 Avenue de la mer, 13003 Marseille',
             id: '88bc36fb0db191928330b1e6',
             isLabeledFranceServices: true,
-            markerType: Marker.CnfsPermanence,
+            markerType: MarkerKey.CnfsPermanence,
             name: 'Médiathèque de la mer'
           },
           type: 'Feature'
@@ -592,7 +586,7 @@ describe('cartography presenter', (): void => {
       const highlightedStructureId$: Observable<string> = of('4c38ebc9a06fdd532bf9d7be');
 
       const visibleMapPointsOfInterest: Feature<Point, PointOfInterestMarkerProperties>[] = await firstValueFrom(
-        cartographyPresenter.visibleMapPointsOfInterestThroughViewportAtZoomLevel$(
+        cartographyPresenter.visibleMapCnfsPermanencesThroughViewportAtZoomLevel$(
           viewportAndZoom$,
           of(false),
           highlightedStructureId$

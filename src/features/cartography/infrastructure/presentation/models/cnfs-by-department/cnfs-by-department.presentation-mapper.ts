@@ -1,13 +1,13 @@
 import { Feature, Point } from 'geojson';
 import { CnfsByDepartment, CnfsByDepartmentProperties } from '../../../../core';
 import { MarkerProperties } from '../markers';
-import { Marker } from '../../../configuration';
+import { MarkerKey } from '../../../configuration';
 
 const coreToPresentationMarkerProperties = ({
   properties
 }: CnfsByDepartment): MarkerProperties<CnfsByDepartmentProperties> => ({
   ...properties,
-  markerType: Marker.CnfsByDepartment
+  markerType: MarkerKey.CnfsByDepartment
 });
 
 export const cnfsByDepartmentToPresentation = (

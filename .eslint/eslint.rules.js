@@ -69,7 +69,7 @@ module.exports = {
   'arrow-body-style': ['error', 'as-needed'],
   'block-scoped-var': 'error',
   camelcase: 'error',
-  'capitalized-comments': 'error',
+  'capitalized-comments': 'off',
   'class-methods-use-this': ['off', { enforceForClassFields: true }],
   complexity: ['error', 8],
   'consistent-return': 'error',

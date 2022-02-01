@@ -16,8 +16,8 @@
       type="checkbox"
       class="fr-toggle__input"
       id="toggle-map"
-      [formControl]="displayMapControl"
-      (change)="this.displayMap.next(displayMapControl.value)" />
+      [formControl]="switchMapListControl"
+      (change)="this.switchMapList.next(switchMapListControl.value)" />
     <label class="fr-toggle__label fr-pl-1w" for="toggle-map">Carte</label>
   </span>
 </div>

@@ -8,7 +8,7 @@ import {
   PointOfInterestMarkerProperties,
   TypedMarker
 } from '../../../models';
-import { ViewReset } from '../../../directives/leaflet-map-state-change';
+import { ViewReset } from '../../../directives';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

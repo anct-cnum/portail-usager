@@ -34,13 +34,17 @@
     <ng-container *ngIf="centerView$ | async as centerView">
       <permanence-map
         [centerView]="centerView"
-        [markers]="visibleMarkersWithUsager$ | async"
+        [cnfsRegionMarkers]="regionMarkers$ | async"
+        [cnfsDepartementMarkers]="departementMarkers$ | async"
+        [cnfsPermanenceMarkers]="permanenceMarkers$ | async"
+        [usagerMarker]="usagerMarker$ | async"
         [highlightedStructureId]="highlightedStructureId$ | async"
-        (cnfsLocalityMarkerChange)="onCnfsLocalityMarkerChange($event)"
+        (cnfsRegionMarkerChange)="onCnfsLocalityMarkerChange($event)"
+        (cnfsDepartementMarkerChange)="onCnfsLocalityMarkerChange($event)"
         (cnfsPermanenceMarkerChange)="onCnfsPermanenceMarkerChange($event)"
         (stateChange)="onMapViewChanged($event)"
         (zoomOut)="onZoomOut()"></permanence-map>
     </ng-container>
   </div>
 </div>
-<display-map (displayMap)="onDisplayMap($event)"></display-map>
+<switch-map-list (switchMapList)="onDisplayMap($event)"></switch-map-list>

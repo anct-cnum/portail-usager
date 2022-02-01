@@ -3,18 +3,18 @@ import { CommonModule } from '@angular/common';
 import {
   AddressGeolocationStubComponent,
   CnfsListStubComponent,
-  DisplayMapStubComponent,
   LeafletMapStubComponent,
-  PermanenceMapStubComponent
+  PermanenceMapStubComponent,
+  SwitchMapListStubComponent
 } from '../components';
 
 @NgModule({
   declarations: [
     AddressGeolocationStubComponent,
     CnfsListStubComponent,
-    DisplayMapStubComponent,
     LeafletMapStubComponent,
-    PermanenceMapStubComponent
+    PermanenceMapStubComponent,
+    SwitchMapListStubComponent
   ],
   imports: [CommonModule],
   providers: []

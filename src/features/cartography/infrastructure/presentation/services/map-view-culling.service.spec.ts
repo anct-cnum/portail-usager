@@ -1,8 +1,8 @@
 import { MapViewCullingService } from './map-view-culling.service';
 import { Feature, Point } from 'geojson';
-import { ViewportAndZoom } from '../directives/leaflet-map-state-change';
 import { CnfsPermanenceProperties, MarkerProperties } from '../models';
-import { Marker } from '../../configuration';
+import { MarkerKey } from '../../configuration';
+import { ViewportAndZoom } from '../directives';
 
 const FRANCE_VIEW_BOX: ViewportAndZoom = {
   // eslint-disable-next-line @typescript-eslint/no-magic-numbers
@@ -28,7 +28,7 @@ const IN_FRANCE_CNFS_FEATURE: Feature<Point, MarkerProperties<CnfsPermanenceProp
     address: 'RUE DES PYRENEES, 31330 GRENADE',
     id: '4c38ebc9a06fdd532bf9d7be',
     isLabeledFranceServices: false,
-    markerType: Marker.CnfsPermanence,
+    markerType: MarkerKey.CnfsPermanence,
     name: 'COMMUNAUTE DE COMMUNES DES HAUTS-TOLOSANS'
   },
   type: 'Feature'
@@ -43,7 +43,7 @@ const IN_AFRICA_CNFS_FEATURE: Feature<Point, MarkerProperties<CnfsPermanenceProp
     address: 'RUE DES PYRENEES, 31330 GRENADE',
     id: '4c38ebc9a06fdd532bf9d7be',
     isLabeledFranceServices: false,
-    markerType: Marker.CnfsPermanence,
+    markerType: MarkerKey.CnfsPermanence,
     name: 'COMMUNAUTE DE COMMUNES DES HAUTS-TOLOSANS'
   },
   type: 'Feature'
@@ -59,7 +59,7 @@ const SUPERPOSED_CNFS_PERMANENCE_FEATURES: Feature<Point, MarkerProperties<CnfsP
       address: 'RUE DES PYRENEES, 31330 GRENADE',
       id: '4c38ebc9a06fdd532bf9d7be',
       isLabeledFranceServices: false,
-      markerType: Marker.CnfsPermanence,
+      markerType: MarkerKey.CnfsPermanence,
       name: 'COMMUNAUTE DE COMMUNES DES HAUTS-TOLOSANS'
     },
     type: 'Feature'
@@ -73,7 +73,7 @@ const SUPERPOSED_CNFS_PERMANENCE_FEATURES: Feature<Point, MarkerProperties<CnfsP
       address: 'RUE DES PYRENEES, 31330 GRENADE',
       id: '4c38ebc9a06fdd532bf9d7be',
       isLabeledFranceServices: false,
-      markerType: Marker.CnfsPermanence,
+      markerType: MarkerKey.CnfsPermanence,
       name: 'COMMUNAUTE DE COMMUNES DES HAUTS-TOLOSANS'
     },
     type: 'Feature'
@@ -87,7 +87,7 @@ const SUPERPOSED_CNFS_PERMANENCE_FEATURES: Feature<Point, MarkerProperties<CnfsP
       address: 'RUE DES PYRENEES, 31330 GRENADE',
       id: '4c38ebc9a06fdd532bf9d7be',
       isLabeledFranceServices: false,
-      markerType: Marker.CnfsPermanence,
+      markerType: MarkerKey.CnfsPermanence,
       name: 'COMMUNAUTE DE COMMUNES DES HAUTS-TOLOSANS'
     },
     type: 'Feature'
@@ -133,7 +133,7 @@ describe('map view culling service', (): void => {
           address: 'RUE DES PYRENEES, 31330 GRENADE',
           id: '4c38ebc9a06fdd532bf9d7be',
           isLabeledFranceServices: false,
-          markerType: Marker.CnfsPermanence,
+          markerType: MarkerKey.CnfsPermanence,
           name: 'COMMUNAUTE DE COMMUNES DES HAUTS-TOLOSANS'
         },
         type: 'Feature'
