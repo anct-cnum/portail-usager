@@ -42,10 +42,10 @@
         (cnfsRegionMarkerChange)="onCnfsLocalityMarkerChange($event)"
         (cnfsDepartementMarkerChange)="onCnfsLocalityMarkerChange($event)"
         (cnfsPermanenceMarkerChange)="onCnfsPermanenceMarkerChange($event)"
-        (displayDetails)="displayCnfsDetails($event)"
+        (displayDetails)="displayCnfsDetails($event); switchMapList.toggle()"
         (stateChange)="onMapViewChanged($event)"
         (zoomOut)="onZoomOut()"></permanence-map>
     </ng-container>
   </div>
 </div>
-<switch-map-list (switchMapList)="onDisplayMap($event)"></switch-map-list>
+<switch-map-list #switchMapList (switchMapList)="onDisplayMap($event)"></switch-map-list>

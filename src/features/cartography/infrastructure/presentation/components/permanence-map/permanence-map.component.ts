@@ -65,11 +65,11 @@ export class PermanenceMapComponent {
 
   @Output() public readonly displayDetails: EventEmitter<string> = new EventEmitter<string>();
 
-  @Input() public usagerMarker: Feature<Point, UsagerMarkerProperties> | null = null;
-
   @Input() public highlightedStructureId: string | null = null;
 
   @Output() public readonly stateChange: EventEmitter<ViewReset> = new EventEmitter<ViewReset>();
+
+  @Input() public usagerMarker: Feature<Point, UsagerMarkerProperties> | null = null;
 
   @Output() public readonly zoomOut: EventEmitter<void> = new EventEmitter<void>();
 
@@ -93,15 +93,15 @@ export class PermanenceMapComponent {
     this.stateChange.emit(viewReset);
   }
 
+  public trackByDepartementName(_: number, cnfsPermanenceFeature: Feature<Point, CnfsByDepartmentMarkerProperties>): string {
+    return cnfsPermanenceFeature.properties.code;
+  }
+
   public trackByPermanenceId(_: number, cnfsPermanenceFeature: Feature<Point, CnfsPermanenceMarkerProperties>): string {
     return cnfsPermanenceFeature.properties.id;
   }
 
   public trackByRegionName(_: number, cnfsPermanenceFeature: Feature<Point, CnfsByRegionMarkerProperties>): string {
     return cnfsPermanenceFeature.properties.region;
-  }
-
-  public trackByDepartementName(_: number, cnfsPermanenceFeature: Feature<Point, CnfsByDepartmentMarkerProperties>): string {
-    return cnfsPermanenceFeature.properties.code;
   }
 }

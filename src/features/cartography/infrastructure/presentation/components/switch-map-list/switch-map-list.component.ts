@@ -10,4 +10,10 @@ export class SwitchMapListComponent {
   public switchMapListControl: FormControl = new FormControl(false);
 
   @Output() public readonly switchMapList: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+  public toggle(): void {
+    const nextSwitchMapListControlValue: boolean = !(this.switchMapListControl.value as boolean);
+    this.switchMapListControl.setValue(nextSwitchMapListControlValue);
+    this.switchMapList.emit(nextSwitchMapListControlValue);
+  }
 }
