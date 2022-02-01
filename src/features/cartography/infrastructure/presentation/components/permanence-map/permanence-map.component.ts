@@ -39,13 +39,14 @@ const DEFAULT_CENTER_VIEW: CenterView = {
 export class PermanenceMapComponent {
   private readonly _centerView$: BehaviorSubject<CenterView> = new BehaviorSubject<CenterView>(DEFAULT_CENTER_VIEW);
 
-  // TODO Utiliser startwith pour éviter la valeur par défault.
-  public centerView$: Observable<CenterView> = this._centerView$.asObservable();
-
   public defaultCenterView: CenterView = {
     coordinates: new Coordinates(DEFAULT_LATITUDE, DEFAULT_LONGITUDE),
     zoomLevel: DEFAULT_ZOOM_LEVEL
   };
+
+  // TODO Utiliser startwith pour éviter la valeur par défault.
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  public centerView$: Observable<CenterView> = this._centerView$.asObservable();
 
   @Output() public readonly cnfsDepartementMarkerChange: EventEmitter<MarkerEvent<CnfsByDepartmentMarkerProperties>> =
     new EventEmitter<MarkerEvent<CnfsByDepartmentMarkerProperties>>();
@@ -93,15 +94,15 @@ export class PermanenceMapComponent {
     this.stateChange.emit(viewReset);
   }
 
-  public trackByDepartementName(_: number, cnfsPermanenceFeature: Feature<Point, CnfsByDepartmentMarkerProperties>): string {
-    return cnfsPermanenceFeature.properties.code;
+  public trackByDepartementName(_: number, cnfsDepartemenFeature: Feature<Point, CnfsByDepartmentMarkerProperties>): string {
+    return cnfsDepartemenFeature.properties.code;
   }
 
   public trackByPermanenceId(_: number, cnfsPermanenceFeature: Feature<Point, CnfsPermanenceMarkerProperties>): string {
     return cnfsPermanenceFeature.properties.id;
   }
 
-  public trackByRegionName(_: number, cnfsPermanenceFeature: Feature<Point, CnfsByRegionMarkerProperties>): string {
-    return cnfsPermanenceFeature.properties.region;
+  public trackByRegionName(_: number, cnfsRegionFeature: Feature<Point, CnfsByRegionMarkerProperties>): string {
+    return cnfsRegionFeature.properties.region;
   }
 }
