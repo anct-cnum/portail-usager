@@ -64,6 +64,8 @@ export class PermanenceMapComponent {
 
   @Input() public cnfsRegionMarkers: FeatureCollection<Point, CnfsByRegionMarkerProperties> | null = null;
 
+  @Output() public readonly displayDetails: EventEmitter<string> = new EventEmitter<string>();
+
   @Input() public usagerMarker: Feature<Point, UsagerMarkerProperties> | null = null;
 
   @Input() public highlightedStructureId: string | null = null;

@@ -15,6 +15,12 @@ $variables: (
       active: true
     )
   ),
+  typography: (
+    text-align: (
+      active: true,
+      breakpoints: sm md lg,
+    )
+  ),
   display: (
     column-count: (
       active: true,

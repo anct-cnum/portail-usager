@@ -1,0 +1,8 @@
+////
+/// Core Settings : Typography
+/// @group core
+////
+
+$typography-vars: map-get($variables, typography);
+
+@import "settings/text-align";

@@ -1,4 +1,6 @@
 <!--eslint-disable @angular-eslint/template/cyclomatic-complexity-->
+<!--eslint-disable @angular-eslint/template/no-call-expression-->
+
 <leaflet-map
   [centerView]="(centerView$ | async) ?? defaultCenterView"
   (stateChange)="onStateChanged($event)"
@@ -30,12 +32,22 @@
       [highlight]="highlightedStructureId === permanenceMarkersFeature.properties.id"
       markerFactoryKey="cnfsPermanence"
       (markerClick)="onPermanenceClick($event)">
-      <!-- todo: opened by default when highlighted -->
       <leaflet-map-popup
-        [content]="'<b>' + permanenceMarkersFeature.properties.name + '</b>'"
+        [content]="popupContent"
         [closeOnClick]="false"
         [closeButton]="false"
-        [isOpen]="highlightedStructureId === permanenceMarkersFeature.properties.id"></leaflet-map-popup>
+        [isOpen]="highlightedStructureId === permanenceMarkersFeature.properties.id">
+          <div #popupContent class="fr-text-align--center">
+            <div class="fr-mb-1v">
+             <b>{{ permanenceMarkersFeature.properties.name }}</b>
+            </div>
+            <button
+              class='fr-btn fr-btn--sm fr-btn--secondary'
+              (click)="displayDetails.emit(permanenceMarkersFeature.properties.id)">
+              Afficher les détails
+            </button>
+          </div>
+      </leaflet-map-popup>
     </leaflet-map-marker>
   </ng-container>
   <ng-container *ngIf="usagerMarker">

@@ -17,7 +17,7 @@ export class LeafletMapPopupDirective implements OnDestroy, OnChanges {
 
   @Input() public closeOnClick: boolean = true;
 
-  @Input() public content: string = '';
+  @Input() public content: HTMLElement | string = '';
 
   @Input() public isOpen: boolean = false;
 
