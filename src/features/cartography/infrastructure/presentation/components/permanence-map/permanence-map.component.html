@@ -1,5 +1,4 @@
 <!--eslint-disable @angular-eslint/template/cyclomatic-complexity-->
-<!--eslint-disable @angular-eslint/template/no-call-expression-->
 
 <leaflet-map
   [centerView]="(centerView$ | async) ?? defaultCenterView"
@@ -37,16 +36,16 @@
         [closeOnClick]="false"
         [closeButton]="false"
         [isOpen]="highlightedStructureId === permanenceMarkersFeature.properties.id">
-          <div #popupContent class="fr-text-align--center">
-            <div class="fr-mb-1v">
-             <b>{{ permanenceMarkersFeature.properties.name }}</b>
-            </div>
-            <button
-              class='fr-btn fr-btn--sm fr-btn--secondary'
-              (click)="displayDetails.emit(permanenceMarkersFeature.properties.id)">
-              Afficher les détails
-            </button>
+        <div #popupContent class="fr-text-align--center">
+          <div class="fr-mb-1v">
+            <b>{{ permanenceMarkersFeature.properties.name }}</b>
           </div>
+          <button
+            class="fr-btn fr-btn--sm fr-btn--secondary"
+            (click)="displayDetails.emit(permanenceMarkersFeature.properties.id)">
+            Afficher les détails
+          </button>
+        </div>
       </leaflet-map-popup>
     </leaflet-map-marker>
   </ng-container>

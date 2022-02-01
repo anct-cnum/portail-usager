@@ -39,14 +39,13 @@ const DEFAULT_CENTER_VIEW: CenterView = {
 export class PermanenceMapComponent {
   private readonly _centerView$: BehaviorSubject<CenterView> = new BehaviorSubject<CenterView>(DEFAULT_CENTER_VIEW);
 
+  // TODO Utiliser startwith pour éviter la valeur par défault.
+  public centerView$: Observable<CenterView> = this._centerView$.asObservable();
+
   public defaultCenterView: CenterView = {
     coordinates: new Coordinates(DEFAULT_LATITUDE, DEFAULT_LONGITUDE),
     zoomLevel: DEFAULT_ZOOM_LEVEL
   };
-
-  // TODO Utiliser startwith pour éviter la valeur par défault.
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  public centerView$: Observable<CenterView> = this._centerView$.asObservable();
 
   @Output() public readonly cnfsDepartementMarkerChange: EventEmitter<MarkerEvent<CnfsByDepartmentMarkerProperties>> =
     new EventEmitter<MarkerEvent<CnfsByDepartmentMarkerProperties>>();
