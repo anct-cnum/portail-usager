@@ -66,6 +66,7 @@ export class PermanenceMapComponent {
 
   @Output() public readonly displayDetails: EventEmitter<string> = new EventEmitter<string>();
 
+
   @Input() public highlightedStructureId: string | null = null;
 
   @Output() public readonly stateChange: EventEmitter<ViewReset> = new EventEmitter<ViewReset>();
