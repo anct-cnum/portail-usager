@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import {
   AddressGeolocationStubComponent,
   CnfsListStubComponent,
+  IncompleteDataNoticeStubComponent,
   LeafletMapStubComponent,
   PermanenceMapStubComponent,
   SwitchMapListStubComponent
@@ -12,6 +13,7 @@ import {
   declarations: [
     AddressGeolocationStubComponent,
     CnfsListStubComponent,
+    IncompleteDataNoticeStubComponent,
     LeafletMapStubComponent,
     PermanenceMapStubComponent,
     SwitchMapListStubComponent

@@ -19,7 +19,8 @@ import {
   CnfsListComponent,
   LeafletMapComponent,
   SwitchMapListComponent,
-  PermanenceMapComponent
+  PermanenceMapComponent,
+  IncompleteDataNoticeComponent
 } from '../../presentation/components';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CnfsRest } from '../../data/rest';
@@ -43,6 +44,7 @@ const METROPOLITAN_FRANCE_CENTER_LATITUDE: number = 46.28146057911664;
     CnfsDetailsContactComponent,
     CnfsListComponent,
     DropdownPaneComponent,
+    IncompleteDataNoticeComponent,
     LeafletMapComponent,
     LeafletMapMarkerDirective,
     LeafletMapPopupDirective,

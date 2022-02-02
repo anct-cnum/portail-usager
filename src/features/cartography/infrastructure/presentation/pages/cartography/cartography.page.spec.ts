@@ -10,7 +10,8 @@ import {
   AddressGeolocationStubComponent,
   CnfsListStubComponent,
   SwitchMapListStubComponent,
-  PermanenceMapStubComponent
+  PermanenceMapStubComponent,
+  IncompleteDataNoticeStubComponent
 } from '../../test-doubles';
 import { CARTOGRAPHY_TOKEN } from '../../../configuration';
 
@@ -49,6 +50,7 @@ describe('cartography page', (): void => {
         AddressGeolocationStubComponent,
         CartographyPage,
         CnfsListStubComponent,
+        IncompleteDataNoticeStubComponent,
         SwitchMapListStubComponent,
         PermanenceMapStubComponent
       ],

@@ -48,4 +48,12 @@
     </ng-container>
   </div>
 </div>
-<switch-map-list #switchMapList (switchMapList)="onDisplayMap($event)"></switch-map-list>
+<div class="fr-position--absolute fr-bottom-0 fr-full-container--width fr-index--focus">
+  <switch-map-list
+    #switchMapList
+    (switchMapList)="onDisplayMap($event)"
+    style="padding-bottom: 56px; display: block"></switch-map-list>
+  <incomplete-data-notice
+    [displayDetailsStructureId]="displayDetailsStructureId"
+    [displayMap]="displayMap"></incomplete-data-notice>
+</div>
