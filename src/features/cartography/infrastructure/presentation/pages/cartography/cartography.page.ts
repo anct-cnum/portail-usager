@@ -17,16 +17,17 @@ import {
 import { CartographyPresenter, isGuyaneBoundedMarker } from './cartography.presenter';
 import {
   BehaviorSubject,
+  catchError,
   debounceTime,
   delay,
   distinctUntilChanged,
+  EMPTY,
   filter,
-  merge,
+  mergeWith,
   Observable,
   of,
   Subject,
-  switchMap,
-  tap
+  switchMap
 } from 'rxjs';
 import { Coordinates } from '../../../../core';
 import { CartographyConfiguration, CARTOGRAPHY_TOKEN } from '../../../configuration';
@@ -55,13 +56,13 @@ const SEARCH_DEBOUNCE_TIME: number = 300;
 export class CartographyPage {
   private readonly _addressToGeocode$: Subject<string> = new Subject<string>();
 
-  private _automaticLocationInProgress: boolean = false;
-
   private readonly _centerView$: BehaviorSubject<CenterView> = new BehaviorSubject<CenterView>(this.cartographyConfiguration);
 
   private readonly _cnfsDetails$: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
 
   private readonly _forceCnfsPermanence$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  private readonly _geocodeAddressError$: Subject<boolean> = new Subject<boolean>();
 
   private readonly _highlightedStructureId$: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
 
@@ -108,6 +109,8 @@ export class CartographyPage {
 
   public displayMap: boolean = false;
 
+  public geocodeAddressError$: Observable<boolean> = this._geocodeAddressError$.asObservable();
+
   public highlightedStructureId$: Observable<string | null> = this._highlightedStructureId$.asObservable().pipe(delay(0));
 
   public readonly permanenceMarkers$: Observable<FeatureCollection<Point, CnfsPermanenceMarkerProperties>> = this.presenter
@@ -138,18 +141,22 @@ export class CartographyPage {
 
   public structuresList$: Observable<StructurePresentation[]> = this.presenter.structuresList$(this._mapViewportAndZoom$);
 
-  // TODO On peut merger ça plus haut pour éviter le null
-  public readonly usagerMarker$: Observable<Feature<Point, UsagerMarkerProperties>> = merge(
-    this.presenter.geocodeAddress$(this._addressToGeocode$),
-    this._usagerCoordinates$
-  ).pipe(
-    tap((usagerCoordinates: Coordinates): void => {
+  public readonly usagerMarker$: Observable<Feature<Point, UsagerMarkerProperties>> = this._addressToGeocode$.pipe(
+    switchMap(
+      (addressToGeocode: string): Observable<Coordinates> =>
+        this.presenter.geocodeAddress$(addressToGeocode).pipe(
+          catchError((): Observable<never> => {
+            this._geocodeAddressError$.next(true);
+            return EMPTY;
+          })
+        )
+    ),
+    mergeWith(this._usagerCoordinates$),
+    map((usagerCoordinates: Coordinates): Feature<Point, UsagerMarkerProperties> => {
+      this._geocodeAddressError$.next(false);
       this._centerView$.next(coordinatesToCenterView(usagerCoordinates, CITY_ZOOM_LEVEL));
-    }),
-    map(
-      (usagerCoordinates: Coordinates): Feature<Point, UsagerMarkerProperties> =>
-        usagerFeatureFromCoordinates(usagerCoordinates)
-    )
+      return usagerFeatureFromCoordinates(usagerCoordinates);
+    })
   );
 
   public constructor(
@@ -170,7 +177,6 @@ export class CartographyPage {
   }
 
   public onAutoLocateUsagerRequest(coordinates: Coordinates): void {
-    this._automaticLocationInProgress = true;
     this._usagerCoordinates$.next(coordinates);
   }
 
@@ -190,7 +196,6 @@ export class CartographyPage {
   }
 
   public onGeocodeUsagerRequest(address: string): void {
-    this._automaticLocationInProgress = true;
     this._addressToGeocode$.next(address);
   }
 

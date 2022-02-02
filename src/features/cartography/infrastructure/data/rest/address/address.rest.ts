@@ -3,12 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Coordinates, AddressRepository, AddressFound } from '../../../../core';
 import { Api } from '../../../../../../environments/environment.model';
-import {
-  AddressFoundTransfer,
-  addressFoundTransferToCore,
-  CoordinatesTransfer,
-  coordinatesTransferToFirstCoordinates
-} from '../../models';
+import { AddressFoundTransfer, addressFoundTransferToCore, CoordinatesTransfer, toFirstCoordinates } from '../../models';
 import { map } from 'rxjs/operators';
 
 @Injectable()
@@ -17,10 +12,10 @@ export class AddressRest extends AddressRepository {
     super();
   }
 
-  public geocode$(address: string): Observable<Coordinates> {
+  public geocode$(address: string): Observable<Coordinates | null> {
     return this.httpClient
       .get<CoordinatesTransfer>(`${Api.ConseillerNumerique}/geocode/${encodeURIComponent(address)}`)
-      .pipe(map(coordinatesTransferToFirstCoordinates));
+      .pipe(map(toFirstCoordinates));
   }
 
   public search$(searchTerm: string): Observable<AddressFound[]> {

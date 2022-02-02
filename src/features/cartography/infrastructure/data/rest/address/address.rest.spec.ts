@@ -25,9 +25,23 @@ describe('address rest', (): void => {
     } as unknown as HttpClient;
     const addressRest: AddressRest = new AddressRest(httpClient);
 
-    const coordinates: Coordinates = await firstValueFrom(addressRest.geocode$(address));
+    const coordinates: Coordinates | null = await firstValueFrom(addressRest.geocode$(address));
 
     expect(coordinates).toStrictEqual(expectedCoordinates);
+  });
+
+  it('should get null when no location coordinates have been found from string address', async (): Promise<void> => {
+    const geocodeTransfer: CoordinatesTransfer = [];
+    const address: string = 'AddressError';
+
+    const httpClient: HttpClient = {
+      get: (): Observable<CoordinatesTransfer> => of(geocodeTransfer)
+    } as unknown as HttpClient;
+    const addressRest: AddressRest = new AddressRest(httpClient);
+
+    const coordinates: Coordinates | null = await firstValueFrom(addressRest.geocode$(address));
+
+    expect(coordinates).toBeNull();
   });
 
   it('should get a list of addresses from string address', async (): Promise<void> => {

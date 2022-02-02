@@ -22,8 +22,7 @@ import {
   PermanenceMapComponent
 } from '../../presentation/components';
 import { ReactiveFormsModule } from '@angular/forms';
-import { CnfsRest } from '../../data/rest';
-import { AddressRest } from '../../data/rest/coordinates';
+import { AddressRest, CnfsRest } from '../../data/rest';
 import { MapViewCullingService } from '../../presentation/services/map-view-culling.service';
 import { DropdownPaneComponent } from '../../../../../app/components';
 import {

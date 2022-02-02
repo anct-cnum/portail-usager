@@ -16,8 +16,13 @@ export class AddressGeolocationComponent {
   });
 
   @Input() public addressSuggestions: AddressFoundPresentation[] = [];
+
   @Output() public readonly addressToGeocode: EventEmitter<string> = new EventEmitter<string>();
+
+  @Input() public geocodeAddressError: boolean = false;
+
   @Output() public readonly searchAddress: EventEmitter<string> = new EventEmitter<string>();
+
   @Output() public readonly usagerAutolocate: EventEmitter<Coordinates> = new EventEmitter<Coordinates>();
 
   public emitLocation(position: GeolocationPosition): void {

@@ -8,7 +8,7 @@ import {
   SearchAddressUseCase
 } from '../../../../use-cases';
 import { MapViewCullingService } from '../../services/map-view-culling.service';
-import { firstValueFrom, Observable, of, Subject, throwError } from 'rxjs';
+import { firstValueFrom, Observable, of } from 'rxjs';
 import { Feature, Point } from 'geojson';
 import {
   AddressFound,
@@ -594,43 +594,6 @@ describe('cartography presenter', (): void => {
       );
 
       expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsPermanenceMarkersFeatures);
-    });
-  });
-
-  describe('address geocoding', (): void => {
-    // eslint-disable-next-line jest/no-done-callback
-    it('should swallow the error on invalid address search, keeping the observable flow open for further searches', (done: jest.DoneCallback): void => {
-      const mockThrowErrorThenReturnCoordinateFunction: () => Observable<Coordinates> = jest
-        .fn()
-        .mockImplementationOnce((): Observable<never> => throwError(new TypeError('Can not read value from undefined')))
-        .mockReturnValueOnce(of(new Coordinates(0, 0)));
-
-      const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
-        {} as CnfsDetailsUseCase,
-        LIST_CNFS_BY_REGION_USE_CASE,
-        LIST_CNFS_BY_DEPARTMENT_USE_CASE,
-        LIST_CNFS_USE_CASE,
-        {
-          execute$: mockThrowErrorThenReturnCoordinateFunction
-        } as unknown as GeocodeAddressUseCase,
-        {} as SearchAddressUseCase,
-        {} as MapViewCullingService
-      );
-
-      const addressInput$: Subject<string> = new Subject<string>();
-
-      const geocodeAddresse$: Observable<Coordinates> = cartographyPresenter.geocodeAddress$(addressInput$.asObservable());
-
-      // eslint-disable-next-line rxjs/no-subscribe-handlers
-      geocodeAddresse$.subscribe({
-        next: (resolved: Coordinates): void => {
-          expect(resolved).toStrictEqual(new Coordinates(0, 0));
-          done();
-        }
-      });
-
-      addressInput$.next('invalid address');
-      addressInput$.next('valid address');
     });
   });
 
