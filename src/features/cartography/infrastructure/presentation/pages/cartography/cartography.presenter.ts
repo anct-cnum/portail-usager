@@ -15,7 +15,7 @@ import {
   StructurePresentation
 } from '../../models';
 import { CnfsByDepartmentProperties, CnfsByRegionProperties, Coordinates } from '../../../../core';
-import { EMPTY, iif, map, Observable, of, switchMap } from 'rxjs';
+import { iif, map, Observable, of } from 'rxjs';
 import {
   CnfsDetailsUseCase,
   GeocodeAddressUseCase,
@@ -26,7 +26,7 @@ import {
 } from '../../../../use-cases';
 import { Feature, Point } from 'geojson';
 import { MapViewCullingService } from '../../services/map-view-culling.service';
-import { catchError, combineLatestWith, mergeMap, share } from 'rxjs/operators';
+import { combineLatestWith, mergeMap, share } from 'rxjs/operators';
 import { cnfsPermanencesToStructurePresentations } from '../../models/structure/structure.presentation-mapper';
 import { MarkerKey } from '../../../configuration';
 import { ObservableCache } from '../../helpers/observable-cache';
@@ -194,13 +194,8 @@ export class CartographyPresenter {
     return this.cnfsDetailsUseCase.execute$(id).pipe(map(cnfsDetailsToPresentation));
   }
 
-  public geocodeAddress$(addressToGeocode$: Observable<string>): Observable<Coordinates> {
-    return addressToGeocode$.pipe(
-      switchMap(
-        (address: string): Observable<Coordinates> =>
-          this.geocodeAddressUseCase.execute$(address).pipe(catchError((): Observable<never> => EMPTY))
-      )
-    );
+  public geocodeAddress$(addressToGeocode: string): Observable<Coordinates> {
+    return this.geocodeAddressUseCase.execute$(addressToGeocode);
   }
 
   public searchAddress$(searchTerm: string): Observable<AddressFoundPresentation[]> {
