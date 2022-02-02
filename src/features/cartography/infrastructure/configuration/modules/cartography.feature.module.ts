@@ -30,6 +30,7 @@ import {
   LeafletMapPopupDirective,
   LeafletMapStateChangeDirective
 } from '../../presentation/directives';
+import { CollapseModule } from '../../../../../app/directives';
 
 const METROPOLITAN_FRANCE_CENTER_LONGITUDE: number = 4.468874066180609;
 const METROPOLITAN_FRANCE_CENTER_LATITUDE: number = 46.28146057911664;
@@ -49,7 +50,7 @@ const METROPOLITAN_FRANCE_CENTER_LATITUDE: number = 46.28146057911664;
     PermanenceMapComponent,
     SwitchMapListComponent
   ],
-  imports: [CartographyFeatureRoutingModule, CommonModule, ReactiveFormsModule],
+  imports: [CartographyFeatureRoutingModule, CollapseModule, CommonModule, ReactiveFormsModule],
   providers: [
     {
       provide: CARTOGRAPHY_TOKEN,

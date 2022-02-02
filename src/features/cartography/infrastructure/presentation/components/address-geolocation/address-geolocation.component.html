@@ -23,7 +23,7 @@
         <div
           #dropdownPane="dropdownPane"
           [dropdownControl]="addressInput"
-          class="fr-dropdown__pane"
+          class="fr-dropdown__pane fr-position--absolute"
           aria-labelledby="address"
           appDropdownPane>
           <div class="fr-list-group">
@@ -45,8 +45,12 @@
       </div>
       <button class="fr-btn">Rechercher</button>
     </div>
-    <div *ngIf="geocodeAddressError" class="fr-alert fr-alert--warning fr-alert--sm fr-text fr-background-default--white">
-      <p class="fr-text--sm" id="address-desc-error">Nous n'avons pas trouvé de localisation pour cette adresse.</p>
+    <div class="fr-collapse-v">
+      <div class="fr-collapse-v--content" [class.fr-collapse-v--content-expanded]="geocodeAddressError">
+        <div class="fr-alert fr-alert--warning fr-alert--sm fr-text fr-background-default--white">
+          <p class="fr-text--sm" id="address-desc-error">Nous n'avons pas trouvé de localisation pour cette adresse.</p>
+        </div>
+      </div>
     </div>
   </form>
   <button (click)="locate()" class="fr-btn fr-btn--sm fr-btn--icon-left fr-mt-1w">Me localiser automatiquement</button>

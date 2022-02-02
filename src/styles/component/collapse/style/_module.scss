@@ -1,0 +1,18 @@
+////
+/// Dropdown Module
+/// @group dropdown
+////
+
+#{ns(collapse-v)} {
+  overflow: hidden;
+
+  &--content {
+    transform: translateY(-100%);
+    transition: 200ms ease-in-out;
+  }
+
+  &--content-expanded {
+    transform: translateY(0%);
+    margin-top: 0 !important;
+  }
+}
