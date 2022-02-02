@@ -101,7 +101,7 @@ jobs:
         if: steps.deploy-attempt-1.outcome=='failure'
         run: |
           clever cancel-deploy
-          clever deploy --force
+          clever restart
 
       - name: Retrieve the deployment url (without leading whitespaces)
         id: deployed-domain
