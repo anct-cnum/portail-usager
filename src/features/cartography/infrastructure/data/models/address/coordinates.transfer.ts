@@ -3,5 +3,5 @@ import { Point, Feature } from 'geojson';
 
 export type CoordinatesTransfer = Feature<Point, { address: string }>[];
 
-export const coordinatesTransferToFirstCoordinates = (feature: Feature<Point>[]): Coordinates =>
-  Coordinates.fromGeoJsonFeature(feature[0]);
+export const toFirstCoordinates = (feature: Feature<Point>[]): Coordinates | null =>
+  feature.length > 0 ? Coordinates.fromGeoJsonFeature(feature[0]) : null;
