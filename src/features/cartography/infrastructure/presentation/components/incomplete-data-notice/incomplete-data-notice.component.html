@@ -1,5 +1,5 @@
 <div
-  *ngIf="isOpen"
+  *ngIf="isOpen && displayDetailsStructureId"
   class="fr-background-flat--info"
   [ngClass]="{
     'fr-col-xl-8 fr-col-lg-7 fr-overflow--auto': displayDetailsStructureId,
@@ -14,7 +14,7 @@
     <span class="fr-sr-only">Fermer</span>
   </button>
   <div class="fr-p-3w">
-    <h6 *ngIf="displayDetailsStructureId" class="fr-text-inverted--info">
+    <h6 class="fr-text-inverted--info">
       <span class="fr-fi-error-warning-fill" aria-hidden="true"></span>
       Besoin de plus d’informations ?
     </h6>
