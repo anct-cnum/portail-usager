@@ -1,28 +1,17 @@
-<div
-  *ngIf="isOpen && displayDetailsStructureId"
-  class="fr-background-flat--info"
-  [ngClass]="{
-    'fr-col-xl-8 fr-col-lg-7 fr-overflow--auto': displayDetailsStructureId,
-    'fr-col-xl-4 fr-col-lg-5': !displayDetailsStructureId,
-    'fr-displayed-lg': displayMap,
-    'fr-col-12': !displayMap
-  }">
+<div *ngIf="isOpen" class="fr-background-flat--info">
   <button
     style="float: right"
     class="fr-link--close fr-link fr-link--lg fr-text-inverted--info fr-pl-0 fr-mt-1w fr-mr-1w"
     (click)="isOpen = false">
     <span class="fr-sr-only">Fermer</span>
   </button>
-  <div class="fr-p-3w">
-    <h6 class="fr-text-inverted--info">
+  <div class="fr-p-3v">
+    <p class="fr-text-inverted--info fr-mb-0 fr-text-align--center fr-text--bold">
       <span class="fr-fi-error-warning-fill" aria-hidden="true"></span>
-      Besoin de plus d’informations ?
-    </h6>
-    <p class="fr-text-inverted--info fr-mb-0">
-      Nous travaillons actuellement à l'enrichissement de ces données.
+      Nous travaillons actuellement à l'enrichissement des données de la carte.
       <br />
-      Vous pourrez bientôt découvrir les coordonnées des conseillers numériques France Services ainsi que leurs horaires de
-      permanences.
+      Vous pourrez dans quelques semaines accéder aux coordonnées des conseillers numériques France Services ainsi qu’à leurs
+      horaires de permanences.
     </p>
   </div>
 </div>
