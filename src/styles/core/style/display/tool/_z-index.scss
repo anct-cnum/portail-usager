@@ -3,10 +3,12 @@
 /// @group core
 ////
 
-@mixin build-z-index() {
-  $z-index-vars: map-get($display-vars, z-index);
+@use 'sass:map';
 
-  @if ($z-index-vars != false and map-get($z-index-vars, active) != false) {
+@mixin build-z-index() {
+  $z-index-vars: map.get($display-vars, z-index);
+
+  @if $z-index-vars != false and map.get($z-index-vars, active) != false {
     @each $key, $value in $z-indexes {
       #{ns(index)}--#{$key} {
         z-index: $value !important;

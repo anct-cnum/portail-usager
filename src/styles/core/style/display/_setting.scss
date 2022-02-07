@@ -3,7 +3,9 @@
 /// @group core
 ////
 
-$display-vars: map-get($variables, display);
+@use 'sass:map';
+
+$display-vars: map.get($variables, display);
 
 @import 'setting/column-count';
 @import 'setting/display';

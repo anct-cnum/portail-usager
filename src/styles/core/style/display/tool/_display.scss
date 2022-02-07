@@ -3,6 +3,8 @@
 /// @group core
 ////
 
+@use 'sass:map';
+
 @mixin display($value: inline, $breakpoint: null) {
   @include respond-from($breakpoint) {
     display: $value;
@@ -16,38 +18,38 @@
     @include display(flex);
   }
 
-  @if $flex-direction != null {
+  @if $flex-direction {
     flex-direction: #{$flex-direction};
   }
 
-  @if $align-items != null {
+  @if $align-items {
     align-items: #{$align-items};
   }
 
-  @if $justify-content != null {
+  @if $justify-content {
     justify-content: #{$justify-content};
   }
 
-  @if $flex-wrap != null {
+  @if $flex-wrap {
     flex-wrap: #{$flex-wrap};
   }
 }
 
 @mixin build-display() {
-  $display-display-vars: map-get($display-vars, display);
-  $buildBreakpoints: map-get($display-display-vars, breakpoints);
-  $breakpointsList: if($buildBreakpoints == all, $breakpoints, $buildBreakpoints);
+  $display-display-vars: map.get($display-vars, display);
+  $build-breakpoints: map.get($display-display-vars, breakpoints);
+  $breakpoints-list: if($build-breakpoints == all, $breakpoints, $build-breakpoints);
 
-  @if ($display-display-vars != false and map-get($display-display-vars, active) != false) {
-    @each $type in $displayTypes {
+  @if $display-display-vars != false and map.get($display-display-vars, active) != false {
+    @each $type in $display-types {
       #{ns(display)}--#{$type} {
         display: $type !important;
       }
     }
 
-    @if ($breakpointsList != false) {
-      @each $bp, $limit in $breakpointsList {
-        @each $type in $displayTypes {
+    @if $breakpoints-list != false {
+      @each $bp, $limit in $breakpoints-list {
+        @each $type in $display-types {
           @include respond-from($bp) {
             #{ns(display)}--#{$type}-#{$bp} {
               display: $type !important;

@@ -3,7 +3,9 @@
 /// @group core
 ////
 
-$color-vars: map-get($variables, color);
+@use 'sass:map';
+
+$color-vars: map.get($variables, color);
 
 @import 'setting/gradient';
 @import 'setting/shadow';

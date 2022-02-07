@@ -3,6 +3,8 @@
 /// @group cartography
 ////
 
+@use 'sass:map';
+
 @mixin _marker() {
   background-repeat: no-repeat;
   background-position: center;
@@ -15,10 +17,10 @@
 @mixin _marker-variations() {
   @each $marker-name, $marker-properties in $markers {
     &--#{$marker-name} {
-      width: map-get($marker-properties, width);
-      height: map-get($marker-properties, height);
-      padding: map-get($marker-properties, padding);
-      background-image: url(map-get($marker-properties, icon-path));
+      width: map.get($marker-properties, width);
+      height: map.get($marker-properties, height);
+      padding: map.get($marker-properties, padding);
+      background-image: url('#{map-get($marker-properties, icon-path)}');
     }
   }
 }
@@ -38,8 +40,8 @@
 
 @mixin build-markers() {
   #{ns(marker)} {
-    @include _marker();
-    @include _marker-variations();
-    @include _marker-label();
+    @include _marker;
+    @include _marker-variations;
+    @include _marker-label;
   }
 }

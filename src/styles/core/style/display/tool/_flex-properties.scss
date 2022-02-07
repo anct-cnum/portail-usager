@@ -3,6 +3,8 @@
 /// @group core
 ////
 
+@use 'sass:map';
+
 @mixin justify-content($value: start, $breakpoint: null) {
   @include respond-from($breakpoint) {
     justify-content: $value;
@@ -34,13 +36,13 @@
 }
 
 @mixin build-flex-properties() {
-  $places: map-get($flexProperties, 'places');
-  $flex-properties-vars: map-get($display-vars, flex-properties);
-  $buildBreakpoints: map-get($flex-properties-vars, breakpoints);
-  $breakpointsList: if($buildBreakpoints == all, $breakpoints, $buildBreakpoints);
+  $places: map.get($flex-properties, 'places');
+  $flex-properties-vars: map.get($display-vars, flex-properties);
+  $build-breakpoints: map.get($flex-properties-vars, breakpoints);
+  $breakpoints-list: if($build-breakpoints == all, $breakpoints, $build-breakpoints);
 
-  @if ($flex-properties-vars != false and map-get($flex-properties-vars, active) != false) {
-    @each $prop, $values in $flexProperties {
+  @if $flex-properties-vars != false and map.get($flex-properties-vars, active) != false {
+    @each $prop, $values in $flex-properties {
       @each $val in $values {
         #{ns($prop)}--#{$val} {
           #{$prop}: #{$val} !important;
@@ -48,9 +50,9 @@
       }
     }
 
-    @if ($breakpointsList != false) {
-      @each $bp, $limit in $breakpointsList {
-        @each $prop, $values in $flexProperties {
+    @if $breakpoints-list != false {
+      @each $bp, $limit in $breakpoints-list {
+        @each $prop, $values in $flex-properties {
           @each $val in $values {
             @include respond-from($bp) {
               #{ns($prop)}--#{$val}-#{$bp} {

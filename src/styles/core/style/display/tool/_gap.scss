@@ -3,16 +3,18 @@
 /// @group core
 ////
 
+@use 'sass:math';
+
 @function _gap-name($prop: gap, $value: 1, $unit: null, $breakpoint: null) {
   $middle: '';
 
-  @if $breakpoint != null {
+  @if $breakpoint {
     $middle: '#{$breakpoint}-';
   }
 
   $end: #{$value};
 
-  @if $value != 0 and $unit != null {
+  @if $value != 0 and $unit {
     $end: '#{$end}#{$unit}';
   }
 
@@ -27,13 +29,14 @@
   }
 
   $w: null;
-  @if (abs($value) % 2) == 0 and $value != 0 {
-    $w: abs($value) * 0.5;
+
+  @if (math.abs($value) % 2) == 0 and $value != 0 {
+    $w: math.abs($value) * 0.5;
   }
 
   $selectors: '#{ns(_gap-name($prop, $value, v, $breakpoint))}';
 
-  @if $w != null {
+  @if $w {
     $selectors: '#{$selectors},#{ns(_gap-name($prop, $value * 0.5, w, $breakpoint))}';
   }
 

@@ -2,11 +2,12 @@
 /// Core Tools : Global white-space
 /// @group core
 ////
+@use 'sass:map';
 
 @mixin build-white-space() {
-  $white-space-vars: map-get($display-vars, white-space);
+  $white-space-vars: map.get($display-vars, white-space);
 
-  @if ($white-space-vars != false and map-get($white-space-vars, active) != false) {
+  @if $white-space-vars != false and map.get($white-space-vars, active) != false {
     @each $type in $white-space {
       #{ns(white-space)}--#{$type} {
         white-space: $type !important;

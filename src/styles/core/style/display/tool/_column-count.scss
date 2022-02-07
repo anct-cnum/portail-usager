@@ -3,16 +3,18 @@
 /// @group core
 ////
 
-@mixin build-column-count() {
-  $from: map-get($column-count-settings, from);
-  $through: map-get($column-count-settings, through);
-  $column-count-vars: map-get($display-vars, column-count);
-  $buildBreakpoints: map-get($column-count-vars, breakpoints);
-  $breakpointsList: if($buildBreakpoints == all, $breakpoints, $buildBreakpoints);
+@use 'sass:map';
 
-  @if ($column-count-vars != false and map-get($column-count-vars, active) != false) {
+@mixin build-column-count() {
+  $from: map.get($column-count-settings, from);
+  $through: map.get($column-count-settings, through);
+  $column-count-vars: map.get($display-vars, column-count);
+  $build-breakpoints: map.get($column-count-vars, breakpoints);
+  $breakpoints-list: if($build-breakpoints == all, $breakpoints, $build-breakpoints);
+
+  @if $column-count-vars != false and map.get($column-count-vars, active) != false {
     @for $i from $from through $through {
-      @include _build-column-variations($i, $breakpointsList);
+      @include _build-column-variations($i, $breakpoints-list);
     }
   }
 }
@@ -22,7 +24,7 @@
     column-count: $value !important;
   }
 
-  @if ($breakpointsList != false) {
+  @if $breakpointsList != false {
     @each $bp, $limit in $breakpointsList {
       @include respond-from($bp) {
         #{ns(column-count)}-#{$value}-#{$bp} {

@@ -26,6 +26,7 @@ $list-group-border-width: 1px;
     display: block;
     border-width: 1px;
     border-style: solid;
+
     @include padding-x('3v');
     @include padding-y('1w');
 

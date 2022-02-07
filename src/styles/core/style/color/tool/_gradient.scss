@@ -3,14 +3,16 @@
 /// @group core
 ////
 
-@mixin build-gradient() {
-  $gradient-vars: map-get($color-vars, gradient);
+@use 'sass:map';
 
-  @if ($gradient-vars != false and map-get($gradient-vars, active) != false) {
+@mixin build-gradient() {
+  $gradient-vars: map.get($color-vars, gradient);
+
+  @if $gradient-vars != false and map.get($gradient-vars, active) != false {
     @each $key, $value in $gradient-settings {
       #{ns(gradient)}--#{$key} {
-        background: map-get($value, start);
-        background: linear-gradient(0deg, map-get($value, start) 0%, map-get($value, stop) 33%, map-get($value, stop) 100%);
+        background: map.get($value, start);
+        background: linear-gradient(0deg, map.get($value, start) 0%, map.get($value, stop) 33%, map.get($value, stop) 100%);
       }
     }
   }

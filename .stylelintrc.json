@@ -1,16 +1,12 @@
 {
-  "extends": "stylelint-config-standard",
+  "extends": ["stylelint-config-standard-scss", "stylelint-config-prettier"],
   "plugins": ["stylelint-scss"],
   "rules": {
-    "at-rule-no-unknown": null,
-    "declaration-colon-newline-after": null,
     "scss/at-rule-no-unknown": true,
-    "no-descending-specificity": null,
     "block-closing-brace-newline-after": "always-single-line",
-    "unit-case": null,
     "unit-no-unknown": [true, { "ignoreFunctions": ["space", "calc"], "ignoreUnits": ["N", "v", "w", "/x[0-9]+/"] }],
-    "at-rule-empty-line-before": null,
-    "declaration-empty-line-before": null,
-    "font-family-no-missing-generic-family-keyword": [true, { "ignoreFontFamilies": ["icons"] }]
+    "font-family-no-missing-generic-family-keyword": [true, { "ignoreFontFamilies": ["icons"] }],
+    "scss/at-function-pattern": "^_?[a-z]+([a-z0-9-]+[a-z0-9]+)?$",
+    "scss/at-mixin-pattern": "^_?[a-z]+([a-z0-9-]+[a-z0-9]+)?$"
   }
 }

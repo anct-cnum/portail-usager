@@ -3,6 +3,8 @@
 /// @group core
 ////
 
-$typography-vars: map-get($variables, typography);
+@use 'sass:map';
+
+$typography-vars: map.get($variables, typography);
 
 @import 'settings/text-align';

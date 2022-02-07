@@ -3,14 +3,16 @@
 /// @group core
 ////
 
-@mixin build-size() {
-  $size-vars: map-get($display-vars, z-index);
+@use 'sass:map';
 
-  @if ($size-vars != false and map-get($size-vars, active) != false) {
+@mixin build-size() {
+  $size-vars: map.get($display-vars, z-index);
+
+  @if $size-vars != false and map.get($size-vars, active) != false {
     @each $key, $types in $size {
       @each $type, $value in $types {
         #{ns($key)}--#{$type} {
-          @include size(map-get($value, width), map-get($value, height));
+          @include size(map.get($value, width), map.get($value, height));
         }
       }
     }

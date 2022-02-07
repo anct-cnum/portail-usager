@@ -3,8 +3,10 @@
 /// @group core
 ////
 
+@use 'sass:map';
+
 @function text-align($place) {
-  @return map-get($text-align-settings, $place);
+  @return map.get($text-align-settings, $place);
 }
 
 @mixin text-align($value: start, $breakpoint: null) {
@@ -14,19 +16,19 @@
 }
 
 @mixin build-text-align() {
-  $places: map-get($text-align-settings, 'places');
-  $text-align-vars: map-get($typography-vars, text-align);
-  $buildBreakpoints: map-get($text-align-vars, breakpoints);
-  $breakpointsList: if($buildBreakpoints == all, $breakpoints, $buildBreakpoints);
+  $places: map.get($text-align-settings, 'places');
+  $text-align-vars: map.get($typography-vars, text-align);
+  $build-breakpoints: map.get($text-align-vars, breakpoints);
+  $breakpoints-list: if($build-breakpoints == all, $breakpoints, $build-breakpoints);
 
-  @if ($text-align-vars == true or map-get($text-align-vars, active)) {
+  @if $text-align-vars == true or map.get($text-align-vars, active) {
     @each $place in $places {
       #{ns(text-align)}--#{$place} {
         text-align: $place !important;
       }
     }
 
-    @each $bp, $limit in $breakpointsList {
+    @each $bp, $limit in $breakpoints-list {
       @each $place in $places {
         @include respond-from($bp) {
           #{ns(text-align)}--#{$place}-#{$bp} {

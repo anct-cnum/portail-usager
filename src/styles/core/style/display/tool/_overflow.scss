@@ -3,10 +3,12 @@
 /// @group core
 ////
 
-@mixin build-overflow() {
-  $overflow-vars: map-get($display-vars, overflow);
+@use 'sass:map';
 
-  @if ($overflow-vars != false and map-get($overflow-vars, active) != false) {
+@mixin build-overflow() {
+  $overflow-vars: map.get($display-vars, overflow);
+
+  @if $overflow-vars != false and map.get($overflow-vars, active) != false {
     @each $type in $overflow {
       #{ns(overflow)}--#{$type} {
         overflow: $type !important;

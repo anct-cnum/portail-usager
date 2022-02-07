@@ -3,21 +3,24 @@
 /// @group core
 ////
 
-@mixin build-positions() {
-  $types: map-get($position-settings, types);
-  $position-vars: map-get($display-vars, position);
-  $buildBreakpoints: map-get($position-vars, breakpoints);
-  $breakpointsList: if($buildBreakpoints == all, $breakpoints, $buildBreakpoints);
+@use 'sass:map';
+@use 'sass:math';
 
-  @if ($position-vars != true and map-get($position-vars, active) != false) {
+@mixin build-positions() {
+  $types: map.get($position-settings, types);
+  $position-vars: map.get($display-vars, position);
+  $build-breakpoints: map.get($position-vars, breakpoints);
+  $breakpoints-list: if($build-breakpoints == all, $breakpoints, $build-breakpoints);
+
+  @if $position-vars != true and map.get($position-vars, active) != false {
     @each $type in $types {
       #{ns(position)}--#{$type} {
         position: $type !important;
       }
     }
 
-    @if ($breakpointsList != false) {
-      @each $bp, $limit in $breakpointsList {
+    @if $breakpoints-list != false {
+      @each $bp, $limit in $breakpoints-list {
         @each $type in $types {
           @include respond-from($bp) {
             #{ns(position)}--#{$type}-#{$bp} {
@@ -31,28 +34,28 @@
 }
 
 @function _position-side-name($prop, $value: 1, $unit: null, $breakpoint: null) {
-  $formatedValue: '';
+  $formated-value: '';
   $end: '';
 
   @if type-of($value) == 'map' {
-    $formatedValue: map-keys($value);
+    $formated-value: map.keys($value);
   } @else {
-    $formatedValue: '#{$value}';
+    $formated-value: '#{$value}';
   }
 
   @if type-of($value) == 'number' and $value < 0 {
-    $formatedValue: 'n#{abs($value)}';
+    $formated-value: 'n#{math.abs($value)}';
   }
 
-  @if $value != 0 and $unit != null {
-    $formatedValue: '#{$formatedValue}#{$unit}';
+  @if $value != 0 and $unit {
+    $formated-value: '#{$formated-value}#{$unit}';
   }
 
-  @if $breakpoint != null {
+  @if $breakpoint {
     $end: '-#{$breakpoint}';
   }
 
-  $selector: '#{$prop}-#{$formatedValue}#{$end}';
+  $selector: '#{$prop}-#{$formated-value}#{$end}';
 
   @return $selector;
 }
@@ -63,13 +66,14 @@
   }
 
   $w: null;
-  @if (abs($value) % 2) == 0 and $value != 0 {
-    $w: abs($value) * 0.5;
+
+  @if (math.abs($value) % 2) == 0 and $value != 0 {
+    $w: math.abs($value) * 0.5;
   }
 
   $selectors: '#{ns(_position-side-name($prop, $value, v, $breakpoint))}';
 
-  @if $w != null {
+  @if $w {
     $selectors: '#{$selectors},#{ns(_position-side-name($prop, $value * 0.5, w, $breakpoint))}';
   }
 
@@ -95,7 +99,7 @@
   @each $prop in $sides {
     #{_position-side-selectors($prop, $value, $breakpoint)} {
       @if type-of($v) == 'map' {
-        #{$prop}: map-values($v) !important;
+        #{$prop}: map.values($v) !important;
       } @else {
         #{$prop}: $v !important;
       }
@@ -105,9 +109,9 @@
 
 @mixin _position-side-properties($props, $breakpoint: null) {
   $special: map_get($props, special);
-  $sides: map-get($position-settings, sides);
+  $sides: map.get($position-settings, sides);
 
-  @if $special != null {
+  @if $special {
     @each $specialVal in $special {
       @include _position-side-variations($sides, $specialVal, $breakpoint);
     }
@@ -115,17 +119,17 @@
 }
 
 @mixin build-position-sides() {
-  $sides: map-get($position-settings, sides);
-  $position-vars: map-get($display-vars, position);
-  $position-values-vars: map-get($display-vars, 'position-values');
-  $buildBreakpoints: map-get($position-vars, breakpoints);
-  $breakpointsList: if($buildBreakpoints == all, $breakpoints, $buildBreakpoints);
+  $sides: map.get($position-settings, sides);
+  $position-vars: map.get($display-vars, position);
+  $position-values-vars: map.get($display-vars, 'position-values');
+  $build-breakpoints: map.get($position-vars, breakpoints);
+  $breakpoints-list: if($build-breakpoints == all, $breakpoints, $build-breakpoints);
 
-  @if ($position-values-vars != false and map-get($position-values-vars, active) != false) {
+  @if $position-values-vars != false and map.get($position-values-vars, active) != false {
     @include _position-side-properties($position-values-vars);
 
-    @if ($breakpointsList != false) {
-      @each $bp, $limit in $breakpointsList {
+    @if $breakpoints-list != false {
+      @each $bp, $limit in $breakpoints-list {
         @include respond-from($bp) {
           @include _position-side-properties($position-values-vars, $bp);
         }
@@ -135,14 +139,14 @@
 }
 
 @mixin _position-alignments-variation($values, $axis, $breakpoint: null) {
-  @if (map-has-key($values, $axis)) {
+  @if map-has-key($values, $axis) {
     $end: '';
 
-    @if $breakpoint != null {
+    @if $breakpoint {
       $end: '-#{$breakpoint}';
     }
 
-    @each $key, $value in map-get($values, $axis) {
+    @each $key, $value in map.get($values, $axis) {
       #{ns(translate-#{$axis}-#{$key}#{$end})} {
         transform: translate#{to-upper-case($axis) }($value);
       }
@@ -158,16 +162,16 @@
 }
 
 @mixin build-position-alignments() {
-  $position-vars: map-get($display-vars, position);
-  $position-alignments-vars: map-get($display-vars, 'position-alignments');
-  $buildBreakpoints: map-get($position-vars, breakpoints);
-  $breakpointsList: if($buildBreakpoints == all, $breakpoints, $buildBreakpoints);
+  $position-vars: map.get($display-vars, position);
+  $position-alignments-vars: map.get($display-vars, 'position-alignments');
+  $build-breakpoints: map.get($position-vars, breakpoints);
+  $breakpoints-list: if($build-breakpoints == all, $breakpoints, $build-breakpoints);
 
-  @if ($position-alignments-vars != false and map-get($position-alignments-vars, active) != false) {
+  @if $position-alignments-vars != false and map.get($position-alignments-vars, active) != false {
     @include _position-alignments-properties($position-alignments-vars);
 
-    @if ($breakpointsList != false) {
-      @each $bp, $limit in $breakpointsList {
+    @if $breakpoints-list != false {
+      @each $bp, $limit in $breakpoints-list {
         @include respond-from($bp) {
           @include _position-alignments-properties($position-alignments-vars, $bp);
         }
