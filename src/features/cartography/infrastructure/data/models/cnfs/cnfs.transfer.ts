@@ -1,4 +1,5 @@
 import { Feature, FeatureCollection, Point } from 'geojson';
+
 export interface CnfsTransferProperties {
   id: string;
   name: string;

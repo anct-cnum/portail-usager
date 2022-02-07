@@ -1,8 +1,8 @@
 import { CnfsRest } from './cnfs.rest';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Observable, of } from 'rxjs';
-import { CnfsByRegion, CnfsByDepartment, CnfsDetails, Coordinates, StructureContact } from '../../../../core';
-import { CnfsByRegionTransfer, CnfsByDepartmentTransfer, CnfsDetailsTransfer } from '../../models';
+import { CnfsByDepartment, CnfsByRegion, CnfsDetails, CnfsType, Coordinates, StructureContact } from '../../../../core';
+import { CnfsByDepartmentTransfer, CnfsByRegionTransfer, CnfsDetailsTransfer, CnfsTypeTransfer } from '../../models';
 
 const CNFS_BY_REGION_TRANSFER: CnfsByRegionTransfer = {
   features: [
@@ -139,6 +139,40 @@ describe('cnfs rest repository', (): void => {
     const expectedCnfsDetails: CnfsDetails = new CnfsDetails(
       2,
       'Aide rurale',
+      CnfsType.Default,
+      [],
+      '12 RUE DE LA PLACE, 87100 LIMOGES',
+      new StructureContact('john.doe@aide-rurale.net', '04 23 45 68 97')
+    );
+
+    const id: string = '88bc36fb0db191928330b1e6';
+    const cnfsRestRepository: CnfsRest = new CnfsRest(httpClient);
+
+    const cnfsDetails: CnfsDetails = await firstValueFrom(cnfsRestRepository.cnfsDetails$(id));
+
+    expect(cnfsDetails).toStrictEqual(expectedCnfsDetails);
+  });
+
+  it('should get cnfs details with cnfs ambassadeur Mon Espace Santé', async (): Promise<void> => {
+    const cnfsDetailsTransfer: CnfsDetailsTransfer = {
+      adresse: '12 RUE DE LA PLACE, 87100 LIMOGES',
+      email: 'john.doe@aide-rurale.net',
+      nom: 'Aide rurale',
+      nombreCnfs: 2,
+      telephone: '04 23 45 68 97',
+      type: CnfsTypeTransfer.MonEspaceSante
+    };
+
+    const httpClient: HttpClient = {
+      get(): Observable<CnfsDetailsTransfer> {
+        return of(cnfsDetailsTransfer);
+      }
+    } as unknown as HttpClient;
+
+    const expectedCnfsDetails: CnfsDetails = new CnfsDetails(
+      2,
+      'Aide rurale',
+      CnfsType.MonEspaceSante,
       [],
       '12 RUE DE LA PLACE, 87100 LIMOGES',
       new StructureContact('john.doe@aide-rurale.net', '04 23 45 68 97')

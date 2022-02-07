@@ -1,6 +1,6 @@
 import { Cnfs, CnfsPermanence, Coordinates } from '../../../../core';
 import { CnfsTransfer, CnfsTransferProperties } from './cnfs.transfer';
-import { Point, Feature, Position } from 'geojson';
+import { Feature, Point, Position } from 'geojson';
 
 const hasValidCoordinates = (feature: Feature<Point>): boolean => {
   const [longitude, latitude]: Position = feature.geometry.coordinates;
