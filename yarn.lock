@@ -2121,7 +2121,7 @@
     semver "^7.3.5"
     tsutils "^3.21.0"
 
-"@typescript-eslint/utils@5.11.0":
+"@typescript-eslint/utils@5.11.0", "@typescript-eslint/utils@^5.10.0":
   version "5.11.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/utils/-/utils-5.11.0.tgz#d91548ef180d74c95d417950336d9260fdbe1dc5"
   integrity sha512-g2I480tFE1iYRDyMhxPAtLQ9HAn0jjBtipgTCZmd9I9s11OV8CTsG+YfFciuNDcHqm4csbAgC2aVZCHzLxMSUw==
@@ -4064,12 +4064,12 @@ eslint-etc@^5.0.0, eslint-etc@^5.1.0:
     tsutils "^3.17.1"
     tsutils-etc "^1.4.1"
 
-eslint-plugin-jest@^25.2.4:
-  version "25.7.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-25.7.0.tgz#ff4ac97520b53a96187bad9c9814e7d00de09a6a"
-  integrity sha512-PWLUEXeeF7C9QGKqvdSbzLOiLTx+bno7/HC9eefePfEb257QFHg7ye3dh80AZVkaa/RQsBB1Q/ORQvg2X7F0NQ==
+eslint-plugin-jest@^26.1.0:
+  version "26.1.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-26.1.0.tgz#9f6c33e66f3cef3f2832c3a4d2caa21a75792dee"
+  integrity sha512-vjF6RvcKm4xZSJgCmXb9fXmhzTva+I9jtj9Qv5JeZQTRocU7WT1g3Kx0cZ+00SekPe2DtSWDawHtSj4RaxFhXQ==
   dependencies:
-    "@typescript-eslint/experimental-utils" "^5.0.0"
+    "@typescript-eslint/utils" "^5.10.0"
 
 eslint-plugin-rxjs-angular@^2.0.0:
   version "2.0.0"
@@ -4082,10 +4082,10 @@ eslint-plugin-rxjs-angular@^2.0.0:
     requireindex "~1.2.0"
     tslib "^2.0.0"
 
-eslint-plugin-rxjs@^4.0.2:
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-rxjs/-/eslint-plugin-rxjs-4.0.4.tgz#b7570951d4c44d529e5f60819212387aee2a800e"
-  integrity sha512-7JopYQRqS5TYBNXioTLtS+W6+IKC1rsC7q8Dtou8E5gMuPxuEFqxU1x2161bwadaK3+h6sR+xiGjEhiE6JwjUA==
+eslint-plugin-rxjs@^5.0.2:
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-rxjs/-/eslint-plugin-rxjs-5.0.2.tgz#0f6f31d227f7d11f4596c3bbbded16e278629684"
+  integrity sha512-Q2wsEHWInhZ3uz5df+YbD4g/NPQqAeYHjJuEsxqgVS+XAsYCuVE2pj9kADdMFy4GsQy2jt7KP+TOrnq1i6bI5Q==
   dependencies:
     "@typescript-eslint/experimental-utils" "^5.0.0"
     common-tags "^1.8.0"
