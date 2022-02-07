@@ -15,10 +15,10 @@ const openingHoursToPresentation = (openingHours: string[] = []): Opening[] =>
     })
   );
 
-const getNote = (type: CnfsType): Pick<CnfsDetailsPresentation, 'note'> =>
+const getCnfsTypeNote = (type: CnfsType): Pick<CnfsDetailsPresentation, 'cnfsTypeNote'> =>
   STRUCTURE_NOTE_MAP.has(type)
     ? {
-        note: STRUCTURE_NOTE_MAP.get(type)
+        cnfsTypeNote: STRUCTURE_NOTE_MAP.get(type)
       }
     : {};
 
@@ -26,7 +26,7 @@ export const cnfsDetailsToPresentation = (cnfsDetails: CnfsDetails): CnfsDetails
   address: cnfsDetails.structureAddress,
   cnfsNumber: cnfsDetails.cnfsNumber,
   email: cnfsDetails.contact?.email,
-  ...getNote(cnfsDetails.type),
+  ...getCnfsTypeNote(cnfsDetails.type),
   opening: openingHoursToPresentation(cnfsDetails.openingHours),
   phone: cnfsDetails.contact?.phone,
   structureName: cnfsDetails.structureName,

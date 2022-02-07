@@ -17,7 +17,7 @@ export interface CnfsDetailsPresentation {
   address?: string;
   cnfsNumber: number;
   email?: string;
-  note?: string;
+  cnfsTypeNote?: string;
   opening: Opening[];
   phone?: string;
   structureName: string;

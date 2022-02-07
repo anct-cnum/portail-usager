@@ -181,8 +181,8 @@ describe('cartography presenter', (): void => {
       const expectedCnfsDetails: CnfsDetailsPresentation = {
         address: 'Place José Moron 3200 RIOM',
         cnfsNumber: 2,
+        cnfsTypeNote: "Un conseiller de cette structure est spécialisé dans l'accueil des professions agricoles",
         email: 'email@example.com',
-        note: "Un conseiller de cette structure est spécialisé dans l'accueil des professions agricoles",
         opening: [
           {
             day: DayPresentation.Monday,
