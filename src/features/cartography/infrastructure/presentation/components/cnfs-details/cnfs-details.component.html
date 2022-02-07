@@ -12,6 +12,7 @@
         <span class="fr-fi-app fr-fi-map-pin-line" aria-hidden="true"></span>
         {{ cnfsDetails.address }}
       </p>
+      <small *ngIf="cnfsDetails.note">{{ cnfsDetails.note }}</small>
     </div>
     <div class="fr-col-xl-6 fr-col-lg-12 fr-col-md-6 fr-col-12">
       <h2 class="fr-sr-only">Conseillers</h2>

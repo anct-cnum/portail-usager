@@ -18,6 +18,7 @@ import {
   CnfsByRegion,
   CnfsByRegionProperties,
   CnfsDetails,
+  CnfsType,
   Coordinates,
   StructureContact
 } from '../../../../core';
@@ -96,6 +97,7 @@ const CNFS_DETAILS_USE_CASE: CnfsDetailsUseCase = {
       new CnfsDetails(
         2,
         'Association Des Centres Sociaux Et Culturels Du Bassin De Riom',
+        CnfsType.Default,
         ['9h30 - 17h30', '9h30 - 17h30', '9h30 - 17h30', '9h30 - 17h30', '9h30 - 17h30', '9h30 - 12h00'],
         'Place José Moron 3200 RIOM',
         new StructureContact('email@example.com', '03 86 55 26 40', 'https://www.test.com')
@@ -146,6 +148,56 @@ describe('cartography presenter', (): void => {
 
       const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
         CNFS_DETAILS_USE_CASE,
+        LIST_CNFS_BY_REGION_USE_CASE,
+        LIST_CNFS_BY_DEPARTMENT_USE_CASE,
+        LIST_CNFS_USE_CASE,
+        {} as GeocodeAddressUseCase,
+        {} as SearchAddressUseCase,
+        {} as MapViewCullingService
+      );
+
+      const cnfsDetails: CnfsDetailsPresentation = await firstValueFrom(cartographyPresenter.cnfsDetails$(id));
+
+      expect(cnfsDetails).toStrictEqual(expectedCnfsDetails);
+    });
+
+    it('should get cnfs details with a Conseiller numérique France Service en Chambre d’Agriculture', async (): Promise<void> => {
+      const cnfsDetailsUseCase: CnfsDetailsUseCase = {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        execute$(_: string): Observable<CnfsDetails> {
+          return of(
+            new CnfsDetails(
+              2,
+              'Association Des Centres Sociaux Et Culturels Du Bassin De Riom',
+              CnfsType.ChambreDAgriculture,
+              ['9h30 - 17h30'],
+              'Place José Moron 3200 RIOM',
+              new StructureContact('email@example.com', '03 86 55 26 40', 'https://www.test.com')
+            )
+          );
+        }
+      } as CnfsDetailsUseCase;
+
+      const expectedCnfsDetails: CnfsDetailsPresentation = {
+        address: 'Place José Moron 3200 RIOM',
+        cnfsNumber: 2,
+        email: 'email@example.com',
+        note: "Un conseiller de cette structure est spécialisé dans l'accueil des professions agricoles",
+        opening: [
+          {
+            day: DayPresentation.Monday,
+            hours: '9h30 - 17h30'
+          }
+        ],
+        phone: '03 86 55 26 40',
+        structureName: 'Association Des Centres Sociaux Et Culturels Du Bassin De Riom',
+        website: 'https://www.test.com'
+      };
+
+      const id: string = '4c38ebc9a06fdd532bf9d7be';
+
+      const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+        cnfsDetailsUseCase,
         LIST_CNFS_BY_REGION_USE_CASE,
         LIST_CNFS_BY_DEPARTMENT_USE_CASE,
         LIST_CNFS_USE_CASE,
