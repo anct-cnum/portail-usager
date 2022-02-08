@@ -8,7 +8,7 @@
 
   &__pane {
     position: absolute;
-    background-color: var(--background-default-white);
+    background-color: var(--background-elevated-grey);
 
     @include z-index(menu);
     @include shadow(md);
