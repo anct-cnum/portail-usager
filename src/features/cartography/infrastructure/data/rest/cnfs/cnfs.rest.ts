@@ -13,7 +13,7 @@ import {
   CnfsTransfer,
   cnfsTransferToCore
 } from '../../models';
-import { Api } from '../../../../../../environments/environment.model';
+import { Api } from '../../../../../../environments';
 
 @Injectable()
 export class CnfsRest extends CnfsRepository {

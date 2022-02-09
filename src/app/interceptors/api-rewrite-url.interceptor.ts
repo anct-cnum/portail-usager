@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { ApiConfiguration, APIS_TOKENS } from '../tokens';
 import { NotInAvailableApisError } from './errors';
-import { Api } from '../../environments/environment.model';
+import { Api } from '../../environments';
 
 @Injectable()
 export class ApiRewriteUrlInterceptor<TResult> implements HttpInterceptor {

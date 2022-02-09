@@ -1,5 +1,5 @@
 import { EnvironmentType } from './enum/environement';
-import { Api, EnvironmentModel } from './environment.model';
+import { Api, EnvironmentModel } from './models/environment.model';
 
 export const ENVIRONMENT: EnvironmentModel = {
   apisConfiguration: {

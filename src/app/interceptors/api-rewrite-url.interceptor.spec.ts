@@ -2,7 +2,7 @@ import { HttpHandler, HttpRequest } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { ApiRewriteUrlInterceptor } from './api-rewrite-url.interceptor';
 import { APIS_TOKENS } from '../tokens';
-import { Api } from '../../environments/environment.model';
+import { Api } from '../../environments';
 
 const HTTP_REQUEST_NO_REWRITE: HttpRequest<void> = new HttpRequest<void>('GET', 'https://www.google.com');
 

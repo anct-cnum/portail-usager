@@ -1,6 +1,6 @@
 import { firstValueFrom, Observable, of } from 'rxjs';
 import { CnfsDetailsUseCase } from './cnfs-details.use-case';
-import {CnfsDetails, CnfsRepository, CnfsType, StructureContact} from '../../core';
+import { CnfsDetails, CnfsRepository, CnfsType, StructureContact } from '../../core';
 
 const CNFS_DETAILS: CnfsDetails = new CnfsDetails(
   3,

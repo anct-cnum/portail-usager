@@ -2,7 +2,7 @@ import { Observable } from 'rxjs';
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Coordinates, AddressRepository, AddressFound } from '../../../../core';
-import { Api } from '../../../../../../environments/environment.model';
+import { Api } from '../../../../../../environments';
 import { AddressFoundTransfer, addressFoundTransferToCore, CoordinatesTransfer, toFirstCoordinates } from '../../models';
 import { map } from 'rxjs/operators';
 
