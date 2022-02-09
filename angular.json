@@ -66,6 +66,19 @@
               "serviceWorker": true,
               "ngswConfigPath": "./ngsw-config.json"
             },
+            "local": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.local.ts"
+                }
+              ],
+              "buildOptimizer": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            },
             "development": {
               "buildOptimizer": false,
               "vendorChunk": true,
@@ -81,6 +94,9 @@
           "configurations": {
             "production": {
               "browserTarget": "portail-usager:build:production"
+            },
+            "local": {
+              "browserTarget": "portail-usager:build:local"
             },
             "development": {
               "browserTarget": "portail-usager:build:development"
