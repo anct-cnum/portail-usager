@@ -16,6 +16,7 @@ jobs:
     uses: ./.github/workflows/build-angular.reusable.yml
     with:
       build-directory-path: 'dist/portail-usager'
+      build-environment: 'production'
 
   deploy:
     needs:

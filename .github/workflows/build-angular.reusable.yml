@@ -4,6 +4,12 @@ on:
   workflow_call:
     inputs:
       build-directory-path:
+        description: 'Build directory used as bundle build artifact upload path'
+        required: true
+        type: string
+      build-environment:
+        description: 'Build environment used for ng build configuration flag value'
+        default: 'production'
         required: true
         type: string
 
@@ -21,7 +27,7 @@ jobs:
 
       - name: Build files
         run: |
-          node_modules/.bin/ng build
+          node_modules/.bin/ng build --configuration ${{ inputs.build-environment }}
 
       - name: Upload build bundle as artifact
         uses: actions/upload-artifact@v2
