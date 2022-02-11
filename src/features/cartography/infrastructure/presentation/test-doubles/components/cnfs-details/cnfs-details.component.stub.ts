@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { CnfsPresentation, CnfsDetailsPresentation, Opening } from '../../models';
+import { CnfsDetailsPresentation, CnfsPresentation, Opening } from '../../../models';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'cnfs-details',
-  templateUrl: './cnfs-details.component.html'
+  template: ''
 })
-export class CnfsDetailsComponent {
+export class CnfsDetailsStubComponent {
   @Input() public access?: string;
 
   @Input() public address?: string;
@@ -30,12 +30,4 @@ export class CnfsDetailsComponent {
   @Input() public structureName: string = '';
 
   @Input() public website?: string;
-
-  public trackByCnfsEmail(_: number, cnfs: CnfsPresentation): string {
-    return cnfs.email;
-  }
-
-  public trackByOpeningDay(_: number, opening: Opening): string {
-    return opening.day;
-  }
 }

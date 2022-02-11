@@ -111,7 +111,18 @@ describe('cartography presenter', (): void => {
     it('should get cnfs details', async (): Promise<void> => {
       const expectedCnfsDetails: CnfsDetailsPresentation = {
         address: 'Place José Moron 3200 RIOM',
-        cnfsNumber: 2,
+        cnfsList: [
+          {
+            email: 'christelle.bateau@conseiller-numerique.fr',
+            fullName: 'Christelle Bateau',
+            phone: '08 86 66 87 72'
+          },
+          {
+            email: 'charles.desmoulins@conseiller-numerique.fr',
+            fullName: 'Charles Desmoulins',
+            phone: '03 86 55 24 40'
+          }
+        ],
         email: 'email@example.com',
         opening: [
           {
@@ -180,7 +191,18 @@ describe('cartography presenter', (): void => {
 
       const expectedCnfsDetails: CnfsDetailsPresentation = {
         address: 'Place José Moron 3200 RIOM',
-        cnfsNumber: 2,
+        cnfsList: [
+          {
+            email: 'christelle.bateau@conseiller-numerique.fr',
+            fullName: 'Christelle Bateau',
+            phone: '08 86 66 87 72'
+          },
+          {
+            email: 'charles.desmoulins@conseiller-numerique.fr',
+            fullName: 'Charles Desmoulins',
+            phone: '03 86 55 24 40'
+          }
+        ],
         cnfsTypeNote: "Un conseiller de cette structure est spécialisé dans l'accueil des professions agricoles",
         email: 'email@example.com',
         opening: [

@@ -11,7 +11,7 @@
   @if $shadow-vars != false and map.get($shadow-vars, active) != false {
     @each $key, $value in $shadows-settings {
       #{ns(shadow)}--#{$key} {
-        box-shadow: $value;
+        box-shadow: $value !important;
       }
     }
   }

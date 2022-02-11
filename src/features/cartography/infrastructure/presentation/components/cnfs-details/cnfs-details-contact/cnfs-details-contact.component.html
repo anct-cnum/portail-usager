@@ -1,11 +1,35 @@
 <div *ngIf="phone">
-  <a class="fr-link fr-fi-app fr-fi-phone-line fr-link--icon-left" [href]="'tel://' + phone">
+  <a
+    [class.fr-link--sm]="size === 'sm'"
+    [ngClass]="{ 'fr-fi-app fr-fi-phone-fill fr-link--icon-left': icons }"
+    class="fr-link"
+    [href]="'tel://' + phone">
     {{ phone }}
   </a>
 </div>
 <div *ngIf="email">
-  <a class="fr-link fr-fi-mail-line fr-link--icon-left" [href]="'mailto:' + email">Courriel</a>
+  <a
+    [class.fr-link--sm]="size === 'sm'"
+    [ngClass]="{ 'fr-fi-mail-line fr-link--icon-left': icons }"
+    class="fr-link"
+    [href]="'mailto:' + email">
+    {{ emailLabel ?? email }}
+  </a>
 </div>
 <div *ngIf="website">
-  <a class="fr-link fr-fi-app fr-fi-global-line fr-link--icon-left" [href]="website" target="_blank">Site internet</a>
+  <a
+    [class.fr-link--sm]="size === 'sm'"
+    [ngClass]="{ 'fr-fi-app fr-fi-link fr-link--icon-left': icons }"
+    class="fr-link"
+    [href]="website"
+    target="_blank">
+    Site internet
+  </a>
+</div>
+<div class="fr-text--sm" *ngIf="!email && !phone && !website">
+  Les informations de contact
+  <br />
+  de cette structure ne sont
+  <br />
+  pas disponibles
 </div>

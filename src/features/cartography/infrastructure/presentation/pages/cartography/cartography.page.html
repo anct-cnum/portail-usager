@@ -1,16 +1,23 @@
 <div class="fr-grid-row fr-flex-wrap--nowrap fr-full-container--height fr-overflow--hidden">
   <div
     [ngClass]="{
-    'fr-col-xl-8 fr-col-lg-7 fr-overflow--auto': displayDetailsStructureId,
+    'fr-col-xl-8 fr-col-lg-7': displayDetailsStructureId,
     'fr-col-xl-4 fr-col-lg-5': !displayDetailsStructureId,
     'fr-displayed-lg': displayMap,
     'fr-col-12': !displayMap
-  }"
+    }"
     class="fr-display--flex fr-flex-direction--column fr-index--over fr-shadow--right fr-full-container--width">
     <cnfs-details
-      class="fr-px-3w"
-      *ngIf="displayDetailsStructureId; else: displayCnfsList"
-      [cnfsDetails]="cnfsDetails$ | async"
+      class="fr-full-container--height"
+      *ngIf="cnfsDetails$ | async as cnfsDetails; else: displayCnfsList"
+      [address]="cnfsDetails.address"
+      [cnfsList]="cnfsDetails.cnfsList"
+      [email]="cnfsDetails.email"
+      [cnfsTypeNote]="cnfsDetails.cnfsTypeNote"
+      [opening]="cnfsDetails.opening"
+      [phone]="cnfsDetails.phone"
+      [structureName]="cnfsDetails.structureName"
+      [website]="cnfsDetails.website"
       (backToList)="hideCnfsDetails()"></cnfs-details>
     <ng-template #displayCnfsList>
       <address-geolocation

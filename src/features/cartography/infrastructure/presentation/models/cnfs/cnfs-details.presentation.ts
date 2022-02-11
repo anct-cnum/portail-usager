@@ -13,9 +13,15 @@ export interface Opening {
   hours: string;
 }
 
+export interface CnfsPresentation {
+  email: string;
+  fullName: string;
+  phone: string;
+}
+
 export interface CnfsDetailsPresentation {
   address?: string;
-  cnfsNumber: number;
+  cnfsList: CnfsPresentation[];
   email?: string;
   cnfsTypeNote?: string;
   opening: Opening[];

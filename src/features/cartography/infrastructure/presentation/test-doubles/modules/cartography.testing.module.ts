@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   AddressGeolocationStubComponent,
+  CnfsDetailsContactStubComponent,
+  CnfsDetailsStubComponent,
   CnfsListStubComponent,
   IncompleteDataNoticeStubComponent,
   LeafletMapStubComponent,
@@ -12,6 +14,8 @@ import {
 @NgModule({
   declarations: [
     AddressGeolocationStubComponent,
+    CnfsDetailsContactStubComponent,
+    CnfsDetailsStubComponent,
     CnfsListStubComponent,
     IncompleteDataNoticeStubComponent,
     LeafletMapStubComponent,
