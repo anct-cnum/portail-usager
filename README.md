@@ -38,7 +38,7 @@ Exécuter `yarn start`, puis naviguer vers `http://localhost:4200/`.
 
 Cette méthode est recommandée pour permettre aux développeurs d'utiliser une configuration locale au lieu de la configuration par défaut.
 
-- Créer le fichier `environment.local.ts` dans le dossier `/src/env/environments`
+- Créer le fichier `environment.local.ts` dans le dossier `/src/environments/`
 - Copier le contenu du fichier `environment.ts` vers `environment.local.ts`
 - Modifier le fichier `environment.local.ts` pour obtenir la configuration souhaitée
 - Exécuter `yarn start:local`, puis naviguer vers `http://localhost:4200/`
