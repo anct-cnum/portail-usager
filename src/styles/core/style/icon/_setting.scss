@@ -3,6 +3,18 @@
 /// @group core
 ////
 
+// Go to https://remixicon.com/
+// Import `cartography.remixicon` collection located in `src/fonts/icons/cartography/`
+// Add icons to collection
+// Export `cartography.remixicon` collection.
+// Rename collection to `cartography.remixicon`
+// Copy `cartography.remixicon` in src/fonts/icons/cartography/
+// Download font bundle
+// Rename all `remixicon` font files as `cartography.icons`
+// Copy all files except `.css` and `.less` in src/fonts/icons/cartography/
+// Look at `.css` or `.less` file to set every `codepoint`
+// Restart local dev server so see changes
+
 $icons-settings: (
   time-line: (
     codepoint: '\f20f'
@@ -10,10 +22,13 @@ $icons-settings: (
   map-pin-line: (
     codepoint: '\ef14'
   ),
-  phone-line: (
-    codepoint: '\efec'
+  phone-fill: (
+    codepoint: '\efe9'
   ),
-  global-line: (
-    codepoint: '\edcf'
+  link: (
+    codepoint: '\eeb2'
+  ),
+  door-closed-line: (
+    codepoint: '\ec44'
   )
 );
