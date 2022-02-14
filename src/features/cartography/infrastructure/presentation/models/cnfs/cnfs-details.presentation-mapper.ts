@@ -1,4 +1,4 @@
-import { CnfsDetails, CnfsType } from '../../../../core';
+import { CnfsDetails, CnfsInStructure, CnfsType } from '../../../../core';
 import { CnfsPresentation, CnfsDetailsPresentation, DayPresentation, Opening } from './cnfs-details.presentation';
 
 const OPENING_DAYS: DayPresentation[] = Object.values(DayPresentation);
@@ -22,22 +22,11 @@ const getCnfsTypeNote = (type: CnfsType): Pick<CnfsDetailsPresentation, 'cnfsTyp
       }
     : {};
 
-const tmpStaticCnfsListToRemove = (): CnfsPresentation[] => [
-  {
-    email: 'christelle.bateau@conseiller-numerique.fr',
-    fullName: 'Christelle Bateau',
-    phone: '08 86 66 87 72'
-  },
-  {
-    email: 'charles.desmoulins@conseiller-numerique.fr',
-    fullName: 'Charles Desmoulins',
-    phone: '03 86 55 24 40'
-  }
-];
+const toCnfsPresentation = (cnfsInStructure: CnfsInStructure): CnfsPresentation => cnfsInStructure;
 
 export const cnfsDetailsToPresentation = (cnfsDetails: CnfsDetails): CnfsDetailsPresentation => ({
   address: cnfsDetails.structureAddress,
-  cnfsList: tmpStaticCnfsListToRemove(),
+  cnfsList: cnfsDetails.cnfs.map(toCnfsPresentation),
   email: cnfsDetails.contact?.email,
   ...getCnfsTypeNote(cnfsDetails.type),
   opening: openingHoursToPresentation(cnfsDetails.openingHours),

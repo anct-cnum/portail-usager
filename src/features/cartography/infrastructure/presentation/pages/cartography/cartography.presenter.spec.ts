@@ -95,7 +95,18 @@ const CNFS_DETAILS_USE_CASE: CnfsDetailsUseCase = {
   execute$(_: string): Observable<CnfsDetails> {
     return of(
       new CnfsDetails(
-        2,
+        [
+          {
+            email: 'christelle.bateau@conseiller-numerique.fr',
+            fullName: 'Christelle Bateau',
+            phone: '08 86 66 87 72'
+          },
+          {
+            email: 'charles.desmoulins@conseiller-numerique.fr',
+            fullName: 'Charles Desmoulins',
+            phone: '03 86 55 24 40'
+          }
+        ],
         'Association Des Centres Sociaux Et Culturels Du Bassin De Riom',
         CnfsType.Default,
         ['9h30 - 17h30', '9h30 - 17h30', '9h30 - 17h30', '9h30 - 17h30', '9h30 - 17h30', '9h30 - 12h00'],
@@ -178,7 +189,18 @@ describe('cartography presenter', (): void => {
         execute$(_: string): Observable<CnfsDetails> {
           return of(
             new CnfsDetails(
-              2,
+              [
+                {
+                  email: 'christelle.bateau@conseiller-numerique.fr',
+                  fullName: 'Christelle Bateau',
+                  phone: '08 86 66 87 72'
+                },
+                {
+                  email: 'charles.desmoulins@conseiller-numerique.fr',
+                  fullName: 'Charles Desmoulins',
+                  phone: '03 86 55 24 40'
+                }
+              ],
               'Association Des Centres Sociaux Et Culturels Du Bassin De Riom',
               CnfsType.ChambreDAgriculture,
               ['9h30 - 17h30'],

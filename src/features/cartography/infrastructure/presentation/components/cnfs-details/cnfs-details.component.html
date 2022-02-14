@@ -9,12 +9,13 @@
     <div>
       <h2 class="fr-text--md fr-text--regular fr-mb-1w">Contacter la structure</h2>
       <div class="fr-mb-3w">
-        <cnfs-details-contact
-          size="sm"
-          emailLabel="Courriel"
-          [email]="email"
-          [phone]="phone"
-          [website]="website"></cnfs-details-contact>
+        <cnfs-details-contact size="sm" emailLabel="Courriel" [email]="email" [phone]="phone" [website]="website">
+          Les informations de contact
+          <br />
+          de cette structure ne sont
+          <br />
+          pas disponibles
+        </cnfs-details-contact>
       </div>
       <button class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-printer-fill fr-btn--icon-left">Imprimer</button>
     </div>
@@ -28,12 +29,9 @@
       </button>
       <h1 class="fr-h3 fr-text-default--grey">{{ structureName }}</h1>
       <div class="fr-mb-3w fr-hidden-xl fr-display--block-lg fr-display--none-md">
-        <cnfs-details-contact
-          size="sm"
-          emailLabel="Courriel"
-          [email]="email"
-          [phone]="phone"
-          [website]="website"></cnfs-details-contact>
+        <cnfs-details-contact size="sm" emailLabel="Courriel" [email]="email" [phone]="phone" [website]="website">
+          Les informations de contact de cette structure ne sont pas disponibles
+        </cnfs-details-contact>
       </div>
       <div class="fr-grid-row fr-mb-3w">
         <div class="fr-col-xl-6 fr-col-lg-12 fr-col-md-6 fr-col-12">
@@ -90,7 +88,7 @@
     </div>
     <div class="fr-container fr-container-xs--fluid">
       <div class="fr-grid-row fr-grid-row--gutters">
-        <div class="fr-col-xl-6 fr-col-lg-12 fr-col-md-6 fr-col-12" *ngFor="let cnfs of cnfsList; trackBy: trackByCnfsEmail">
+        <div class="fr-col-xl-6 fr-col-lg-12 fr-col-md-6 fr-col-12" *ngFor="let cnfs of cnfsList; trackBy: trackByCnfsFullName">
           <div class="fr-card fr-card--no-arrow fr-shadow--none">
             <div class="fr-card__body fr-background-alt--grey">
               <h3 class="fr-text--md card__title">
@@ -99,7 +97,9 @@
               </h3>
               <hr />
               <div class="card__desc">
-                <cnfs-details-contact [phone]="cnfs.phone" [email]="cnfs.email" [icons]="false"></cnfs-details-contact>
+                <cnfs-details-contact [phone]="cnfs.phone" [email]="cnfs.email" [icons]="false">
+                  Les informations de contact de ce conseiller ne sont pas disponibles
+                </cnfs-details-contact>
               </div>
             </div>
           </div>

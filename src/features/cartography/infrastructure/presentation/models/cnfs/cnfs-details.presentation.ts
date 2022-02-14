@@ -14,9 +14,9 @@ export interface Opening {
 }
 
 export interface CnfsPresentation {
-  email: string;
+  email?: string;
   fullName: string;
-  phone: string;
+  phone?: string;
 }
 
 export interface CnfsDetailsPresentation {

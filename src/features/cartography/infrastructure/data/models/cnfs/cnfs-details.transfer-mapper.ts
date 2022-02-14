@@ -1,5 +1,5 @@
-import { CnfsDetails, CnfsType, StructureContact } from '../../../../core';
-import { CnfsDetailsTransfer, CnfsTypeTransfer } from './cnfs-details.transfer';
+import { CnfsDetails, CnfsInStructure, CnfsType, StructureContact } from '../../../../core';
+import { CnfsDetailsTransfer, CnfsInStructureTransfer, CnfsTypeTransfer } from './cnfs-details.transfer';
 
 const CNFS_TYPE_MAP: Map<CnfsTypeTransfer | undefined, CnfsType> = new Map([
   [CnfsTypeTransfer.Coordinateur, CnfsType.Coordinateur],
@@ -10,9 +10,15 @@ const CNFS_TYPE_MAP: Map<CnfsTypeTransfer | undefined, CnfsType> = new Map([
 
 const getCnfsType = (type: CnfsTypeTransfer | undefined): CnfsType => CNFS_TYPE_MAP.get(type) ?? CnfsType.Default;
 
+const toCnfsCore = (cnfs: CnfsInStructureTransfer): CnfsInStructure => ({
+  email: cnfs.email,
+  fullName: `${cnfs.prenom} ${cnfs.nom}`,
+  phone: cnfs.phone
+});
+
 export const cnfsDetailsTransferToCore = (cnfsDetailsTransfer: CnfsDetailsTransfer): CnfsDetails =>
   new CnfsDetails(
-    cnfsDetailsTransfer.nombreCnfs,
+    cnfsDetailsTransfer.cnfs.map(toCnfsCore),
     cnfsDetailsTransfer.nom,
     getCnfsType(cnfsDetailsTransfer.type),
     [],

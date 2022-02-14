@@ -3,7 +3,23 @@ import { CnfsDetailsUseCase } from './cnfs-details.use-case';
 import { CnfsDetails, CnfsRepository, CnfsType, StructureContact } from '../../core';
 
 const CNFS_DETAILS: CnfsDetails = new CnfsDetails(
-  3,
+  [
+    {
+      email: 'christelle.bateau@conseiller-numerique.fr',
+      fullName: 'Christelle Bateau',
+      phone: '08 86 66 87 72'
+    },
+    {
+      email: 'charles.desmoulins@conseiller-numerique.fr',
+      fullName: 'Charles Desmoulins',
+      phone: '03 86 55 24 40'
+    },
+    {
+      email: 'amélie.dupont@conseiller-numerique.fr',
+      fullName: 'Amélie Dupont',
+      phone: '03 44 89 62 14'
+    }
+  ],
   "Association pour l'accès à la technologie",
   CnfsType.Default,
   ['9h00 - 18h00', '9h00 - 18h00', '9h00 - 18h00', '9h00 - 18h00', '9h00 - 18h00'],

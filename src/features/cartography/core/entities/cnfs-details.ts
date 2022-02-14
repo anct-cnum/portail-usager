@@ -7,9 +7,15 @@ export enum CnfsType {
   MonEspaceSante = 'MonEspaceSante'
 }
 
+export interface CnfsInStructure {
+  email?: string;
+  fullName: string;
+  phone?: string;
+}
+
 export class CnfsDetails {
   public constructor(
-    public readonly cnfsNumber: number,
+    public readonly cnfs: CnfsInStructure[],
     public readonly structureName: string,
     public readonly type: CnfsType,
     public readonly openingHours?: string[],

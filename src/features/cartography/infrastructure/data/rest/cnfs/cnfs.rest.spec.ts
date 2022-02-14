@@ -124,6 +124,20 @@ describe('cnfs rest repository', (): void => {
   it('should get cnfs details', async (): Promise<void> => {
     const cnfsDetailsTransfer: CnfsDetailsTransfer = {
       adresse: '12 RUE DE LA PLACE, 87100 LIMOGES',
+      cnfs: [
+        {
+          email: 'christelle.bateau@conseiller-numerique.fr',
+          nom: 'Bateau',
+          phone: '08 86 66 87 72',
+          prenom: 'Christelle'
+        },
+        {
+          email: 'charles.desmoulins@conseiller-numerique.fr',
+          nom: 'Desmoulins',
+          phone: '03 86 55 24 40',
+          prenom: 'Charles'
+        }
+      ],
       email: 'john.doe@aide-rurale.net',
       nom: 'Aide rurale',
       nombreCnfs: 2,
@@ -137,7 +151,18 @@ describe('cnfs rest repository', (): void => {
     } as unknown as HttpClient;
 
     const expectedCnfsDetails: CnfsDetails = new CnfsDetails(
-      2,
+      [
+        {
+          email: 'christelle.bateau@conseiller-numerique.fr',
+          fullName: 'Christelle Bateau',
+          phone: '08 86 66 87 72'
+        },
+        {
+          email: 'charles.desmoulins@conseiller-numerique.fr',
+          fullName: 'Charles Desmoulins',
+          phone: '03 86 55 24 40'
+        }
+      ],
       'Aide rurale',
       CnfsType.Default,
       [],
@@ -156,6 +181,20 @@ describe('cnfs rest repository', (): void => {
   it('should get cnfs details with cnfs ambassadeur Mon Espace Santé', async (): Promise<void> => {
     const cnfsDetailsTransfer: CnfsDetailsTransfer = {
       adresse: '12 RUE DE LA PLACE, 87100 LIMOGES',
+      cnfs: [
+        {
+          email: 'christelle.bateau@conseiller-numerique.fr',
+          nom: 'Bateau',
+          phone: '08 86 66 87 72',
+          prenom: 'Christelle'
+        },
+        {
+          email: 'charles.desmoulins@conseiller-numerique.fr',
+          nom: 'Desmoulins',
+          phone: '03 86 55 24 40',
+          prenom: 'Charles'
+        }
+      ],
       email: 'john.doe@aide-rurale.net',
       nom: 'Aide rurale',
       nombreCnfs: 2,
@@ -170,7 +209,18 @@ describe('cnfs rest repository', (): void => {
     } as unknown as HttpClient;
 
     const expectedCnfsDetails: CnfsDetails = new CnfsDetails(
-      2,
+      [
+        {
+          email: 'christelle.bateau@conseiller-numerique.fr',
+          fullName: 'Christelle Bateau',
+          phone: '08 86 66 87 72'
+        },
+        {
+          email: 'charles.desmoulins@conseiller-numerique.fr',
+          fullName: 'Charles Desmoulins',
+          phone: '03 86 55 24 40'
+        }
+      ],
       'Aide rurale',
       CnfsType.MonEspaceSante,
       [],

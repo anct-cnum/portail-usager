@@ -31,8 +31,8 @@ export class CnfsDetailsComponent {
 
   @Input() public website?: string;
 
-  public trackByCnfsEmail(_: number, cnfs: CnfsPresentation): string {
-    return cnfs.email;
+  public trackByCnfsFullName(_: number, cnfs: CnfsPresentation): string {
+    return cnfs.fullName;
   }
 
   public trackByOpeningDay(_: number, opening: Opening): string {
