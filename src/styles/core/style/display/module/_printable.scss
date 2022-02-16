@@ -1,0 +1,46 @@
+////
+/// Core Module : printable
+/// @group core
+////
+
+#{ns(printable)} {
+  &__only {
+    display: none;
+  }
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #{ns(printable)}__only {
+    display: inherit;
+  }
+
+  #{ns(printable)} {
+    visibility: visible;
+    display: block;
+    overflow: auto;
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    .fr-link {
+      padding: 0;
+      min-height: 0;
+    }
+
+    &__no-print {
+      display: none;
+
+      & * {
+        display: none;
+      }
+    }
+
+    & * {
+      visibility: visible;
+    }
+  }
+}
