@@ -7,7 +7,12 @@ import {
   CnfsListStubComponent,
   IncompleteDataNoticeStubComponent,
   LeafletMapStubComponent,
+  PermanenceAccessStubComponent,
+  PermanenceAddressStubComponent,
+  PermanenceCnfsInfoStubComponent,
+  PermanenceCnfsListStubComponent,
   PermanenceMapStubComponent,
+  PermanenceOpeningHoursStubComponent,
   SwitchMapListStubComponent
 } from '../components';
 
@@ -19,7 +24,12 @@ import {
     CnfsListStubComponent,
     IncompleteDataNoticeStubComponent,
     LeafletMapStubComponent,
+    PermanenceAccessStubComponent,
+    PermanenceAddressStubComponent,
+    PermanenceCnfsInfoStubComponent,
+    PermanenceCnfsListStubComponent,
     PermanenceMapStubComponent,
+    PermanenceOpeningHoursStubComponent,
     SwitchMapListStubComponent
   ],
   imports: [CommonModule],

@@ -27,15 +27,9 @@ export class CnfsDetailsComponent {
 
   @Input() public phone?: string;
 
+  @Output() public readonly print: EventEmitter<void> = new EventEmitter<void>();
+
   @Input() public structureName: string = '';
 
   @Input() public website?: string;
-
-  public trackByCnfsFullName(_: number, cnfs: CnfsPresentation): string {
-    return cnfs.fullName;
-  }
-
-  public trackByOpeningDay(_: number, opening: Opening): string {
-    return opening.day;
-  }
 }

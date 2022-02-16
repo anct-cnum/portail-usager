@@ -1,4 +1,3 @@
-<!--eslint-disable @angular-eslint/template/cyclomatic-complexity-->
 <div class="fr-display--flex fr-full-container--height">
   <div class="fr-display--flex fr-displayed-xl fr-hidden-lg fr-displayed-md fr-flex-direction--column fr-ml-3w fr-mb-3w">
     <div class="fr-flex--1">
@@ -17,8 +16,26 @@
           pas disponibles
         </cnfs-details-contact>
       </div>
-      <button class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-printer-fill fr-btn--icon-left">Imprimer</button>
+      <button (click)="print.emit()" class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-printer-fill fr-btn--icon-left">
+        Imprimer
+      </button>
     </div>
+  </div>
+  <div class="fr-printable fr-printable__only">
+    <h1 class="fr-h3 fr-text-default--grey">{{ structureName }}</h1>
+    <cnfs-details-contact size="sm" emailLabel="Courriel" [email]="email" [phone]="phone" [website]="website">
+      Les informations de contact de cette structure ne sont pas disponibles
+    </cnfs-details-contact>
+    <div class="fr-grid-row">
+      <div class="fr-col-6">
+        <permanence-access [access]="access"></permanence-access>
+        <permanence-address [address]="address" [distance]="distance"></permanence-address>
+      </div>
+      <div class="fr-col-6">
+        <permanence-opening-hours [opening]="opening"></permanence-opening-hours>
+      </div>
+    </div>
+    <permanence-cnfs-list [cnfsList]="cnfsList"></permanence-cnfs-list>
   </div>
   <div class="fr-flex--1 fr-overflow--auto">
     <div class="fr-m-3w">
@@ -33,78 +50,18 @@
           Les informations de contact de cette structure ne sont pas disponibles
         </cnfs-details-contact>
       </div>
-      <div class="fr-grid-row fr-mb-3w">
+      <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-xl-6 fr-col-lg-12 fr-col-md-6 fr-col-12">
-          <h2 *ngIf="access" class="fr-text--md fr-display--flex">
-            <span class="fr-fi-app fr-fi-door-closed-line fr-mr-1v" aria-hidden="true"></span>
-            <span>
-              Accès
-              <br />
-              <span class="fr-text--regular fr-text-default--grey">{{ access }}</span>
-            </span>
-          </h2>
-          <h2 *ngIf="address" class="fr-text--md fr-display--flex">
-            <span class="fr-fi-app fr-fi-map-pin-line fr-mr-1v" aria-hidden="true"></span>
-            <span>
-              {{ address }}
-              <br />
-              <span *ngIf="distance" class="fr-text--regular fr-text-default--grey">Distance : {{ distance }}</span>
-            </span>
-          </h2>
+          <permanence-access [access]="access"></permanence-access>
+          <permanence-address [address]="address" [distance]="distance"></permanence-address>
         </div>
         <div class="fr-col-xl-6 fr-col-lg-12 fr-col-md-6 fr-col-12">
-          <h2 class="fr-text--md fr-mb-0">
-            <span class="fr-fi-app fr-fi-time-line" aria-hidden="true"></span>
-            Horaires
-          </h2>
-          <table class="fr-full-container--width fr-mb-2w" *ngIf="opening.length > 0; else noOpeningHours">
-            <tr *ngFor="let opening of opening; index as i; trackBy: trackByOpeningDay">
-              <td>{{ opening.day }}</td>
-              <td class="fr-text-label--grey">{{ opening.hours }}</td>
-            </tr>
-          </table>
-          <ng-template #noOpeningHours>
-            <p>Aucun horaire disponible pour cette structure</p>
-          </ng-template>
+          <permanence-opening-hours [opening]="opening"></permanence-opening-hours>
         </div>
       </div>
       <hr />
-      <h2 class="fr-sr-only">Conseillers</h2>
-      <div class="fr-display--flex">
-        <img width="35" class="fr-px-1v" src="/assets/map/pin-cnfs.svg" alt="" />
-        <div>
-          <div class="fr-ml-3v">
-            {{ cnfsList.length }}
-            {{ cnfsList.length === 1 ? 'conseiller numérique' : 'conseillers numériques' }}
-          </div>
-          <a
-            class="fr-link"
-            href="https://cdn.conseiller-numerique.gouv.fr/presentation-conseiller-numerique.pdf"
-            target="_blank">
-            Que peuvent-ils faire pour moi&nbsp;?
-          </a>
-        </div>
-      </div>
+      <permanence-cnfs-info [cnfsList]="cnfsList"></permanence-cnfs-info>
     </div>
-    <div class="fr-container fr-container-xs--fluid">
-      <div class="fr-grid-row fr-grid-row--gutters">
-        <div class="fr-col-xl-6 fr-col-lg-12 fr-col-md-6 fr-col-12" *ngFor="let cnfs of cnfsList; trackBy: trackByCnfsFullName">
-          <div class="fr-card fr-card--no-arrow fr-shadow--none">
-            <div class="fr-card__body fr-background-alt--grey">
-              <h3 class="fr-text--md card__title">
-                <span class="fr-fi-account-fill fr-text-title--blue-france" aria-hidden="true"></span>
-                {{ cnfs.fullName }}
-              </h3>
-              <hr />
-              <div class="card__desc">
-                <cnfs-details-contact [phone]="cnfs.phone" [email]="cnfs.email" [icons]="false">
-                  Les informations de contact de ce conseiller ne sont pas disponibles
-                </cnfs-details-contact>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <permanence-cnfs-list [cnfsList]="cnfsList"></permanence-cnfs-list>
   </div>
 </div>

@@ -1,12 +1,27 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CnfsDetailsComponent } from './cnfs-details.component';
 import { FailedToCompileError } from '@angular-common/errors';
-import { CnfsDetailsContactStubComponent } from '../../test-doubles';
+import {
+  CnfsDetailsContactStubComponent,
+  PermanenceAccessStubComponent,
+  PermanenceAddressStubComponent,
+  PermanenceCnfsInfoStubComponent,
+  PermanenceCnfsListStubComponent,
+  PermanenceOpeningHoursStubComponent
+} from '../../test-doubles';
 
 describe('cnfs-details component', (): void => {
   beforeEach(async (): Promise<void> => {
     await TestBed.configureTestingModule({
-      declarations: [CnfsDetailsComponent, CnfsDetailsContactStubComponent]
+      declarations: [
+        CnfsDetailsComponent,
+        CnfsDetailsContactStubComponent,
+        PermanenceAccessStubComponent,
+        PermanenceAddressStubComponent,
+        PermanenceOpeningHoursStubComponent,
+        PermanenceCnfsInfoStubComponent,
+        PermanenceCnfsListStubComponent
+      ]
     })
       .compileComponents()
       .catch((): void => {

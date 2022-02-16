@@ -1,0 +1,30 @@
+<div class="fr-container fr-container-xs--fluid fr-printable__no-print">
+  <div class="fr-grid-row fr-grid-row--gutters">
+    <div class="fr-col-xl-6 fr-col-lg-12 fr-col-md-6 fr-col-12" *ngFor="let cnfs of cnfsList; trackBy: trackByCnfsFullName">
+      <div class="fr-card fr-card--no-arrow fr-shadow--none">
+        <div class="fr-card__body fr-background-alt--grey">
+          <h3 class="fr-text--md card__title">
+            <span class="fr-fi-account-fill fr-text-title--blue-france" aria-hidden="true"></span>
+            {{ cnfs.fullName }}
+          </h3>
+          <hr />
+          <div class="card__desc">
+            <cnfs-details-contact [phone]="cnfs.phone" [email]="cnfs.email" [icons]="false">
+              Les informations de contact de ce conseiller ne sont pas disponibles
+            </cnfs-details-contact>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="fr-printable__only">
+  <div class="fr-grid-row">
+    <div class="fr-col-6 fr-mb-2w" *ngFor="let cnfs of cnfsList; trackBy: trackByCnfsFullName">
+      <h3 class="fr-text--md fr-text--light fr-mb-0">{{ cnfs.fullName }}</h3>
+      <cnfs-details-contact [phone]="cnfs.phone" [email]="cnfs.email" [icons]="false">
+        Les informations de contact de ce conseiller ne sont pas disponibles
+      </cnfs-details-contact>
+    </div>
+  </div>
+</div>

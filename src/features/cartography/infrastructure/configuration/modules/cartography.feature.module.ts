@@ -20,7 +20,12 @@ import {
   LeafletMapComponent,
   SwitchMapListComponent,
   PermanenceMapComponent,
-  IncompleteDataNoticeComponent
+  IncompleteDataNoticeComponent,
+  PermanenceAccessComponent,
+  PermanenceAddressComponent,
+  PermanenceCnfsInfoComponent,
+  PermanenceCnfsListComponent,
+  PermanenceOpeningHoursComponent
 } from '../../presentation/components';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AddressRest, CnfsRest } from '../../data/rest';
@@ -49,7 +54,12 @@ const METROPOLITAN_FRANCE_CENTER_LATITUDE: number = 46.28146057911664;
     LeafletMapMarkerDirective,
     LeafletMapPopupDirective,
     LeafletMapStateChangeDirective,
+    PermanenceAccessComponent,
+    PermanenceAddressComponent,
+    PermanenceCnfsInfoComponent,
+    PermanenceCnfsListComponent,
     PermanenceMapComponent,
+    PermanenceOpeningHoursComponent,
     SwitchMapListComponent
   ],
   imports: [CartographyFeatureRoutingModule, CollapseModule, CommonModule, ReactiveFormsModule],

@@ -1,0 +1,13 @@
+<h2 class="fr-text--md fr-mb-0">
+  <span class="fr-fi-app fr-fi-time-line" aria-hidden="true"></span>
+  Horaires
+</h2>
+<table class="fr-full-container--width fr-mb-2w" *ngIf="opening.length > 0; else noOpeningHours">
+  <tr *ngFor="let opening of opening; index as i; trackBy: trackByOpeningDay">
+    <td>{{ opening.day }}</td>
+    <td class="fr-text-label--grey">{{ opening.hours }}</td>
+  </tr>
+</table>
+<ng-template #noOpeningHours>
+  <p>Aucun horaire disponible pour cette structure</p>
+</ng-template>

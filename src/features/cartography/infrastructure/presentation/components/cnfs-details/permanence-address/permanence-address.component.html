@@ -1,0 +1,8 @@
+<h2 *ngIf="address" class="fr-text--md fr-display--flex">
+  <span class="fr-fi-app fr-fi-map-pin-line fr-mr-1v" aria-hidden="true"></span>
+  <span>
+    {{ address }}
+    <br />
+    <span *ngIf="distance" class="fr-text--regular fr-text-default--grey">Distance : {{ distance }}</span>
+  </span>
+</h2>

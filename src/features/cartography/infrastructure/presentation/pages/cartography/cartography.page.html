@@ -18,6 +18,7 @@
       [phone]="cnfsDetails.phone"
       [structureName]="cnfsDetails.structureName"
       [website]="cnfsDetails.website"
+      (print)="printCnfsDetails()"
       (backToList)="hideCnfsDetails()"></cnfs-details>
     <ng-template #displayCnfsList>
       <address-geolocation

@@ -1,6 +1,5 @@
 export * from './address-geolocation/address-geolocation.component';
-export * from './cnfs-details/cnfs-details.component';
-export * from './cnfs-details/cnfs-details-contact/cnfs-details-contact.component';
+export * from './cnfs-details';
 export * from './cnfs-list/cnfs-list.component';
 export * from './incomplete-data-notice/incomplete-data-notice.component';
 export * from './leaflet-map/leaflet-map.component';

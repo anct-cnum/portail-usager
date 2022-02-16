@@ -12,7 +12,7 @@ import {
   CnfsByRegionMarkerProperties,
   CnfsByDepartmentMarkerProperties,
   boundedMarkerEventToCenterView,
-  UsagerMarkerProperties
+  UsagerMarkerProperties,
 } from '../../models';
 import { CartographyPresenter, isGuyaneBoundedMarker } from './cartography.presenter';
 import {
@@ -209,5 +209,10 @@ export class CartographyPage {
 
   public onZoomOut(): void {
     this._forceCnfsPermanence$.next(false);
+  }
+
+  public printCnfsDetails(): void {
+    this.onDisplayMap(false);
+    setTimeout((): void => window.print());
   }
 }
