@@ -14,7 +14,7 @@ import {
   PointOfInterestMarkerProperties,
   StructurePresentation
 } from '../../models';
-import { CnfsByDepartmentProperties, CnfsByRegionProperties, Coordinates } from '../../../../core';
+import { CnfsByDepartmentProperties, CnfsByRegionProperties, CnfsDetails, Coordinates } from '../../../../core';
 import { iif, map, Observable, of } from 'rxjs';
 import {
   CnfsDetailsUseCase,
@@ -190,8 +190,12 @@ export class CartographyPresenter {
     );
   }
 
-  public cnfsDetails$(id: string): Observable<CnfsDetailsPresentation> {
-    return this.cnfsDetailsUseCase.execute$(id).pipe(map(cnfsDetailsToPresentation));
+  public cnfsDetails$(id: string, usagerCoordinates?: Coordinates): Observable<CnfsDetailsPresentation> {
+    return this.cnfsDetailsUseCase
+      .execute$(id)
+      .pipe(
+        map((cnfsDetails: CnfsDetails): CnfsDetailsPresentation => cnfsDetailsToPresentation(cnfsDetails, usagerCoordinates))
+      );
   }
 
   public geocodeAddress$(addressToGeocode: string): Observable<Coordinates> {

@@ -22,6 +22,7 @@ export interface CnfsPresentation {
 export interface CnfsDetailsPresentation {
   address?: string;
   cnfsList: CnfsPresentation[];
+  distanceFromUsager?: string;
   email?: string;
   cnfsTypeNote?: string;
   opening: Opening[];

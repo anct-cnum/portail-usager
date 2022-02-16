@@ -12,7 +12,7 @@ import {
   CnfsByRegionMarkerProperties,
   CnfsByDepartmentMarkerProperties,
   boundedMarkerEventToCenterView,
-  UsagerMarkerProperties,
+  UsagerMarkerProperties
 } from '../../models';
 import { CartographyPresenter, isGuyaneBoundedMarker } from './cartography.presenter';
 import {
@@ -26,13 +26,14 @@ import {
   mergeWith,
   Observable,
   of,
+  startWith,
   Subject,
   switchMap
 } from 'rxjs';
 import { Coordinates } from '../../../../core';
 import { CartographyConfiguration, CARTOGRAPHY_TOKEN } from '../../../configuration';
 import { Feature, FeatureCollection, Point } from 'geojson';
-import { map } from 'rxjs/operators';
+import { combineLatestWith, map } from 'rxjs/operators';
 import { CITY_ZOOM_LEVEL } from '../../helpers/map-constants';
 import { ViewportAndZoom, ViewReset } from '../../directives';
 import { usagerFeatureFromCoordinates } from '../../helpers';
@@ -74,6 +75,24 @@ export class CartographyPage {
 
   private readonly _usagerCoordinates$: Subject<Coordinates> = new Subject<Coordinates>();
 
+  private readonly _usagerMarker$: Observable<Feature<Point, UsagerMarkerProperties>> = this._addressToGeocode$.pipe(
+    switchMap(
+      (addressToGeocode: string): Observable<Coordinates> =>
+        this.presenter.geocodeAddress$(addressToGeocode).pipe(
+          catchError((): Observable<never> => {
+            this._geocodeAddressError$.next(true);
+            return EMPTY;
+          })
+        )
+    ),
+    mergeWith(this._usagerCoordinates$),
+    map((usagerCoordinates: Coordinates): Feature<Point, UsagerMarkerProperties> => {
+      this._geocodeAddressError$.next(false);
+      this._centerView$.next(coordinatesToCenterView(usagerCoordinates, CITY_ZOOM_LEVEL));
+      return usagerFeatureFromCoordinates(usagerCoordinates);
+    })
+  );
+
   public addressesFound$: Observable<AddressFoundPresentation[]> = this._searchTerm$.pipe(
     map((searchTerm: string): string => searchTerm.trim()),
     filter((searchTerm: string): boolean => searchTerm.length >= MIN_SEARCH_TERM_LENGTH),
@@ -84,11 +103,14 @@ export class CartographyPage {
 
   public centerView$: Observable<CenterView> = this._centerView$.asObservable();
 
-  // Todo : use empty object pattern.
   public cnfsDetails$: Observable<CnfsDetailsPresentation | null> = this._cnfsDetails$.pipe(
+    combineLatestWith(this._usagerMarker$.pipe(startWith(null))),
     switchMap(
-      (id: string | null): Observable<CnfsDetailsPresentation | null> =>
-        id == null ? of(null) : this.presenter.cnfsDetails$(id)
+      ([id, usagerMarker]: [
+        string | null,
+        Feature<Point, UsagerMarkerProperties> | null
+      ]): Observable<CnfsDetailsPresentation | null> =>
+        id == null ? of(null) : this.cnfsDetailsWithUsagerMarker$(id, usagerMarker)
     )
   );
 
@@ -141,28 +163,21 @@ export class CartographyPage {
 
   public structuresList$: Observable<StructurePresentation[]> = this.presenter.structuresList$(this._mapViewportAndZoom$);
 
-  public readonly usagerMarker$: Observable<Feature<Point, UsagerMarkerProperties>> = this._addressToGeocode$.pipe(
-    switchMap(
-      (addressToGeocode: string): Observable<Coordinates> =>
-        this.presenter.geocodeAddress$(addressToGeocode).pipe(
-          catchError((): Observable<never> => {
-            this._geocodeAddressError$.next(true);
-            return EMPTY;
-          })
-        )
-    ),
-    mergeWith(this._usagerCoordinates$),
-    map((usagerCoordinates: Coordinates): Feature<Point, UsagerMarkerProperties> => {
-      this._geocodeAddressError$.next(false);
-      this._centerView$.next(coordinatesToCenterView(usagerCoordinates, CITY_ZOOM_LEVEL));
-      return usagerFeatureFromCoordinates(usagerCoordinates);
-    })
-  );
+  public readonly usagerMarker$: Observable<Feature<Point, UsagerMarkerProperties>> = this._usagerMarker$;
 
   public constructor(
     private readonly presenter: CartographyPresenter,
     @Inject(CARTOGRAPHY_TOKEN) private readonly cartographyConfiguration: CartographyConfiguration
   ) {}
+
+  private cnfsDetailsWithUsagerMarker$(
+    id: string,
+    usagerMarker: Feature<Point, UsagerMarkerProperties> | null
+  ): Observable<CnfsDetailsPresentation> {
+    return usagerMarker == null
+      ? this.presenter.cnfsDetails$(id)
+      : this.presenter.cnfsDetails$(id, Coordinates.fromGeoJsonFeature(usagerMarker));
+  }
 
   public displayCnfsDetails(id: string): void {
     this._cnfsDetails$.next(id);

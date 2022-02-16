@@ -12,6 +12,7 @@
       *ngIf="cnfsDetails$ | async as cnfsDetails; else: displayCnfsList"
       [address]="cnfsDetails.address"
       [cnfsList]="cnfsDetails.cnfsList"
+      [distance]="cnfsDetails.distanceFromUsager"
       [email]="cnfsDetails.email"
       [cnfsTypeNote]="cnfsDetails.cnfsTypeNote"
       [opening]="cnfsDetails.opening"
