@@ -138,6 +138,7 @@ describe('cnfs rest repository', (): void => {
           prenom: 'Charles'
         }
       ],
+      coordinates: [6.053333, 43.955],
       email: 'john.doe@aide-rurale.net',
       nom: 'Aide rurale',
       nombreCnfs: 2,
@@ -165,6 +166,7 @@ describe('cnfs rest repository', (): void => {
       ],
       'Aide rurale',
       CnfsType.Default,
+      new Coordinates(43.955, 6.053333),
       [],
       '12 RUE DE LA PLACE, 87100 LIMOGES',
       new StructureContact('john.doe@aide-rurale.net', '04 23 45 68 97')
@@ -195,6 +197,7 @@ describe('cnfs rest repository', (): void => {
           prenom: 'Charles'
         }
       ],
+      coordinates: [6.053333, 43.955],
       email: 'john.doe@aide-rurale.net',
       nom: 'Aide rurale',
       nombreCnfs: 2,
@@ -223,6 +226,7 @@ describe('cnfs rest repository', (): void => {
       ],
       'Aide rurale',
       CnfsType.MonEspaceSante,
+      new Coordinates(43.955, 6.053333),
       [],
       '12 RUE DE LA PLACE, 87100 LIMOGES',
       new StructureContact('john.doe@aide-rurale.net', '04 23 45 68 97')

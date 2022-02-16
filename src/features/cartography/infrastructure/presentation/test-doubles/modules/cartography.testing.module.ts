@@ -32,6 +32,7 @@ import {
     PermanenceOpeningHoursStubComponent,
     SwitchMapListStubComponent
   ],
+  exports: [CnfsDetailsStubComponent],
   imports: [CommonModule],
   providers: []
 })

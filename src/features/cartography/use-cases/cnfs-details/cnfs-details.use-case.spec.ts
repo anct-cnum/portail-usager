@@ -1,6 +1,6 @@
 import { firstValueFrom, Observable, of } from 'rxjs';
 import { CnfsDetailsUseCase } from './cnfs-details.use-case';
-import { CnfsDetails, CnfsRepository, CnfsType, StructureContact } from '../../core';
+import { CnfsDetails, CnfsRepository, CnfsType, Coordinates, StructureContact } from "../../core";
 
 const CNFS_DETAILS: CnfsDetails = new CnfsDetails(
   [
@@ -22,6 +22,7 @@ const CNFS_DETAILS: CnfsDetails = new CnfsDetails(
   ],
   "Association pour l'accès à la technologie",
   CnfsType.Default,
+  new Coordinates(43.955, 6.053333),
   ['9h00 - 18h00', '9h00 - 18h00', '9h00 - 18h00', '9h00 - 18h00', '9h00 - 18h00'],
   '3 rue des lilas, 13000 Marseille',
   new StructureContact('john.doe@email.com', '0123456789', 'https://www.john-doe.com')

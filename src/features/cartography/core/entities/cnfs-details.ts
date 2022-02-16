@@ -1,4 +1,5 @@
 import { StructureContact } from './structure-contact';
+import { Coordinates } from '../value-objects';
 
 export enum CnfsType {
   Default = 'Default',
@@ -18,6 +19,7 @@ export class CnfsDetails {
     public readonly cnfs: CnfsInStructure[],
     public readonly structureName: string,
     public readonly type: CnfsType,
+    public readonly position: Coordinates,
     public readonly openingHours?: string[],
     public readonly structureAddress?: string,
     public readonly contact?: StructureContact
