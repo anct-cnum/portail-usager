@@ -65,10 +65,10 @@ const geographicDistance = (coordinatesA: Coordinates, coordinatesB: Coordinates
 const TWO_DIGITS_AFTER_COMMA: number = 2;
 
 const getDistanceFromUsager = (
-  cnfsPosition: Coordinates,
+  cnfsPosition?: Coordinates,
   usagerCoordinates?: Coordinates
 ): Pick<CnfsDetailsPresentation, 'distanceFromUsager'> =>
-  usagerCoordinates == null
+  usagerCoordinates == null || cnfsPosition == null
     ? {}
     : {
         distanceFromUsager: `${geographicDistance(cnfsPosition, usagerCoordinates).toFixed(TWO_DIGITS_AFTER_COMMA)} km`

@@ -2,8 +2,8 @@ import { firstValueFrom, Observable, of } from 'rxjs';
 import { CnfsDetailsUseCase } from './cnfs-details.use-case';
 import { CnfsDetails, CnfsRepository, CnfsType, Coordinates, StructureContact } from '../../core';
 
-const CNFS_DETAILS: CnfsDetails = new CnfsDetails(
-  [
+const CNFS_DETAILS: CnfsDetails = {
+  cnfs: [
     {
       email: 'christelle.bateau@conseiller-numerique.fr',
       fullName: 'Christelle Bateau',
@@ -20,13 +20,13 @@ const CNFS_DETAILS: CnfsDetails = new CnfsDetails(
       phone: '03 44 89 62 14'
     }
   ],
-  "Association pour l'accès à la technologie",
-  CnfsType.Default,
-  new Coordinates(43.955, 6.053333),
-  ['9h00 - 18h00', '9h00 - 18h00', '9h00 - 18h00', '9h00 - 18h00', '9h00 - 18h00'],
-  '3 rue des lilas, 13000 Marseille',
-  new StructureContact('john.doe@email.com', '0123456789', 'https://www.john-doe.com')
-);
+  contact: new StructureContact('john.doe@email.com', '0123456789', 'https://www.john-doe.com'),
+  openingHours: ['9h00 - 18h00', '9h00 - 18h00', '9h00 - 18h00', '9h00 - 18h00', '9h00 - 18h00'],
+  position: new Coordinates(43.955, 6.053333),
+  structureAddress: '3 rue des lilas, 13000 Marseille',
+  structureName: "Association pour l'accès à la technologie",
+  type: CnfsType.Default
+};
 
 const CNFS_REPOSITORY: CnfsRepository = {
   // eslint-disable-next-line @typescript-eslint/naming-convention

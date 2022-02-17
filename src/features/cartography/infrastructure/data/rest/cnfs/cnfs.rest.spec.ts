@@ -151,8 +151,8 @@ describe('cnfs rest repository', (): void => {
       }
     } as unknown as HttpClient;
 
-    const expectedCnfsDetails: CnfsDetails = new CnfsDetails(
-      [
+    const expectedCnfsDetails: CnfsDetails = {
+      cnfs: [
         {
           email: 'christelle.bateau@conseiller-numerique.fr',
           fullName: 'Christelle Bateau',
@@ -164,13 +164,13 @@ describe('cnfs rest repository', (): void => {
           phone: '03 86 55 24 40'
         }
       ],
-      'Aide rurale',
-      CnfsType.Default,
-      new Coordinates(43.955, 6.053333),
-      [],
-      '12 RUE DE LA PLACE, 87100 LIMOGES',
-      new StructureContact('john.doe@aide-rurale.net', '04 23 45 68 97')
-    );
+      contact: new StructureContact('john.doe@aide-rurale.net', '04 23 45 68 97'),
+      openingHours: [],
+      position: new Coordinates(43.955, 6.053333),
+      structureAddress: '12 RUE DE LA PLACE, 87100 LIMOGES',
+      structureName: 'Aide rurale',
+      type: CnfsType.Default
+    };
 
     const id: string = '88bc36fb0db191928330b1e6';
     const cnfsRestRepository: CnfsRest = new CnfsRest(httpClient);
@@ -211,8 +211,8 @@ describe('cnfs rest repository', (): void => {
       }
     } as unknown as HttpClient;
 
-    const expectedCnfsDetails: CnfsDetails = new CnfsDetails(
-      [
+    const expectedCnfsDetails: CnfsDetails = {
+      cnfs: [
         {
           email: 'christelle.bateau@conseiller-numerique.fr',
           fullName: 'Christelle Bateau',
@@ -224,13 +224,13 @@ describe('cnfs rest repository', (): void => {
           phone: '03 86 55 24 40'
         }
       ],
-      'Aide rurale',
-      CnfsType.MonEspaceSante,
-      new Coordinates(43.955, 6.053333),
-      [],
-      '12 RUE DE LA PLACE, 87100 LIMOGES',
-      new StructureContact('john.doe@aide-rurale.net', '04 23 45 68 97')
-    );
+      contact: new StructureContact('john.doe@aide-rurale.net', '04 23 45 68 97'),
+      openingHours: [],
+      position: new Coordinates(43.955, 6.053333),
+      structureAddress: '12 RUE DE LA PLACE, 87100 LIMOGES',
+      structureName: 'Aide rurale',
+      type: CnfsType.MonEspaceSante
+    };
 
     const id: string = '88bc36fb0db191928330b1e6';
     const cnfsRestRepository: CnfsRest = new CnfsRest(httpClient);

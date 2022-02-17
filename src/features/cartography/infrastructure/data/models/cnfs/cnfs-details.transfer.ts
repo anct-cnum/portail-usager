@@ -17,7 +17,7 @@ export interface CnfsInStructureTransfer {
 export interface CnfsDetailsTransfer {
   adresse: string;
   cnfs: CnfsInStructureTransfer[];
-  coordinates: Position;
+  coordinates?: Position;
   email: string;
   nom: string;
   telephone: string;

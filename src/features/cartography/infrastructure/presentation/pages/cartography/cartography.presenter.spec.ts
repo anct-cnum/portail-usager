@@ -93,28 +93,26 @@ const LIST_CNFS_USE_CASE: ListCnfsUseCase = {
 const CNFS_DETAILS_USE_CASE: CnfsDetailsUseCase = {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   execute$(_: string): Observable<CnfsDetails> {
-    return of(
-      new CnfsDetails(
-        [
-          {
-            email: 'christelle.bateau@conseiller-numerique.fr',
-            fullName: 'Christelle Bateau',
-            phone: '08 86 66 87 72'
-          },
-          {
-            email: 'charles.desmoulins@conseiller-numerique.fr',
-            fullName: 'Charles Desmoulins',
-            phone: '03 86 55 24 40'
-          }
-        ],
-        'Association Des Centres Sociaux Et Culturels Du Bassin De Riom',
-        CnfsType.Default,
-        new Coordinates(43.955, 6.053333),
-        ['9h30 - 17h30', '9h30 - 17h30', '9h30 - 17h30', '9h30 - 17h30', '9h30 - 17h30', '9h30 - 12h00'],
-        'Place José Moron 3200 RIOM',
-        new StructureContact('email@example.com', '03 86 55 26 40', 'https://www.test.com')
-      )
-    );
+    return of({
+      cnfs: [
+        {
+          email: 'christelle.bateau@conseiller-numerique.fr',
+          fullName: 'Christelle Bateau',
+          phone: '08 86 66 87 72'
+        },
+        {
+          email: 'charles.desmoulins@conseiller-numerique.fr',
+          fullName: 'Charles Desmoulins',
+          phone: '03 86 55 24 40'
+        }
+      ],
+      contact: new StructureContact('email@example.com', '03 86 55 26 40', 'https://www.test.com'),
+      openingHours: ['9h30 - 17h30', '9h30 - 17h30', '9h30 - 17h30', '9h30 - 17h30', '9h30 - 17h30', '9h30 - 12h00'],
+      position: new Coordinates(43.955, 6.053333),
+      structureAddress: 'Place José Moron 3200 RIOM',
+      structureName: 'Association Des Centres Sociaux Et Culturels Du Bassin De Riom',
+      type: CnfsType.Default
+    });
   }
 } as CnfsDetailsUseCase;
 
@@ -188,28 +186,26 @@ describe('cartography presenter', (): void => {
       const cnfsDetailsUseCase: CnfsDetailsUseCase = {
         // eslint-disable-next-line @typescript-eslint/naming-convention
         execute$(_: string): Observable<CnfsDetails> {
-          return of(
-            new CnfsDetails(
-              [
-                {
-                  email: 'christelle.bateau@conseiller-numerique.fr',
-                  fullName: 'Christelle Bateau',
-                  phone: '08 86 66 87 72'
-                },
-                {
-                  email: 'charles.desmoulins@conseiller-numerique.fr',
-                  fullName: 'Charles Desmoulins',
-                  phone: '03 86 55 24 40'
-                }
-              ],
-              'Association Des Centres Sociaux Et Culturels Du Bassin De Riom',
-              CnfsType.ChambreDAgriculture,
-              new Coordinates(43.955, 6.053333),
-              ['9h30 - 17h30'],
-              'Place José Moron 3200 RIOM',
-              new StructureContact('email@example.com', '03 86 55 26 40', 'https://www.test.com')
-            )
-          );
+          return of({
+            cnfs: [
+              {
+                email: 'christelle.bateau@conseiller-numerique.fr',
+                fullName: 'Christelle Bateau',
+                phone: '08 86 66 87 72'
+              },
+              {
+                email: 'charles.desmoulins@conseiller-numerique.fr',
+                fullName: 'Charles Desmoulins',
+                phone: '03 86 55 24 40'
+              }
+            ],
+            contact: new StructureContact('email@example.com', '03 86 55 26 40', 'https://www.test.com'),
+            openingHours: ['9h30 - 17h30'],
+            position: new Coordinates(43.955, 6.053333),
+            structureAddress: 'Place José Moron 3200 RIOM',
+            structureName: 'Association Des Centres Sociaux Et Culturels Du Bassin De Riom',
+            type: CnfsType.ChambreDAgriculture
+          });
         }
       } as CnfsDetailsUseCase;
 
@@ -261,17 +257,15 @@ describe('cartography presenter', (): void => {
       const cnfsDetailsUseCase: CnfsDetailsUseCase = {
         // eslint-disable-next-line @typescript-eslint/naming-convention
         execute$(_: string): Observable<CnfsDetails> {
-          return of(
-            new CnfsDetails(
-              [],
-              'Association Des Centres Sociaux Et Culturels Du Bassin De Riom',
-              CnfsType.ChambreDAgriculture,
-              new Coordinates(43.955, 6.053333),
-              [],
-              'Place José Moron 3200 RIOM',
-              new StructureContact('email@example.com', '03 86 55 26 40', 'https://www.test.com')
-            )
-          );
+          return of({
+            cnfs: [],
+            contact: new StructureContact('email@example.com', '03 86 55 26 40', 'https://www.test.com'),
+            openingHours: [],
+            position: new Coordinates(43.955, 6.053333),
+            structureAddress: 'Place José Moron 3200 RIOM',
+            structureName: 'Association Des Centres Sociaux Et Culturels Du Bassin De Riom',
+            type: CnfsType.ChambreDAgriculture
+          });
         }
       } as CnfsDetailsUseCase;
 

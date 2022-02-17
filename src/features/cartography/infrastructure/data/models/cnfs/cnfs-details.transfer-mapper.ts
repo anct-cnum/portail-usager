@@ -1,5 +1,6 @@
 import { CnfsDetails, CnfsInStructure, CnfsType, Coordinates, StructureContact } from '../../../../core';
 import { CnfsDetailsTransfer, CnfsInStructureTransfer, CnfsTypeTransfer } from './cnfs-details.transfer';
+import { Position } from 'geojson';
 
 const CNFS_TYPE_MAP: Map<CnfsTypeTransfer | undefined, CnfsType> = new Map([
   [CnfsTypeTransfer.Coordinateur, CnfsType.Coordinateur],
@@ -16,13 +17,19 @@ const toCnfsCore = (cnfs: CnfsInStructureTransfer): CnfsInStructure => ({
   phone: cnfs.phone
 });
 
-export const cnfsDetailsTransferToCore = (cnfsDetailsTransfer: CnfsDetailsTransfer): CnfsDetails =>
-  new CnfsDetails(
-    cnfsDetailsTransfer.cnfs.map(toCnfsCore),
-    cnfsDetailsTransfer.nom,
-    getCnfsType(cnfsDetailsTransfer.type),
-    new Coordinates(cnfsDetailsTransfer.coordinates[1], cnfsDetailsTransfer.coordinates[0]),
-    [],
-    cnfsDetailsTransfer.adresse,
-    new StructureContact(cnfsDetailsTransfer.email, cnfsDetailsTransfer.telephone)
-  );
+const getPosition = (position?: Position): Pick<CnfsDetails, 'position'> =>
+  position == null
+    ? {}
+    : {
+        position: new Coordinates(position[1], position[0])
+      };
+
+export const cnfsDetailsTransferToCore = (cnfsDetailsTransfer: CnfsDetailsTransfer): CnfsDetails => ({
+  cnfs: cnfsDetailsTransfer.cnfs.map(toCnfsCore),
+  contact: new StructureContact(cnfsDetailsTransfer.email, cnfsDetailsTransfer.telephone),
+  openingHours: [],
+  ...getPosition(cnfsDetailsTransfer.coordinates),
+  structureAddress: cnfsDetailsTransfer.adresse,
+  structureName: cnfsDetailsTransfer.nom,
+  type: getCnfsType(cnfsDetailsTransfer.type)
+});
