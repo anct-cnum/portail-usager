@@ -15,10 +15,10 @@
           <br />
           pas disponibles
         </cnfs-details-contact>
+        <button (click)="print.emit()" class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-printer-fill fr-btn--icon-left">
+          Imprimer
+        </button>
       </div>
-      <button (click)="print.emit()" class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-printer-fill fr-btn--icon-left">
-        Imprimer
-      </button>
     </div>
   </div>
   <div class="fr-printable fr-printable__only">
@@ -49,6 +49,9 @@
         <cnfs-details-contact size="sm" emailLabel="Courriel" [email]="email" [phone]="phone" [website]="website">
           Les informations de contact de cette structure ne sont pas disponibles
         </cnfs-details-contact>
+        <button (click)="print.emit()" class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-printer-fill fr-btn--icon-left">
+          Imprimer
+        </button>
       </div>
       <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-xl-6 fr-col-lg-12 fr-col-md-6 fr-col-12">
