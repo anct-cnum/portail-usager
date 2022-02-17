@@ -1,15 +1,12 @@
-<div style="transform: translateY(-56px)">
-  <div
-    class="fr-hidden-lg fr-display--flex fr-shadow--up fr-index--over fr-background-elevated--grey fr-px-2w fr-align-items--center fr-position--absolute fr-left-half fr-translate-x-center">
-    <label class="fr-pr-1w" for="toggle-map">Liste</label>
-    <span class="fr-toggle">
-      <input
-        type="checkbox"
-        class="fr-toggle__input"
-        id="toggle-map"
-        [formControl]="switchMapListControl"
-        (change)="this.switchMapList.next(switchMapListControl.value)" />
-      <label class="fr-toggle__label fr-pl-1w" for="toggle-map">Carte</label>
-    </span>
-  </div>
+<div class="fr-hidden-lg">
+  <button
+    [ngClass]="displayMap ? 'fr-fi-arrow-left-line fr-btn--icon-left' : 'fr-fi-arrow-right-line fr-btn--icon-right'"
+    (click)="toggle()"
+    class="fr-btn fr-full-container--width fr-py-2w">
+    <ng-container *ngIf="displayMap; else displayMapButtonContent">
+      <ng-container *ngIf="displayDetailsStructureId; else displayListButtonContent">Afficher la structure</ng-container>
+      <ng-template #displayListButtonContent>Afficher la liste</ng-template>
+    </ng-container>
+    <ng-template #displayMapButtonContent>Afficher la carte</ng-template>
+  </button>
 </div>

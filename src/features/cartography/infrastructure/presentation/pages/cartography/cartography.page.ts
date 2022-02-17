@@ -127,7 +127,7 @@ export class CartographyPage {
       )
     );
 
-  public displayDetailsStructureId: string | null = null;
+  public displayDetailsStructureId?: string;
 
   public displayMap: boolean = false;
 
@@ -188,7 +188,7 @@ export class CartographyPage {
   public hideCnfsDetails(): void {
     this._cnfsDetails$.next(null);
     this.displayDetailsStructureId != null && this._highlightedStructureId$.next(this.displayDetailsStructureId);
-    this.displayDetailsStructureId = null;
+    this.displayDetailsStructureId = '';
   }
 
   public onAutoLocateUsagerRequest(coordinates: Coordinates): void {

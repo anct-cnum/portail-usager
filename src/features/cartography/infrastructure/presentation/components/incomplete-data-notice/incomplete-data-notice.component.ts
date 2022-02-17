@@ -8,7 +8,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 export class IncompleteDataNoticeComponent {
   public isOpen: boolean = true;
 
-  @Input() public displayDetailsStructureId: string | null = null;
+  @Input() public displayDetailsStructureId?: string;
 
   @Input() public displayMap: boolean = false;
 }

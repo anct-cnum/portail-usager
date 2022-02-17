@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -7,13 +6,14 @@ import { FormControl } from '@angular/forms';
   templateUrl: './switch-map-list.component.html'
 })
 export class SwitchMapListComponent {
-  public switchMapListControl: FormControl = new FormControl(false);
+  @Input() public displayDetailsStructureId?: string;
+
+  @Input() public displayMap: boolean = false;
 
   @Output() public readonly switchMapList: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   public toggle(): void {
-    const nextSwitchMapListControlValue: boolean = !(this.switchMapListControl.value as boolean);
-    this.switchMapListControl.setValue(nextSwitchMapListControlValue);
-    this.switchMapList.emit(nextSwitchMapListControlValue);
+    this.displayMap = !this.displayMap;
+    this.switchMapList.emit(this.displayMap);
   }
 }
