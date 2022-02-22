@@ -3,7 +3,7 @@ module.exports = {
   'max-lines-per-function': [
     'off',
     {
-      max: 32,
+      max: 16,
       skipBlankLines: true,
       skipComments: true
     }
