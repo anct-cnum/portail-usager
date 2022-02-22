@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -7,8 +7,4 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 })
 export class IncompleteDataNoticeComponent {
   public isOpen: boolean = true;
-
-  @Input() public displayDetailsStructureId?: string;
-
-  @Input() public displayMap: boolean = false;
 }
