@@ -1,6 +1,9 @@
+import { Coordinates } from '../../../../core';
+
 export interface StructurePresentation {
   address: string;
   id: string;
   isLabeledFranceServices?: boolean;
+  location?: Coordinates;
   name: string;
 }

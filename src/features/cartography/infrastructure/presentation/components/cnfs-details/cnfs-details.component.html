@@ -1,9 +1,9 @@
 <div class="fr-display--flex fr-full-container--height">
   <div class="fr-display--flex fr-displayed-xl fr-hidden-lg fr-displayed-md fr-flex-direction--column fr-ml-3w fr-mb-3w">
     <div class="fr-flex--1">
-      <button (click)="backToList.emit()" class="fr-link fr-fi-arrow-left-line fr-link--icon-left fr-my-2w">
+      <a [routerLink]="['/', structureId]" class="fr-link fr-fi-arrow-left-line fr-link--icon-left fr-my-2w">
         Revenir à la liste
-      </button>
+      </a>
     </div>
     <div>
       <h2 class="fr-text--md fr-text--regular fr-mb-1w">Contacter la structure</h2>
@@ -37,11 +37,11 @@
   </div>
   <div class="fr-flex--1 fr-overflow--auto">
     <div class="fr-m-3w">
-      <button
-        (click)="backToList.emit()"
-        class="fr-link fr-hidden-xl fr-display--block-lg fr-display--none-md fr-fi-arrow-left-line fr-link--icon-left fr-mb-2w">
+      <a
+        [routerLink]="['/', structureId]"
+        class="fr-link fr-fi-arrow-left-line fr-link--icon-left fr-mb-2w fr-hidden-xl fr-display--inline-block-lg fr-display--none-md">
         Revenir à la liste
-      </button>
+      </a>
       <h1 class="fr-h3 fr-text-default--grey">{{ structureName }}</h1>
       <div class="fr-mb-3w fr-hidden-xl fr-display--block-lg fr-display--none-md">
         <cnfs-details-contact size="sm" emailLabel="Courriel" [email]="email" [phone]="phone" [website]="website">

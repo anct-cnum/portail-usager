@@ -8,22 +8,8 @@ import {
   UsagerMarkerProperties
 } from '../../models';
 import { Feature, FeatureCollection, Point } from 'geojson';
-import { Coordinates } from '../../../../core';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { ViewReset } from '../../directives';
 import { MARKERS, MARKERS_TOKEN } from '../../../configuration';
-
-// TODO Convert configuration to injected token for default options then remove
-const DEFAULT_LONGITUDE: number = 4.468874066180609;
-// TODO Convert configuration to injected token for default options then remove
-const DEFAULT_LATITUDE: number = 46.28146057911664;
-// TODO Convert configuration to injected token for default options then remove
-const DEFAULT_ZOOM_LEVEL: number = 6;
-
-const DEFAULT_CENTER_VIEW: CenterView = {
-  coordinates: new Coordinates(DEFAULT_LATITUDE, DEFAULT_LONGITUDE),
-  zoomLevel: DEFAULT_ZOOM_LEVEL
-};
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,15 +23,7 @@ const DEFAULT_CENTER_VIEW: CenterView = {
   templateUrl: './permanence-map.component.html'
 })
 export class PermanenceMapComponent {
-  private readonly _centerView$: BehaviorSubject<CenterView> = new BehaviorSubject<CenterView>(DEFAULT_CENTER_VIEW);
-
-  // TODO Utiliser startwith pour éviter la valeur par défault.
-  public centerView$: Observable<CenterView> = this._centerView$.asObservable();
-
-  public defaultCenterView: CenterView = {
-    coordinates: new Coordinates(DEFAULT_LATITUDE, DEFAULT_LONGITUDE),
-    zoomLevel: DEFAULT_ZOOM_LEVEL
-  };
+  @Input() public centerView!: CenterView;
 
   @Output() public readonly cnfsDepartementMarkerChange: EventEmitter<MarkerEvent<CnfsByDepartmentMarkerProperties>> =
     new EventEmitter<MarkerEvent<CnfsByDepartmentMarkerProperties>>();
@@ -63,8 +41,6 @@ export class PermanenceMapComponent {
 
   @Input() public cnfsRegionMarkers: FeatureCollection<Point, CnfsByRegionMarkerProperties> | null = null;
 
-  @Output() public readonly displayDetails: EventEmitter<string> = new EventEmitter<string>();
-
   @Input() public highlightedStructureId: string | null = null;
 
   @Output() public readonly stateChange: EventEmitter<ViewReset> = new EventEmitter<ViewReset>();
@@ -72,10 +48,6 @@ export class PermanenceMapComponent {
   @Input() public usagerMarker: Feature<Point, UsagerMarkerProperties> | null = null;
 
   @Output() public readonly zoomOut: EventEmitter<void> = new EventEmitter<void>();
-
-  @Input() public set centerView(centerView: CenterView) {
-    this._centerView$.next(centerView);
-  }
 
   public onDepartementClick(cnfsByDepartementMarkerEvent: MarkerEvent<CnfsByDepartmentMarkerProperties>): void {
     this.cnfsDepartementMarkerChange.emit(cnfsByDepartementMarkerEvent);

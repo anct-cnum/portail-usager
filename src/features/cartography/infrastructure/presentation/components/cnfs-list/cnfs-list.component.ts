@@ -1,13 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChange,
-  SimpleChanges
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChange, SimpleChanges } from '@angular/core';
 import { StructurePresentation } from '../../models';
 
 const shouldHighlight = (featuredStructureIdChange: SimpleChange | undefined): boolean =>
@@ -20,14 +11,17 @@ const currentValue = <T>(simpleChange: SimpleChange | undefined): T => simpleCha
 
 const previousValue = <T>(simpleChange: SimpleChange | undefined): T => simpleChange?.previousValue as T;
 
-const SCROLL_DELAY_IN_MILLISECONDS: number = 250;
+const SCROLL_DELAY_IN_MILLISECONDS: number = 400;
 
 const highlight = (structureId: string): string => {
   const elem: HTMLElement | null = document.getElementById(structureId);
   if (elem == null) return structureId;
 
   setTimeout((): void => {
-    elem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    elem.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest'
+    });
   }, SCROLL_DELAY_IN_MILLISECONDS);
 
   return structureId;
@@ -39,8 +33,6 @@ const highlight = (structureId: string): string => {
   templateUrl: './cnfs-list.component.html'
 })
 export class CnfsListComponent implements OnChanges {
-  @Output() public readonly displayDetails: EventEmitter<string> = new EventEmitter<string>();
-
   @Input() public highlightedStructureId: string | null = null;
 
   @Input() public structuresList: StructurePresentation[] = [];

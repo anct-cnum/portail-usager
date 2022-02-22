@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import { Inject, Injectable } from '@angular/core';
 import {
   AddressFoundPresentation,
@@ -12,10 +14,11 @@ import {
   listCnfsByRegionToPresentation,
   MarkerProperties,
   PointOfInterestMarkerProperties,
-  StructurePresentation
+  StructurePresentation,
+  CenterView
 } from '../../models';
 import { CnfsByDepartmentProperties, CnfsByRegionProperties, CnfsDetails, Coordinates } from '../../../../core';
-import { iif, map, Observable, of } from 'rxjs';
+import { BehaviorSubject, iif, map, Observable, of, Subject } from 'rxjs';
 import {
   CnfsDetailsUseCase,
   GeocodeAddressUseCase,
@@ -24,7 +27,7 @@ import {
   ListCnfsUseCase,
   SearchAddressUseCase
 } from '../../../../use-cases';
-import { Feature, Point } from 'geojson';
+import { Feature, FeatureCollection, Point } from 'geojson';
 import { MapViewCullingService } from '../../services/map-view-culling.service';
 import { combineLatestWith, mergeMap, share } from 'rxjs/operators';
 import { cnfsPermanencesToStructurePresentations } from '../../models/structure/structure.presentation-mapper';
@@ -70,14 +73,31 @@ const highlightPermanence = (
       cnfsPermanence.properties.id === highlightedStructureId ? highlightedPermanence(cnfsPermanence) : cnfsPermanence
   );
 
+// TODO Inject though configuration token
+const DEFAULT_MAP_VIEWPORT_AND_ZOOM: ViewportAndZoom = {
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+  viewport: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
+  zoomLevel: 6
+};
+
 @Injectable()
 export class CartographyPresenter {
+  private readonly _centerView$: Subject<CenterView> = new Subject<CenterView>();
+
   private readonly _cnfsByDepartment$: Observable<Feature<Point, MarkerProperties<CnfsByDepartmentProperties>>[]> =
     this.listCnfsByDepartmentUseCase.execute$().pipe(map(cnfsByDepartmentToPresentation), share());
+
   private readonly _cnfsByRegion$: Observable<Feature<Point, MarkerProperties<CnfsByRegionProperties>>[]> =
     this.listCnfsByRegionUseCase.execute$().pipe(map(listCnfsByRegionToPresentation), share());
+
   private readonly _cnfsPermanences$: Observable<Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[]> =
     this.listCnfsPositionUseCase.execute$().pipe(map(cnfsCoreToCnfsPermanenceFeatures), share());
+
+  private readonly _displayStructureDetails$: Subject<boolean> = new Subject<boolean>();
+
+  private readonly _geocodeAddressError$: Subject<boolean> = new Subject<boolean>();
+
+  private readonly _highlightedStructureId$: Subject<string> = new Subject<string>();
 
   private readonly _markersDepartmentCache: ObservableCache<Feature<Point, CnfsByDepartmentMarkerProperties>[], MarkerKey> =
     new ObservableCache<Feature<Point, CnfsByDepartmentMarkerProperties>[], MarkerKey>();
@@ -87,6 +107,18 @@ export class CartographyPresenter {
 
   private readonly _markersRegionCache: ObservableCache<Feature<Point, CnfsByRegionMarkerProperties>[], MarkerKey> =
     new ObservableCache<Feature<Point, CnfsByRegionMarkerProperties>[], MarkerKey>();
+
+  private readonly _viewportAndZoom$: BehaviorSubject<ViewportAndZoom> = new BehaviorSubject<ViewportAndZoom>(
+    DEFAULT_MAP_VIEWPORT_AND_ZOOM
+  );
+
+  public centerView$: Observable<CenterView> = this._centerView$.asObservable();
+
+  public displayStructureDetails$: Observable<boolean> = this._displayStructureDetails$.asObservable();
+
+  public geocodeAddressError$: Observable<boolean> = this._geocodeAddressError$.asObservable();
+
+  public highlightedStructureId$: Observable<string> = this._highlightedStructureId$.asObservable();
 
   public constructor(
     @Inject(CnfsDetailsUseCase) private readonly cnfsDetailsUseCase: CnfsDetailsUseCase,
@@ -202,12 +234,32 @@ export class CartographyPresenter {
     return this.geocodeAddressUseCase.execute$(addressToGeocode);
   }
 
+  public highlightStructure(structureId: string): void {
+    this._highlightedStructureId$.next(structureId);
+  }
+
   public searchAddress$(searchTerm: string): Observable<AddressFoundPresentation[]> {
     return this.searchAddressUseCase.execute$(searchTerm);
   }
 
-  public structuresList$(viewportAndZoom$: Observable<ViewportAndZoom>): Observable<StructurePresentation[]> {
-    return viewportAndZoom$.pipe(
+  public setGeocodeAddressError(geocodeAddressError: boolean): void {
+    this._geocodeAddressError$.next(geocodeAddressError);
+  }
+
+  public setMapView(coordinates: Coordinates, zoomLevel: number): void {
+    this._centerView$.next({ coordinates, zoomLevel });
+  }
+
+  public setStructureDetailsDisplay(display: boolean): void {
+    this._displayStructureDetails$.next(display);
+  }
+
+  public setViewportAndZoom(viewportAndZoom: ViewportAndZoom): void {
+    this._viewportAndZoom$.next(viewportAndZoom);
+  }
+
+  public structuresList$(): Observable<StructurePresentation[]> {
+    return this._viewportAndZoom$.pipe(
       mergeMap(
         (viewportAndZoom: ViewportAndZoom): Observable<StructurePresentation[]> =>
           iif(
@@ -220,26 +272,41 @@ export class CartographyPresenter {
   }
 
   public visibleMapCnfsByDepartmentAtZoomLevel$(
-    viewBoxWithZoomLevel$: Observable<ViewportAndZoom>,
     forceCnfsPermanenceDisplay$: Observable<boolean> = of(false)
-  ): Observable<Feature<Point, CnfsByDepartmentMarkerProperties>[]> {
-    return this.cnfsByDepartmentAtZoomLevel$(viewBoxWithZoomLevel$, forceCnfsPermanenceDisplay$);
+  ): Observable<FeatureCollection<Point, CnfsByDepartmentMarkerProperties>> {
+    return this.cnfsByDepartmentAtZoomLevel$(this._viewportAndZoom$, forceCnfsPermanenceDisplay$).pipe(
+      map(
+        (
+          cnfsByDepartementFeatures: Feature<Point, CnfsByDepartmentMarkerProperties>[]
+        ): FeatureCollection<Point, CnfsByDepartmentMarkerProperties> => ({
+          features: cnfsByDepartementFeatures,
+          type: 'FeatureCollection'
+        })
+      )
+    );
   }
 
   public visibleMapCnfsByRegionAtZoomLevel$(
-    viewBoxWithZoomLevel$: Observable<ViewportAndZoom>,
     forceCnfsPermanenceDisplay$: Observable<boolean> = of(false)
-  ): Observable<Feature<Point, CnfsByRegionMarkerProperties>[]> {
-    return this.cnfsByRegionAtZoomLevel$(viewBoxWithZoomLevel$, forceCnfsPermanenceDisplay$);
+  ): Observable<FeatureCollection<Point, CnfsByRegionMarkerProperties>> {
+    return this.cnfsByRegionAtZoomLevel$(this._viewportAndZoom$, forceCnfsPermanenceDisplay$).pipe(
+      map(
+        (
+          cnfsByRegionFeatures: Feature<Point, CnfsByRegionMarkerProperties>[]
+        ): FeatureCollection<Point, CnfsByRegionMarkerProperties> => ({
+          features: cnfsByRegionFeatures,
+          type: 'FeatureCollection'
+        })
+      )
+    );
   }
 
   // eslint-disable-next-line max-lines-per-function
   public visibleMapCnfsPermanencesThroughViewportAtZoomLevel$(
-    viewBoxWithZoomLevel$: Observable<ViewportAndZoom>,
     forceCnfsPermanenceDisplay$: Observable<boolean> = of(false),
     highlightedStructureId$: Observable<string | null> = of('')
-  ): Observable<Feature<Point, CnfsPermanenceMarkerProperties>[]> {
-    return viewBoxWithZoomLevel$.pipe(
+  ): Observable<FeatureCollection<Point, CnfsPermanenceMarkerProperties>> {
+    return this._viewportAndZoom$.pipe(
       combineLatestWith(forceCnfsPermanenceDisplay$, highlightedStructureId$),
       mergeMap(
         ([viewportWithZoomLevel, forceCnfsPermanenceDisplay, highlightedStructureId]: [
@@ -252,6 +319,14 @@ export class CartographyPresenter {
             viewportWithZoomLevel,
             highlightedStructureId
           )
+      ),
+      map(
+        (
+          cnfsPermanencesFeatures: Feature<Point, CnfsPermanenceMarkerProperties>[]
+        ): FeatureCollection<Point, CnfsPermanenceMarkerProperties> => ({
+          features: cnfsPermanencesFeatures,
+          type: 'FeatureCollection'
+        })
       )
     );
   }

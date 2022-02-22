@@ -1,3 +1,5 @@
+import { Coordinates } from '../../../../core';
+
 export enum DayPresentation {
   Monday = 'Lun.',
   Tuesday = 'Mar.',
@@ -21,6 +23,7 @@ export interface CnfsPresentation {
 
 export interface CnfsDetailsPresentation {
   address?: string;
+  coordinates?: Coordinates;
   cnfsList: CnfsPresentation[];
   distanceFromUsager?: string;
   email?: string;

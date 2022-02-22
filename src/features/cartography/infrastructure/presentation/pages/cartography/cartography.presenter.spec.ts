@@ -9,14 +9,12 @@ import {
 } from '../../../../use-cases';
 import { MapViewCullingService } from '../../services/map-view-culling.service';
 import { firstValueFrom, Observable, of } from 'rxjs';
-import { Feature, Point } from 'geojson';
+import { FeatureCollection, Point } from 'geojson';
 import {
   AddressFound,
   Cnfs,
   CnfsByDepartment,
-  CnfsByDepartmentProperties,
   CnfsByRegion,
-  CnfsByRegionProperties,
   CnfsDetails,
   CnfsType,
   Coordinates,
@@ -24,16 +22,15 @@ import {
 } from '../../../../core';
 import {
   AddressFoundPresentation,
+  CnfsByDepartmentMarkerProperties,
+  CnfsByRegionMarkerProperties,
   CnfsDetailsPresentation,
-  CnfsPermanenceProperties,
+  CnfsPermanenceMarkerProperties,
   DayPresentation,
-  MarkerProperties,
-  PointOfInterestMarkerProperties,
   StructurePresentation
 } from '../../models';
 import { MarkerKey } from '../../../configuration';
-import { DEPARTMENT_ZOOM_LEVEL, REGION_ZOOM_LEVEL } from '../../helpers/map-constants';
-import { ViewportAndZoom } from '../../directives';
+import { DEPARTMENT_ZOOM_LEVEL } from '../../helpers/map-constants';
 
 const LIST_CNFS_BY_REGION_USE_CASE: ListCnfsByRegionUseCase = {
   execute$(): Observable<CnfsByRegion[]> {
@@ -133,6 +130,7 @@ describe('cartography presenter', (): void => {
             phone: '03 86 55 24 40'
           }
         ],
+        coordinates: new Coordinates(43.955, 6.053333),
         email: 'email@example.com',
         opening: [
           {
@@ -224,6 +222,7 @@ describe('cartography presenter', (): void => {
           }
         ],
         cnfsTypeNote: "Un conseiller de cette structure est spécialisé dans l'accueil des professions agricoles",
+        coordinates: new Coordinates(43.955, 6.053333),
         email: 'email@example.com',
         opening: [
           {
@@ -273,6 +272,7 @@ describe('cartography presenter', (): void => {
         address: 'Place José Moron 3200 RIOM',
         cnfsList: [],
         cnfsTypeNote: "Un conseiller de cette structure est spécialisé dans l'accueil des professions agricoles",
+        coordinates: new Coordinates(43.955, 6.053333),
         distanceFromUsager: '100.98 km',
         email: 'email@example.com',
         opening: [],
@@ -320,15 +320,7 @@ describe('cartography presenter', (): void => {
         {} as MapViewCullingService
       );
 
-      const viewportAndZoom$: Observable<ViewportAndZoom> = of({
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        viewport: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
-        zoomLevel: REGION_ZOOM_LEVEL
-      });
-
-      const structuresList: StructurePresentation[] = await firstValueFrom(
-        cartographyPresenter.structuresList$(viewportAndZoom$)
-      );
+      const structuresList: StructurePresentation[] = await firstValueFrom(cartographyPresenter.structuresList$());
 
       expect(structuresList).toStrictEqual([]);
     });
@@ -339,21 +331,17 @@ describe('cartography presenter', (): void => {
           address: '12 rue des Acacias, 69002 Lyon',
           id: '4c38ebc9a06fdd532bf9d7be',
           isLabeledFranceServices: false,
+          location: new Coordinates(45.734377, 4.816864),
           name: 'Association des centres sociaux et culturels de Lyon'
         },
         {
           address: '31 Avenue de la mer, 13003 Marseille',
           id: '88bc36fb0db191928330b1e6',
           isLabeledFranceServices: true,
+          location: new Coordinates(43.305645, 5.380007),
           name: 'Médiathèque de la mer'
         }
       ];
-
-      const viewportAndZoom$: Observable<ViewportAndZoom> = of({
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        viewport: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
-        zoomLevel: DEPARTMENT_ZOOM_LEVEL + 1
-      });
 
       const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
         {} as CnfsDetailsUseCase,
@@ -369,9 +357,12 @@ describe('cartography presenter', (): void => {
         new MapViewCullingService()
       );
 
-      const structuresList: StructurePresentation[] = await firstValueFrom(
-        cartographyPresenter.structuresList$(viewportAndZoom$)
-      );
+      cartographyPresenter.setViewportAndZoom({
+        viewport: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
+        zoomLevel: DEPARTMENT_ZOOM_LEVEL + 1
+      });
+
+      const structuresList: StructurePresentation[] = await firstValueFrom(cartographyPresenter.structuresList$());
 
       expect(structuresList).toStrictEqual(expectedStructureList);
     });
@@ -379,40 +370,37 @@ describe('cartography presenter', (): void => {
 
   describe('visible point of interest markers through viewport at zoom level', (): void => {
     it('should display the cnfs grouped by region markers at the region zoom level', async (): Promise<void> => {
-      const expectedCnfsByRegionFeatures: Feature<Point, MarkerProperties<CnfsByRegionProperties>>[] = [
-        {
-          geometry: {
-            coordinates: [6.053333, 43.955],
-            type: 'Point'
+      const expectedCnfsByRegionFeatures: FeatureCollection<Point, CnfsByRegionMarkerProperties> = {
+        features: [
+          {
+            geometry: {
+              coordinates: [6.053333, 43.955],
+              type: 'Point'
+            },
+            properties: {
+              boundingZoom: 8,
+              count: 2,
+              markerType: MarkerKey.CnfsByRegion,
+              region: "Provence-Alpes-Côte d'Azur"
+            },
+            type: 'Feature'
           },
-          properties: {
-            boundingZoom: 8,
-            count: 2,
-            markerType: MarkerKey.CnfsByRegion,
-            region: "Provence-Alpes-Côte d'Azur"
-          },
-          type: 'Feature'
-        },
-        {
-          geometry: {
-            coordinates: [2.775278, 49.966111],
-            type: 'Point'
-          },
-          properties: {
-            boundingZoom: 8,
-            count: 7,
-            markerType: MarkerKey.CnfsByRegion,
-            region: 'Hauts-de-France'
-          },
-          type: 'Feature'
-        }
-      ];
-
-      const viewportAndZoom$: Observable<ViewportAndZoom> = of({
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        viewport: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
-        zoomLevel: REGION_ZOOM_LEVEL
-      });
+          {
+            geometry: {
+              coordinates: [2.775278, 49.966111],
+              type: 'Point'
+            },
+            properties: {
+              boundingZoom: 8,
+              count: 7,
+              markerType: MarkerKey.CnfsByRegion,
+              region: 'Hauts-de-France'
+            },
+            type: 'Feature'
+          }
+        ],
+        type: 'FeatureCollection'
+      };
 
       const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
         {} as CnfsDetailsUseCase,
@@ -424,44 +412,47 @@ describe('cartography presenter', (): void => {
         {} as MapViewCullingService
       );
 
-      const visibleMapPointsOfInterest: Feature<Point, PointOfInterestMarkerProperties>[] = await firstValueFrom(
-        cartographyPresenter.visibleMapCnfsByRegionAtZoomLevel$(viewportAndZoom$)
+      const visibleMapPointsOfInterest: FeatureCollection<Point, CnfsByRegionMarkerProperties> = await firstValueFrom(
+        cartographyPresenter.visibleMapCnfsByRegionAtZoomLevel$()
       );
 
       expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsByRegionFeatures);
     });
 
     it('should display cnfs by department at the department zoom level', async (): Promise<void> => {
-      const expectedCnfsByDepartmentFeatures: Feature<Point, MarkerProperties<CnfsByDepartmentProperties>>[] = [
-        {
-          geometry: {
-            coordinates: [5.348666025399395, 46.09979845028028],
-            type: 'Point'
+      const expectedCnfsByDepartmentFeatures: FeatureCollection<Point, CnfsByDepartmentMarkerProperties> = {
+        features: [
+          {
+            geometry: {
+              coordinates: [5.348666025399395, 46.09979845028028],
+              type: 'Point'
+            },
+            properties: {
+              boundingZoom: 10,
+              code: '01',
+              count: 12,
+              department: 'Ain',
+              markerType: MarkerKey.CnfsByDepartment
+            },
+            type: 'Feature'
           },
-          properties: {
-            boundingZoom: 10,
-            code: '01',
-            count: 12,
-            department: 'Ain',
-            markerType: MarkerKey.CnfsByDepartment
-          },
-          type: 'Feature'
-        },
-        {
-          geometry: {
-            coordinates: [45.14736445325332, -12.820655090736881],
-            type: 'Point'
-          },
-          properties: {
-            boundingZoom: 10,
-            code: '976',
-            count: 27,
-            department: 'Mayotte',
-            markerType: MarkerKey.CnfsByDepartment
-          },
-          type: 'Feature'
-        }
-      ];
+          {
+            geometry: {
+              coordinates: [45.14736445325332, -12.820655090736881],
+              type: 'Point'
+            },
+            properties: {
+              boundingZoom: 10,
+              code: '976',
+              count: 27,
+              department: 'Mayotte',
+              markerType: MarkerKey.CnfsByDepartment
+            },
+            type: 'Feature'
+          }
+        ],
+        type: 'FeatureCollection'
+      };
 
       const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
         {} as CnfsDetailsUseCase,
@@ -473,14 +464,13 @@ describe('cartography presenter', (): void => {
         {} as MapViewCullingService
       );
 
-      const viewportAndZoom$: Observable<ViewportAndZoom> = of({
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+      cartographyPresenter.setViewportAndZoom({
         viewport: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
         zoomLevel: DEPARTMENT_ZOOM_LEVEL
       });
 
-      const visibleMapPointsOfInterest: Feature<Point, PointOfInterestMarkerProperties>[] = await firstValueFrom(
-        cartographyPresenter.visibleMapCnfsByDepartmentAtZoomLevel$(viewportAndZoom$)
+      const visibleMapPointsOfInterest: FeatureCollection<Point, CnfsByDepartmentMarkerProperties> = await firstValueFrom(
+        cartographyPresenter.visibleMapCnfsByDepartmentAtZoomLevel$()
       );
 
       expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsByDepartmentFeatures);
@@ -514,22 +504,25 @@ describe('cartography presenter', (): void => {
         }
       } as ListCnfsUseCase;
 
-      const expectedCnfsPermanenceMarkersFeatures: Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[] = [
-        {
-          geometry: {
-            coordinates: [-50.125782, 4.33889],
-            type: 'Point'
-          },
-          properties: {
-            address: '31 Avenue de la mer, 13003 Cayenne',
-            id: '4c38ebc9a06fdd532bf9d7be',
-            isLabeledFranceServices: true,
-            markerType: MarkerKey.CnfsPermanence,
-            name: 'Médiathèque de la mer'
-          },
-          type: 'Feature'
-        }
-      ];
+      const expectedCnfsPermanenceMarkersFeatures: FeatureCollection<Point, CnfsPermanenceMarkerProperties> = {
+        features: [
+          {
+            geometry: {
+              coordinates: [-50.125782, 4.33889],
+              type: 'Point'
+            },
+            properties: {
+              address: '31 Avenue de la mer, 13003 Cayenne',
+              id: '4c38ebc9a06fdd532bf9d7be',
+              isLabeledFranceServices: true,
+              markerType: MarkerKey.CnfsPermanence,
+              name: 'Médiathèque de la mer'
+            },
+            type: 'Feature'
+          }
+        ],
+        type: 'FeatureCollection'
+      };
 
       const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
         {} as CnfsDetailsUseCase,
@@ -541,14 +534,13 @@ describe('cartography presenter', (): void => {
         new MapViewCullingService()
       );
 
-      const viewportAndZoom$: Observable<ViewportAndZoom> = of({
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+      cartographyPresenter.setViewportAndZoom({
         viewport: [-55, 1, -49, 5],
         zoomLevel: DEPARTMENT_ZOOM_LEVEL
       });
 
-      const visibleMapPointsOfInterest: Feature<Point, PointOfInterestMarkerProperties>[] = await firstValueFrom(
-        cartographyPresenter.visibleMapCnfsPermanencesThroughViewportAtZoomLevel$(viewportAndZoom$, forceCnfsPermanenceDisplay$)
+      const visibleMapPointsOfInterest: FeatureCollection<Point, CnfsPermanenceMarkerProperties> = await firstValueFrom(
+        cartographyPresenter.visibleMapCnfsPermanencesThroughViewportAtZoomLevel$(forceCnfsPermanenceDisplay$)
       );
 
       expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsPermanenceMarkersFeatures);
@@ -582,22 +574,25 @@ describe('cartography presenter', (): void => {
         }
       } as ListCnfsUseCase;
 
-      const expectedCnfsByDepartmentMarkersFeatures: Feature<Point, MarkerProperties<CnfsByDepartmentProperties>>[] = [
-        {
-          geometry: {
-            coordinates: [-53.237712294069844, 3.922060670769425],
-            type: 'Point'
-          },
-          properties: {
-            boundingZoom: 10,
-            code: '973',
-            count: 27,
-            department: 'Guyane',
-            markerType: MarkerKey.CnfsByDepartment
-          },
-          type: 'Feature'
-        }
-      ];
+      const expectedCnfsByDepartmentMarkersFeatures: FeatureCollection<Point, CnfsByDepartmentMarkerProperties> = {
+        features: [
+          {
+            geometry: {
+              coordinates: [-53.237712294069844, 3.922060670769425],
+              type: 'Point'
+            },
+            properties: {
+              boundingZoom: 10,
+              code: '973',
+              count: 27,
+              department: 'Guyane',
+              markerType: MarkerKey.CnfsByDepartment
+            },
+            type: 'Feature'
+          }
+        ],
+        type: 'FeatureCollection'
+      };
 
       const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
         {} as CnfsDetailsUseCase,
@@ -609,14 +604,13 @@ describe('cartography presenter', (): void => {
         new MapViewCullingService()
       );
 
-      const viewportAndZoom$: Observable<ViewportAndZoom> = of({
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+      cartographyPresenter.setViewportAndZoom({
         viewport: [-55, 1, -49, 5],
         zoomLevel: DEPARTMENT_ZOOM_LEVEL
       });
 
-      const visibleMapPointsOfInterest: Feature<Point, PointOfInterestMarkerProperties>[] = await firstValueFrom(
-        cartographyPresenter.visibleMapCnfsByDepartmentAtZoomLevel$(viewportAndZoom$, forceCnfsPermanenceDisplay$)
+      const visibleMapPointsOfInterest: FeatureCollection<Point, CnfsByDepartmentMarkerProperties> = await firstValueFrom(
+        cartographyPresenter.visibleMapCnfsByDepartmentAtZoomLevel$(forceCnfsPermanenceDisplay$)
       );
 
       expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsByDepartmentMarkersFeatures);
@@ -633,45 +627,47 @@ describe('cartography presenter', (): void => {
         new MapViewCullingService()
       );
 
-      const expectedCnfsPermanenceMarkersFeatures: Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[] = [
-        {
-          geometry: {
-            coordinates: [4.816864, 45.734377],
-            type: 'Point'
+      const expectedCnfsPermanenceMarkersFeatures: FeatureCollection<Point, CnfsPermanenceMarkerProperties> = {
+        features: [
+          {
+            geometry: {
+              coordinates: [4.816864, 45.734377],
+              type: 'Point'
+            },
+            properties: {
+              address: '12 rue des Acacias, 69002 Lyon',
+              id: '4c38ebc9a06fdd532bf9d7be',
+              isLabeledFranceServices: false,
+              markerType: MarkerKey.CnfsPermanence,
+              name: 'Association des centres sociaux et culturels de Lyon'
+            },
+            type: 'Feature'
           },
-          properties: {
-            address: '12 rue des Acacias, 69002 Lyon',
-            id: '4c38ebc9a06fdd532bf9d7be',
-            isLabeledFranceServices: false,
-            markerType: MarkerKey.CnfsPermanence,
-            name: 'Association des centres sociaux et culturels de Lyon'
-          },
-          type: 'Feature'
-        },
-        {
-          geometry: {
-            coordinates: [5.380007, 43.305645],
-            type: 'Point'
-          },
-          properties: {
-            address: '31 Avenue de la mer, 13003 Marseille',
-            id: '88bc36fb0db191928330b1e6',
-            isLabeledFranceServices: true,
-            markerType: MarkerKey.CnfsPermanence,
-            name: 'Médiathèque de la mer'
-          },
-          type: 'Feature'
-        }
-      ];
+          {
+            geometry: {
+              coordinates: [5.380007, 43.305645],
+              type: 'Point'
+            },
+            properties: {
+              address: '31 Avenue de la mer, 13003 Marseille',
+              id: '88bc36fb0db191928330b1e6',
+              isLabeledFranceServices: true,
+              markerType: MarkerKey.CnfsPermanence,
+              name: 'Médiathèque de la mer'
+            },
+            type: 'Feature'
+          }
+        ],
+        type: 'FeatureCollection'
+      };
 
-      const viewportAndZoom$: Observable<ViewportAndZoom> = of({
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+      cartographyPresenter.setViewportAndZoom({
         viewport: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
         zoomLevel: DEPARTMENT_ZOOM_LEVEL + 1
       });
 
-      const visibleMapPointsOfInterest: Feature<Point, PointOfInterestMarkerProperties>[] = await firstValueFrom(
-        cartographyPresenter.visibleMapCnfsPermanencesThroughViewportAtZoomLevel$(viewportAndZoom$)
+      const visibleMapPointsOfInterest: FeatureCollection<Point, CnfsPermanenceMarkerProperties> = await firstValueFrom(
+        cartographyPresenter.visibleMapCnfsPermanencesThroughViewportAtZoomLevel$()
       );
 
       expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsPermanenceMarkersFeatures);
@@ -688,51 +684,50 @@ describe('cartography presenter', (): void => {
         new MapViewCullingService()
       );
 
-      const expectedCnfsPermanenceMarkersFeatures: Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[] = [
-        {
-          geometry: {
-            coordinates: [4.816864, 45.734377],
-            type: 'Point'
+      const expectedCnfsPermanenceMarkersFeatures: FeatureCollection<Point, CnfsPermanenceMarkerProperties> = {
+        features: [
+          {
+            geometry: {
+              coordinates: [4.816864, 45.734377],
+              type: 'Point'
+            },
+            properties: {
+              address: '12 rue des Acacias, 69002 Lyon',
+              highlight: true,
+              id: '4c38ebc9a06fdd532bf9d7be',
+              isLabeledFranceServices: false,
+              markerType: MarkerKey.CnfsPermanence,
+              name: 'Association des centres sociaux et culturels de Lyon'
+            },
+            type: 'Feature'
           },
-          properties: {
-            address: '12 rue des Acacias, 69002 Lyon',
-            highlight: true,
-            id: '4c38ebc9a06fdd532bf9d7be',
-            isLabeledFranceServices: false,
-            markerType: MarkerKey.CnfsPermanence,
-            name: 'Association des centres sociaux et culturels de Lyon'
-          },
-          type: 'Feature'
-        },
-        {
-          geometry: {
-            coordinates: [5.380007, 43.305645],
-            type: 'Point'
-          },
-          properties: {
-            address: '31 Avenue de la mer, 13003 Marseille',
-            id: '88bc36fb0db191928330b1e6',
-            isLabeledFranceServices: true,
-            markerType: MarkerKey.CnfsPermanence,
-            name: 'Médiathèque de la mer'
-          },
-          type: 'Feature'
-        }
-      ];
+          {
+            geometry: {
+              coordinates: [5.380007, 43.305645],
+              type: 'Point'
+            },
+            properties: {
+              address: '31 Avenue de la mer, 13003 Marseille',
+              id: '88bc36fb0db191928330b1e6',
+              isLabeledFranceServices: true,
+              markerType: MarkerKey.CnfsPermanence,
+              name: 'Médiathèque de la mer'
+            },
+            type: 'Feature'
+          }
+        ],
+        type: 'FeatureCollection'
+      };
 
-      const viewportAndZoom$: Observable<ViewportAndZoom> = of({
+      cartographyPresenter.setViewportAndZoom({
         viewport: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
         zoomLevel: DEPARTMENT_ZOOM_LEVEL + 1
       });
 
       const highlightedStructureId$: Observable<string> = of('4c38ebc9a06fdd532bf9d7be');
 
-      const visibleMapPointsOfInterest: Feature<Point, PointOfInterestMarkerProperties>[] = await firstValueFrom(
-        cartographyPresenter.visibleMapCnfsPermanencesThroughViewportAtZoomLevel$(
-          viewportAndZoom$,
-          of(false),
-          highlightedStructureId$
-        )
+      const visibleMapPointsOfInterest: FeatureCollection<Point, CnfsPermanenceMarkerProperties> = await firstValueFrom(
+        cartographyPresenter.visibleMapCnfsPermanencesThroughViewportAtZoomLevel$(of(false), highlightedStructureId$)
       );
 
       expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsPermanenceMarkersFeatures);

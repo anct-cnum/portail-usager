@@ -1,10 +1,24 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CartographyPage } from '../../presentation/pages';
+import { CartographyLayout, CnfsDetailsPage, CnfsListPage } from '../../presentation/pages';
 
 export const ROUTES: Routes = [
   {
-    component: CartographyPage,
+    children: [
+      {
+        component: CnfsDetailsPage,
+        path: ':structureId/details'
+      },
+      {
+        component: CnfsListPage,
+        path: ':structureId'
+      },
+      {
+        component: CnfsListPage,
+        path: ''
+      }
+    ],
+    component: CartographyLayout,
     path: ''
   }
 ];

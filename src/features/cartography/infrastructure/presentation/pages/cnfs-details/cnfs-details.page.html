@@ -1,0 +1,17 @@
+<ng-container *ngIf="structureId$ | async as structureId">
+  <cnfs-details
+    class="fr-full-container--height"
+    *ngIf="cnfsDetails$ | async as cnfsDetails; else: loading"
+    [structureId]="structureId"
+    [address]="cnfsDetails.address"
+    [cnfsList]="cnfsDetails.cnfsList"
+    [distance]="cnfsDetails.distanceFromUsager"
+    [email]="cnfsDetails.email"
+    [cnfsTypeNote]="cnfsDetails.cnfsTypeNote"
+    [opening]="cnfsDetails.opening"
+    [phone]="cnfsDetails.phone"
+    [structureName]="cnfsDetails.structureName"
+    [website]="cnfsDetails.website"
+    (print)="printCnfsDetails()"></cnfs-details>
+  <ng-template #loading>Chargement...</ng-template>
+</ng-container>

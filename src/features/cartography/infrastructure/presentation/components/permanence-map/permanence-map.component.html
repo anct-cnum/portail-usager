@@ -1,9 +1,6 @@
 <!--eslint-disable @angular-eslint/template/cyclomatic-complexity-->
 
-<leaflet-map
-  [centerView]="(centerView$ | async) ?? defaultCenterView"
-  (stateChange)="onStateChanged($event)"
-  (zoomOut)="zoomOut.emit()">
+<leaflet-map [centerView]="centerView" (stateChange)="onStateChanged($event)" (zoomOut)="zoomOut.emit()">
   <ng-container *ngIf="cnfsRegionMarkers">
     <leaflet-map-marker
       *ngFor="let regionMarkerFeature of cnfsRegionMarkers.features; trackBy: trackByRegionName"
@@ -40,11 +37,11 @@
           <div class="fr-mb-1v">
             <b>{{ permanenceMarkersFeature.properties.name }}</b>
           </div>
-          <button
-            class="fr-btn fr-btn--sm fr-btn--secondary"
-            (click)="displayDetails.emit(permanenceMarkersFeature.properties.id)">
+          <a
+            class="fr-btn fr-btn--secondary fr-text-title--blue-france"
+            [routerLink]="['/', permanenceMarkersFeature.properties.id, 'details']">
             Afficher les détails
-          </button>
+          </a>
         </div>
       </leaflet-map-popup>
     </leaflet-map-marker>

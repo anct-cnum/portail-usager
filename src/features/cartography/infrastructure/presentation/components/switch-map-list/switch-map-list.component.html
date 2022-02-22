@@ -1,10 +1,11 @@
 <div class="fr-hidden-lg">
   <button
+    type="button"
     [ngClass]="displayMap ? 'fr-fi-arrow-left-line fr-btn--icon-left' : 'fr-fi-arrow-right-line fr-btn--icon-right'"
     (click)="toggle()"
     class="fr-btn fr-full-container--width fr-py-2w">
     <ng-container *ngIf="displayMap; else displayMapButtonContent">
-      <ng-container *ngIf="displayDetailsStructureId; else displayListButtonContent">Afficher la structure</ng-container>
+      <ng-container *ngIf="displayStructureDetails; else displayListButtonContent">Afficher la structure</ng-container>
       <ng-template #displayListButtonContent>Afficher la liste</ng-template>
     </ng-container>
     <ng-template #displayMapButtonContent>Afficher la carte</ng-template>

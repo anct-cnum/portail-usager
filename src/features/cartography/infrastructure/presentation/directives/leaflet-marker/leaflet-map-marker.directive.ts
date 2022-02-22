@@ -71,8 +71,6 @@ export class LeafletMapMarkerDirective<TProperty, TIcon extends DivIcon | Icon>
     this._marker = marker([this.latitude, this.longitude], this.markerOptions())
       .addTo(this._mapComponent.map)
       .on('click', (leafletEvent: LeafletEvent): void => this.onClick(leafletEvent));
-
-    if (this.highlight) this._mapComponent.map.panTo([this.latitude, this.longitude]);
   }
 
   public ngOnDestroy(): void {

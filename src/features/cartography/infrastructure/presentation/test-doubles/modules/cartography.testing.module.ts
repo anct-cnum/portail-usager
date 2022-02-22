@@ -15,13 +15,16 @@ import {
   PermanenceOpeningHoursStubComponent,
   SwitchMapListStubComponent
 } from '../components';
+import { CnfsDetailsStubPage, CnfsListStubPage } from '../pages';
 
 @NgModule({
   declarations: [
     AddressGeolocationStubComponent,
     CnfsDetailsContactStubComponent,
     CnfsDetailsStubComponent,
+    CnfsDetailsStubPage,
     CnfsListStubComponent,
+    CnfsListStubPage,
     IncompleteDataNoticeStubComponent,
     LeafletMapStubComponent,
     PermanenceAccessStubComponent,

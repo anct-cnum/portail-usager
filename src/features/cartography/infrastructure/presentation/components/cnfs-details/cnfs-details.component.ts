@@ -11,8 +11,6 @@ export class CnfsDetailsComponent {
 
   @Input() public address?: string;
 
-  @Output() public readonly backToList: EventEmitter<void> = new EventEmitter<void>();
-
   @Input() public cnfsDetails?: CnfsDetailsPresentation | null;
 
   @Input() public cnfsList: CnfsPresentation[] = [];
@@ -28,6 +26,8 @@ export class CnfsDetailsComponent {
   @Input() public phone?: string;
 
   @Output() public readonly print: EventEmitter<void> = new EventEmitter<void>();
+
+  @Input() public structureId: string = '';
 
   @Input() public structureName: string = '';
 

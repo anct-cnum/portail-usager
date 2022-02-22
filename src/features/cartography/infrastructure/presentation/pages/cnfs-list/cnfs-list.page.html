@@ -1,0 +1,17 @@
+<div class="fr-display--flex fr-flex-direction--column fr-full-container--height">
+  <address-geolocation
+    [addressSuggestions]="(addressesFound$ | async) ?? []"
+    [geocodeAddressError]="(geocodeAddressError$ | async) ?? false"
+    (usagerAutolocate)="onAutoLocateUsagerRequest($event)"
+    (addressToGeocode)="onGeocodeUsagerRequest($event)"
+    (searchAddress)="onSearchAddress($event)"></address-geolocation>
+  <ng-container *ngIf="structuresList$ | async as structuresList">
+    <small class="fr-px-3w fr-background-contrast--blue-cumulus" *ngIf="structuresList.length > 0">
+      {{ structuresList.length }} structures trouvées
+    </small>
+    <cnfs-list
+      class="fr-px-3w fr-overflow--auto"
+      [structuresList]="structuresList"
+      [highlightedStructureId]="highlightedStructureId$ | async"></cnfs-list>
+  </ng-container>
+</div>

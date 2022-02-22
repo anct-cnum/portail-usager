@@ -12,9 +12,9 @@
       <div class="fr-display--flex fr-justify-content--space-between fr-column-gap-3v">
         <p class="fr-text-mention--grey fr-text--sm fr-mb-0">{{ structure.address }}</p>
         <div>
-          <button class="fr-btn fr-btn--secondary fr-white-space--nowrap" (click)="displayDetails.emit(structure.id)">
+          <a class="fr-btn fr-btn--secondary fr-white-space--nowrap" [routerLink]="['/', structure.id, 'details']">
             Afficher les détails
-          </button>
+          </a>
         </div>
       </div>
     </li>

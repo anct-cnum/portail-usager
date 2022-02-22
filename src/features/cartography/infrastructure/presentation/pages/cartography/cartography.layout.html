@@ -1,0 +1,32 @@
+<div class="fr-display--flex fr-flex-direction--column fr-full-container--height">
+  <div class="fr-grid-row fr-flex-wrap--nowrap fr-overflow--hidden fr-full-container--height">
+    <div
+      [ngClass]="(displayStructureDetails$ | async) === false ? 'fr-col-xl-4 fr-col-lg-5' : 'fr-col-xl-8 fr-col-lg-7'"
+      [class.fr-displayed-lg]="(displayMap$ | async) === true"
+      [class.fr-col-12]="(displayMap$ | async) === false"
+      class="fr-index--over fr-shadow--right">
+      <router-outlet></router-outlet>
+    </div>
+    <div
+      [ngClass]="(displayStructureDetails$ | async) === true ? 'fr-col-xl-4 fr-col-lg-5' : 'fr-col-xl-8 fr-col-lg-7'"
+      class="fr-col-12">
+      <permanence-map
+        [highlightedStructureId]="highlightedStructureId$ | async"
+        [centerView]="(centerView$ | async) ?? cartographyConfiguration"
+        [cnfsRegionMarkers]="regionMarkers$ | async"
+        [cnfsDepartementMarkers]="departementMarkers$ | async"
+        [cnfsPermanenceMarkers]="permanenceMarkers$ | async"
+        [usagerMarker]="usagerMarker$ | async"
+        (cnfsRegionMarkerChange)="onCnfsLocalityMarkerChange($event)"
+        (cnfsDepartementMarkerChange)="onCnfsLocalityMarkerChange($event)"
+        (cnfsPermanenceMarkerChange)="onCnfsPermanenceMarkerChange($event)"
+        (stateChange)="onMapViewChanged($event)"
+        (zoomOut)="onZoomOut()"></permanence-map>
+    </div>
+  </div>
+  <switch-map-list
+    (switchMapList)="onDisplayMap($event)"
+    [displayMap]="(displayMap$ | async) ?? false"
+    [displayStructureDetails]="(displayStructureDetails$ | async) ?? false"></switch-map-list>
+  <incomplete-data-notice></incomplete-data-notice>
+</div>

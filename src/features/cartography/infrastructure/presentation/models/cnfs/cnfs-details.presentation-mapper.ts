@@ -80,6 +80,7 @@ export const cnfsDetailsToPresentation = (
 ): CnfsDetailsPresentation => ({
   address: cnfsDetails.structureAddress,
   cnfsList: cnfsDetails.cnfs.map(toCnfsPresentation),
+  coordinates: cnfsDetails.position,
   ...getDistanceFromUsager(cnfsDetails.position, usagerCoordinates),
   email: cnfsDetails.contact?.email,
   ...getCnfsTypeNote(cnfsDetails.type),

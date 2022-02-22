@@ -1,2 +1,2 @@
-export * from './cartography.page';
+export * from './cartography.layout';
 export * from './cartography.presenter';

@@ -6,9 +6,9 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
   templateUrl: './switch-map-list.component.html'
 })
 export class SwitchMapListComponent {
-  @Input() public displayDetailsStructureId?: string;
-
   @Input() public displayMap: boolean = false;
+
+  @Input() public displayStructureDetails: boolean = false;
 
   @Output() public readonly switchMapList: EventEmitter<boolean> = new EventEmitter<boolean>();
 

@@ -1,16 +1,17 @@
 import { StructurePresentation } from './structure.presentation';
 import { Feature, Point } from 'geojson';
-import { CnfsPermanenceProperties } from '../cnfs-permanence';
-import { MarkerProperties, TypedMarker } from '../markers';
+import { CnfsPermanenceMarkerProperties } from '../markers';
+import { Coordinates } from '../../../../core';
 
 export const cnfsPermanencesToStructurePresentations = (
-  cnfsPermanences: Feature<Point, MarkerProperties<CnfsPermanenceProperties>>[]
+  cnfsPermanences: Feature<Point, CnfsPermanenceMarkerProperties>[]
 ): StructurePresentation[] =>
   cnfsPermanences.map(
-    ({ properties }: { properties: CnfsPermanenceProperties & TypedMarker }): StructurePresentation => ({
-      address: properties.address,
-      id: properties.id,
-      isLabeledFranceServices: properties.isLabeledFranceServices,
-      name: properties.name
+    (feature: Feature<Point, CnfsPermanenceMarkerProperties>): StructurePresentation => ({
+      address: feature.properties.address,
+      id: feature.properties.id,
+      isLabeledFranceServices: feature.properties.isLabeledFranceServices,
+      location: Coordinates.fromGeoJsonFeature(feature),
+      name: feature.properties.name
     })
   );
