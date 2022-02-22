@@ -1,5 +1,6 @@
 <div class="fr-display--flex fr-flex-direction--column fr-full-container--height">
   <address-geolocation
+    [size]="((structuresList$ | async) ?? []).length > 0 ? 'small' : 'large'"
     [addressSuggestions]="(addressesFound$ | async) ?? []"
     [geocodeAddressError]="(geocodeAddressError$ | async) ?? false"
     (usagerAutolocate)="onAutoLocateUsagerRequest($event)"
