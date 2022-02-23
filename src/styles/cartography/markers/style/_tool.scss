@@ -20,7 +20,6 @@
       width: map.get($marker-properties, width);
       height: map.get($marker-properties, height);
       padding: map.get($marker-properties, padding);
-      background-image: url('#{map-get($marker-properties, icon-path)}');
     }
   }
 }
