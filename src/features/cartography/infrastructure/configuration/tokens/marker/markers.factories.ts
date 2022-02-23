@@ -11,17 +11,9 @@ const ROUND_FALSE: boolean = false;
 
 const CNFS_MARKER_WIDTH_IN_PIXEL: number = 28.5;
 const CNS_MARKER_HEIGHT_IN_PIXEL: number = 48;
-const CNFS_MARKER_HIGHLIGHT_SCALE: number = 1.5;
-const CNFS_MARKER_HIGHLIGHT_WIDTH_IN_PIXEL: number = CNFS_MARKER_WIDTH_IN_PIXEL * CNFS_MARKER_HIGHLIGHT_SCALE;
-const CNFS_MARKER_HIGHLIGHT_HEIGTH_IN_PIXEL: number = CNS_MARKER_HEIGHT_IN_PIXEL * CNFS_MARKER_HIGHLIGHT_SCALE;
 const CNFS_MARKER_DIMENSIONS: LeafletPoint = new LeafletPoint(
   CNFS_MARKER_WIDTH_IN_PIXEL,
   CNS_MARKER_HEIGHT_IN_PIXEL,
-  ROUND_FALSE
-);
-const CNFS_MARKER_HIGHLIGHT_DIMENSIONS: LeafletPoint = new LeafletPoint(
-  CNFS_MARKER_HIGHLIGHT_WIDTH_IN_PIXEL,
-  CNFS_MARKER_HIGHLIGHT_HEIGTH_IN_PIXEL,
   ROUND_FALSE
 );
 
@@ -53,18 +45,26 @@ export type IconMarkerFactory<T = null> = MarkerFactory<T, Icon>;
 
 export type DivIconMarkerFactory<T> = MarkerFactory<T, DivIcon>;
 
-export const cnfsMarkerFactory: IconMarkerFactory<CnfsPermanenceMarkerProperties> = (
+const cnfsMarkerHtmlTemplate = (cnfsMarkerClass: string): string => `
+<svg class="fr-cnfs-marker ${cnfsMarkerClass}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28.52 48">
+  <path class="fr-cnfs-marker__out" d="M14.26 0L0 8.23V24.7L13.5 48h1.52l13.5-23.3V8.23z"/>
+  <path class="fr-cnfs-marker__in" d="M18.34 18.82v-4.71l-4.08-2.35-4.08 2.35v4.71l4.08 2.36z"/>
+  <path d="m 18.34,14.11 h 5.41 V 10.99 L 14.26,5.52 4.78,10.99 v 10.95 l 9.48,5.48 9.49,-5.48 v -3.12 h -5.41 l -4.08,2.36 -4.08,-2.36 v -4.71 l 4.08,-2.35 z" fill="#fff"/>
+</svg>`;
+
+const getCnfsMarkerClass = (properties: MarkerProperties<CnfsPermanenceMarkerProperties>): string =>
+  properties.highlight === true ? 'fr-cnfs-marker--focus' : '';
+
+export const cnfsMarkerFactory: DivIconMarkerFactory<CnfsPermanenceMarkerProperties> = (
   properties: MarkerProperties<CnfsPermanenceMarkerProperties>
-): Icon => {
-  const cnfsMarkerDimensions: LeafletPoint =
-    properties.highlight === true ? CNFS_MARKER_HIGHLIGHT_DIMENSIONS : CNFS_MARKER_DIMENSIONS;
-  return icon({
-    iconAnchor: new LeafletPoint(cnfsMarkerDimensions.x * HALF, cnfsMarkerDimensions.y),
-    iconSize: cnfsMarkerDimensions,
-    iconUrl: PIN_CNFS_BASE_64,
-    popupAnchor: [0, -CNFS_MARKER_HIGHLIGHT_DIMENSIONS.y]
+): DivIcon =>
+  new DivIcon({
+    className: '',
+    html: cnfsMarkerHtmlTemplate(getCnfsMarkerClass(properties)),
+    iconAnchor: new LeafletPoint(CNFS_MARKER_DIMENSIONS.x * HALF, CNFS_MARKER_DIMENSIONS.y),
+    iconSize: CNFS_MARKER_DIMENSIONS,
+    popupAnchor: [0, -CNFS_MARKER_DIMENSIONS.y]
   });
-};
 
 export const usagerMarkerFactory: IconMarkerFactory = (): Icon =>
   icon({

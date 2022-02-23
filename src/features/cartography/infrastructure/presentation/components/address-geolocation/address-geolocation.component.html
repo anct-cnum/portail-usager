@@ -1,6 +1,9 @@
 <div class="fr-p-3w fr-gradient--blue">
   <form (submit)="geocode()" [formGroup]="searchForm">
-    <label [class.fr-sr-only]="size === 'small'" class="fr-label fr-text-inverted--blue-france fr-text--bold fr-mb-1w" for="address">
+    <label
+      [class.fr-sr-only]="size === 'small'"
+      class="fr-label fr-text-inverted--blue-france fr-text--bold fr-mb-1w"
+      for="address">
       Entrez un code postal, une ville, une adresse&nbsp;:
     </label>
     <div [class.fr-search-bar--lg]="size === 'large'" class="fr-search-bar" role="search">
