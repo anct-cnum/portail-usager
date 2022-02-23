@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
-import { debounceTime, distinctUntilChanged, filter, Observable, startWith, Subject, switchMap, tap } from "rxjs";
+import { debounceTime, distinctUntilChanged, filter, Observable, startWith, Subject, switchMap, tap } from 'rxjs';
 import { AddressFoundPresentation, StructurePresentation } from '../../models';
 import { map } from 'rxjs/operators';
 import { Coordinates } from '../../../../core';
