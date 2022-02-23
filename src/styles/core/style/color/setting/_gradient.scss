@@ -5,7 +5,7 @@
 
 $gradient-settings: (
   'blue': (
-    start: var(get-color(background action-high blue-france, decision)),
-    stop: #0078f3
+    start: #0078f3,
+    stop: var(get-color(background action-high blue-france, decision))
   )
 );

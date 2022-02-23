@@ -1,0 +1,8 @@
+////
+/// Core Setting : Svg
+/// @group core
+////
+
+@use 'sass:map';
+
+$svg-vars: map.get($variables, svg);

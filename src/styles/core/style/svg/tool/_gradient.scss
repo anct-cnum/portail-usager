@@ -1,0 +1,36 @@
+////
+/// Core Tool : Svg gradient
+/// @group core
+////
+
+@use 'sass:map';
+
+@mixin build-svg-gradient() {
+  $gradient-vars: map.get($color-vars, gradient);
+
+  @if $gradient-vars != false and map.get($gradient-vars, active) != false {
+    #{ns(svg)} {
+      &#{ns(svg)}--gradient-transition {
+        stop {
+          transition: 0.2s ease;
+        }
+
+        @each $key, $value in $gradient-settings {
+          &:hover #{ns(svg)}__gradient-#{$key}-stop {
+            stop-color: map.get($value, start);
+          }
+        }
+      }
+
+      @each $key, $value in $gradient-settings {
+        &__gradient-#{$key}-start {
+          stop-color: map.get($value, start);
+        }
+
+        &__gradient-#{$key}-stop {
+          stop-color: map.get($value, stop);
+        }
+      }
+    }
+  }
+}

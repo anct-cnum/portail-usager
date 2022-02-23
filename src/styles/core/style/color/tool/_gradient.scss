@@ -11,8 +11,8 @@
   @if $gradient-vars != false and map.get($gradient-vars, active) != false {
     @each $key, $value in $gradient-settings {
       #{ns(gradient)}--#{$key} {
-        background: map.get($value, start);
-        background: linear-gradient(0deg, map.get($value, start) 0%, map.get($value, stop) 33%, map.get($value, stop) 100%);
+        background: map.get($value, stop);
+        background: linear-gradient(0deg, map.get($value, stop) 0%, map.get($value, start) 33%, map.get($value, start) 100%);
       }
     }
   }
