@@ -73,11 +73,23 @@ export const usagerMarkerFactory: IconMarkerFactory = (): Icon =>
     iconUrl: 'assets/map/pin-usager.svg'
   });
 
+const cnfsByRegionMarkerBackground = (regionSlug: string): string => `
+<svg class=" fr-position--absolute fr-index--under" width="72" height="72" xmlns="http://www.w3.org/2000/svg">
+    <linearGradient x1="50%" y1="0%" x2="50%" y2="77%" id="${regionSlug}">
+      <stop class="fr-svg__gradient-blue-start" />
+      <stop class="fr-svg__gradient-blue-stop" offset="100%" />
+    </linearGradient>
+    <circle fill="url(#${regionSlug})" cx="36" cy="36" r="36"/>
+  </svg>`;
+
 const cnfsByRegionMarkerHtmlTemplate = (properties: MarkerProperties<CnfsByRegionProperties>): string => `
-<div class="fr-marker fr-marker--cnfs-by-region">
-  <img style="height: 32px; width: 19px" alt="" src="${PIN_CNFS_BASE_64}"/>
-  <div class="fr-marker__label">
-    ${properties.count}
+<div class="fr-svg fr-svg--gradient-transition">
+  ${cnfsByRegionMarkerBackground(properties.region.replace(/\s|'/gu, '-'))}
+  <div class="fr-marker fr-marker--cnfs-by-region">
+    <img style="height: 32px; width: 19px" alt="" src="${PIN_CNFS_BASE_64}"/>
+    <div class="fr-marker__label">
+      ${properties.count}
+    </div>
   </div>
 </div>`;
 
@@ -92,13 +104,25 @@ export const cnfsByRegionMarkerFactory: DivIconMarkerFactory<CnfsByRegionPropert
     popupAnchor: [0, -CNFS_MARKER_CNFS_BY_REGION_DIMENSIONS.y]
   });
 
-const cnfsByDepartmentMarkerHtmlTemplate = (properties: CnfsByDepartmentProperties): string => `
+const cnfsByDepartmentMarkerBackground = (regionSlug: string): string => `
+  <svg class=" fr-position--absolute fr-index--under" width="72" height="72" xmlns="http://www.w3.org/2000/svg">
+    <linearGradient x1="50%" y1="0%" x2="50%" y2="77%" id="${regionSlug}">
+      <stop class="fr-svg__gradient-blue-start" />
+      <stop class="fr-svg__gradient-blue-stop" offset="100%" />
+    </linearGradient>
+    <path fill="url(#${regionSlug})" d="M31.174 0 0 18.004v35.992L31.174 72 62.35 53.996V18.004z"/>
+  </svg>`;
+
+const cnfsByDepartmentMarkerHtmlTemplate = (properties: MarkerProperties<CnfsByDepartmentProperties>): string => `
+<div class="fr-svg fr-svg--gradient-transition">
+  ${cnfsByDepartmentMarkerBackground(properties.department.replace(/\s|'/gu, '-'))}
   <div class="fr-marker fr-marker--cnfs-by-department">
     <img style="height: 32px; width: 19px" alt="" src="${PIN_CNFS_BASE_64}"/>
     <div class="fr-marker__label">
       ${properties.count}
     </div>
-  </div>`;
+  </div>
+</div>`;
 
 export const cnfsByDepartmentMarkerFactory: DivIconMarkerFactory<CnfsByDepartmentProperties> = (
   properties: MarkerProperties<CnfsByDepartmentProperties>
