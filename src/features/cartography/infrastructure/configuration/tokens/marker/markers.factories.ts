@@ -1,5 +1,5 @@
 import { DivIcon, icon, Icon, Point as LeafletPoint } from 'leaflet';
-import { CnfsPermanenceMarkerProperties, MarkerProperties } from '../../../presentation/models';
+import { CnfsPermanenceMarkerProperties, MarkerHighLight, MarkerProperties } from '../../../presentation/models';
 import { CnfsByDepartmentProperties, CnfsByRegionProperties } from '../../../../core';
 import { MarkerFactory } from './markers.configuration';
 
@@ -52,15 +52,20 @@ const cnfsMarkerHtmlTemplate = (cnfsMarkerClass: string): string => `
   <path d="m 18.34,14.11 h 5.41 V 10.99 L 14.26,5.52 4.78,10.99 v 10.95 l 9.48,5.48 9.49,-5.48 v -3.12 h -5.41 l -4.08,2.36 -4.08,-2.36 v -4.71 l 4.08,-2.35 z" fill="#fff"/>
 </svg>`;
 
-const getCnfsMarkerClass = (properties: MarkerProperties<CnfsPermanenceMarkerProperties>): string =>
-  properties.highlight === true ? 'fr-cnfs-marker--focus' : '';
+const CNFS_MARKER_HIGHLIGHT_CLASSES_MAP: Record<MarkerHighLight, string> = {
+  focus: 'fr-cnfs-marker--focus',
+  hint: 'fr-cnfs-marker--hint'
+};
+
+const getCnfsMarkerClass = (highlight?: MarkerHighLight): string =>
+  highlight == null ? '' : CNFS_MARKER_HIGHLIGHT_CLASSES_MAP[highlight];
 
 export const cnfsMarkerFactory: DivIconMarkerFactory<CnfsPermanenceMarkerProperties> = (
   properties: MarkerProperties<CnfsPermanenceMarkerProperties>
 ): DivIcon =>
   new DivIcon({
     className: '',
-    html: cnfsMarkerHtmlTemplate(getCnfsMarkerClass(properties)),
+    html: cnfsMarkerHtmlTemplate(getCnfsMarkerClass(properties.highlight)),
     iconAnchor: new LeafletPoint(CNFS_MARKER_DIMENSIONS.x * HALF, CNFS_MARKER_DIMENSIONS.y),
     iconSize: CNFS_MARKER_DIMENSIONS,
     popupAnchor: [0, -CNFS_MARKER_DIMENSIONS.y]

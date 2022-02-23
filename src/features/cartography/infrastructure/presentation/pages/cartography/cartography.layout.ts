@@ -8,7 +8,7 @@ import {
   CnfsByDepartmentMarkerProperties,
   UsagerMarkerProperties
 } from '../../models';
-import { CartographyPresenter, isGuyaneBoundedMarker } from './cartography.presenter';
+import { CartographyPresenter, HighlightedStructure, isGuyaneBoundedMarker } from './cartography.presenter';
 import {
   BehaviorSubject,
   catchError,
@@ -97,7 +97,7 @@ export class CartographyLayout {
     })
   );
 
-  public highlightedStructureId$: Observable<string> = this.presenter.highlightedStructureId$;
+  public highlightedStructure$: Observable<HighlightedStructure> = this.presenter.highlightedStructure$;
 
   public readonly permanenceMarkers$: Observable<FeatureCollection<Point, CnfsPermanenceMarkerProperties>> =
     this.presenter.visibleMapCnfsPermanencesThroughViewportAtZoomLevel$(this._forceCnfsPermanence$.asObservable());

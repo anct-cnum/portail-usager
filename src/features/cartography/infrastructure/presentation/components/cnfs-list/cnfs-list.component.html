@@ -5,6 +5,7 @@
       *ngFor="let structure of structuresList; trackBy: trackByStructureId"
       [attr.aria-current]="structure.id === highlightedStructureId ? true : null"
       [class.fr-list-group__item--active]="structure.id === highlightedStructureId"
+      (mouseenter)="structureEnter.emit(structure.id)"
       class="fr-list-group__item fr-list-group__item--active-out">
       <div class="fr-display--flex fr-justify-content--space-between fr-column-gap-3v">
         <h4 class="fr-list-group__item__title">{{ structure.name }}</h4>

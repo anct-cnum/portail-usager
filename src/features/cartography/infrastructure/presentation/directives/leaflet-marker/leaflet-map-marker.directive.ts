@@ -2,7 +2,7 @@ import { Directive, EventEmitter, Inject, Input, OnChanges, OnDestroy, Output } 
 import { DivIcon, Icon, LeafletEvent, marker, Marker, MarkerOptions } from 'leaflet';
 import { CanHavePopupDirective } from '../_abstract/can-have-popup.directive';
 import { LeafletMapComponent } from '../../components';
-import { MarkerEvent, MarkerProperties } from '../../models';
+import { MarkerEvent, MarkerHighLight, MarkerProperties } from '../../models';
 import { Coordinates } from '../../../../core';
 import { MarkerKey, MARKERS_TOKEN, MarkersConfiguration } from '../../../configuration';
 
@@ -16,7 +16,7 @@ export class LeafletMapMarkerDirective<TProperty, TIcon extends DivIcon | Icon>
 {
   private _marker?: Marker;
 
-  @Input() public highlight: boolean = false;
+  @Input() public highlight?: MarkerHighLight;
 
   @Input() public latitude!: number;
 

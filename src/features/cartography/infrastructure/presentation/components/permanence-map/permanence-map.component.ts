@@ -10,6 +10,7 @@ import {
 import { Feature, FeatureCollection, Point } from 'geojson';
 import { ViewReset } from '../../directives';
 import { MARKERS, MARKERS_TOKEN } from '../../../configuration';
+import { HighlightedStructure } from '../../pages';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,7 +42,7 @@ export class PermanenceMapComponent {
 
   @Input() public cnfsRegionMarkers: FeatureCollection<Point, CnfsByRegionMarkerProperties> | null = null;
 
-  @Input() public highlightedStructureId: string | null = null;
+  @Input() public highlightedStructure?: HighlightedStructure;
 
   @Output() public readonly stateChange: EventEmitter<ViewReset> = new EventEmitter<ViewReset>();
 

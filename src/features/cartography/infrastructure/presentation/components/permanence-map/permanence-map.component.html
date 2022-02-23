@@ -25,14 +25,14 @@
       [latitude]="permanenceMarkersFeature.geometry.coordinates[1]"
       [longitude]="permanenceMarkersFeature.geometry.coordinates[0]"
       [properties]="permanenceMarkersFeature.properties"
-      [highlight]="highlightedStructureId === permanenceMarkersFeature.properties.id"
+      [highlight]="highlightedStructure?.id === permanenceMarkersFeature.properties.id ? highlightedStructure?.type : undefined"
       markerFactoryKey="cnfsPermanence"
       (markerClick)="onPermanenceClick($event)">
       <leaflet-map-popup
         [content]="popupContent"
         [closeOnClick]="false"
         [closeButton]="false"
-        [isOpen]="highlightedStructureId === permanenceMarkersFeature.properties.id">
+        [isOpen]="highlightedStructure?.id === permanenceMarkersFeature.properties.id">
         <div #popupContent class="fr-text-align--center">
           <div class="fr-mb-1v">
             <b>{{ permanenceMarkersFeature.properties.name }}</b>

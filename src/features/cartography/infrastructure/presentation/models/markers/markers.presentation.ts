@@ -16,10 +16,15 @@ export type CnfsLocalityMarkerProperties = CnfsByDepartmentMarkerProperties | Cn
 
 export type PointOfInterestMarkerProperties = CnfsLocalityMarkerProperties | CnfsPermanenceMarkerProperties;
 
+export enum MarkerHighLight {
+  Focus = 'focus',
+  Hint = 'hint'
+}
+
 export interface TypedMarker {
   markerType: MarkerKey;
   zIndexOffset?: number;
-  highlight?: boolean;
+  highlight?: MarkerHighLight;
 }
 
 export type MarkerProperties<T> = T & TypedMarker;

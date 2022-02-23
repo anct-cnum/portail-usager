@@ -11,7 +11,7 @@
       [ngClass]="(displayStructureDetails$ | async) === true ? 'fr-col-xl-4 fr-col-lg-5' : 'fr-col-xl-8 fr-col-lg-7'"
       class="fr-col-12">
       <permanence-map
-        [highlightedStructureId]="highlightedStructureId$ | async"
+        [highlightedStructure]="(highlightedStructure$ | async) ?? undefined"
         [centerView]="(centerView$ | async) ?? cartographyConfiguration"
         [cnfsRegionMarkers]="regionMarkers$ | async"
         [cnfsDepartementMarkers]="departementMarkers$ | async"

@@ -25,7 +25,7 @@ export class CnfsDetailsPage implements OnInit {
   private readonly _structureId$: Observable<string> = this.route.paramMap.pipe(
     map((params: ParamMap): string | null => params.get('structureId')),
     filter((structureId: string | null): structureId is string => structureId !== null),
-    tap((structureId: string): void => this.presenter.highlightStructure(structureId))
+    tap((structureId: string): void => this.presenter.focusStructure(structureId))
   );
 
   public cnfsDetails$: Observable<CnfsDetailsPresentation | null> = this._structureId$.pipe(

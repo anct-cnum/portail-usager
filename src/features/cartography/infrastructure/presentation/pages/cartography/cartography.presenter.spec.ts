@@ -27,6 +27,7 @@ import {
   CnfsDetailsPresentation,
   CnfsPermanenceMarkerProperties,
   DayPresentation,
+  MarkerHighLight,
   StructurePresentation
 } from '../../models';
 import { MarkerKey } from '../../../configuration';
@@ -673,7 +674,7 @@ describe('cartography presenter', (): void => {
       expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsPermanenceMarkersFeatures);
     });
 
-    it('should display all cnfs permanences with highlighted permanence', async (): Promise<void> => {
+    it('should display all cnfs permanences with permanence focus', async (): Promise<void> => {
       const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
         {} as CnfsDetailsUseCase,
         LIST_CNFS_BY_REGION_USE_CASE,
@@ -693,7 +694,7 @@ describe('cartography presenter', (): void => {
             },
             properties: {
               address: '12 rue des Acacias, 69002 Lyon',
-              highlight: true,
+              highlight: MarkerHighLight.Focus,
               id: '4c38ebc9a06fdd532bf9d7be',
               isLabeledFranceServices: false,
               markerType: MarkerKey.CnfsPermanence,
@@ -724,10 +725,74 @@ describe('cartography presenter', (): void => {
         zoomLevel: DEPARTMENT_ZOOM_LEVEL + 1
       });
 
-      const highlightedStructureId$: Observable<string> = of('4c38ebc9a06fdd532bf9d7be');
+      const highlightedStructureId: string = '4c38ebc9a06fdd532bf9d7be';
+
+      cartographyPresenter.focusStructure(highlightedStructureId);
 
       const visibleMapPointsOfInterest: FeatureCollection<Point, CnfsPermanenceMarkerProperties> = await firstValueFrom(
-        cartographyPresenter.visibleMapCnfsPermanencesThroughViewportAtZoomLevel$(of(false), highlightedStructureId$)
+        cartographyPresenter.visibleMapCnfsPermanencesThroughViewportAtZoomLevel$(of(false))
+      );
+
+      expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsPermanenceMarkersFeatures);
+    });
+
+    it('should display all cnfs permanences with permanence hint', async (): Promise<void> => {
+      const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+        {} as CnfsDetailsUseCase,
+        LIST_CNFS_BY_REGION_USE_CASE,
+        LIST_CNFS_BY_DEPARTMENT_USE_CASE,
+        LIST_CNFS_USE_CASE,
+        {} as GeocodeAddressUseCase,
+        {} as SearchAddressUseCase,
+        new MapViewCullingService()
+      );
+
+      const expectedCnfsPermanenceMarkersFeatures: FeatureCollection<Point, CnfsPermanenceMarkerProperties> = {
+        features: [
+          {
+            geometry: {
+              coordinates: [4.816864, 45.734377],
+              type: 'Point'
+            },
+            properties: {
+              address: '12 rue des Acacias, 69002 Lyon',
+              highlight: MarkerHighLight.Hint,
+              id: '4c38ebc9a06fdd532bf9d7be',
+              isLabeledFranceServices: false,
+              markerType: MarkerKey.CnfsPermanence,
+              name: 'Association des centres sociaux et culturels de Lyon'
+            },
+            type: 'Feature'
+          },
+          {
+            geometry: {
+              coordinates: [5.380007, 43.305645],
+              type: 'Point'
+            },
+            properties: {
+              address: '31 Avenue de la mer, 13003 Marseille',
+              id: '88bc36fb0db191928330b1e6',
+              isLabeledFranceServices: true,
+              markerType: MarkerKey.CnfsPermanence,
+              name: 'Médiathèque de la mer'
+            },
+            type: 'Feature'
+          }
+        ],
+        type: 'FeatureCollection'
+      };
+
+      cartographyPresenter.setViewportAndZoom({
+        viewport: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
+        zoomLevel: DEPARTMENT_ZOOM_LEVEL + 1
+      });
+
+      const highlightedStructureId: string = '4c38ebc9a06fdd532bf9d7be';
+
+      cartographyPresenter.hintStructure(highlightedStructureId);
+
+      const visibleMapPointsOfInterest: FeatureCollection<Point, CnfsPermanenceMarkerProperties> = await firstValueFrom(
+        cartographyPresenter.visibleMapCnfsPermanencesThroughViewportAtZoomLevel$(of(false))
       );
 
       expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsPermanenceMarkersFeatures);

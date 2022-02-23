@@ -21,7 +21,7 @@ export class CnfsListPage implements OnInit {
   private readonly _structureId$: Observable<string> = this.route.paramMap.pipe(
     map((params: ParamMap): string | null => params.get('structureId')),
     filter((structureId: string | null): structureId is string => structureId !== null),
-    tap((): void => this.presenter.highlightStructure(''))
+    tap((): void => this.presenter.focusStructure(''))
   );
 
   public addressesFound$: Observable<AddressFoundPresentation[]> = this._searchTerm$.pipe(
@@ -62,6 +62,10 @@ export class CnfsListPage implements OnInit {
     await this.router.navigate([], {
       queryParams: { address }
     });
+  }
+
+  public onHintAStructure(structureId: string): void {
+    this.presenter.hintStructure(structureId);
   }
 
   public onSearchAddress(searchTerm: string): void {

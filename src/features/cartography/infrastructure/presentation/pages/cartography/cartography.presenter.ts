@@ -15,10 +15,11 @@ import {
   MarkerProperties,
   PointOfInterestMarkerProperties,
   StructurePresentation,
-  CenterView
+  CenterView,
+  MarkerHighLight
 } from '../../models';
 import { CnfsByDepartmentProperties, CnfsByRegionProperties, CnfsDetails, Coordinates } from '../../../../core';
-import { BehaviorSubject, iif, map, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, filter, iif, map, Observable, of, Subject } from 'rxjs';
 import {
   CnfsDetailsUseCase,
   GeocodeAddressUseCase,
@@ -35,6 +36,11 @@ import { MarkerKey } from '../../../configuration';
 import { ObservableCache } from '../../helpers/observable-cache';
 import { DEPARTMENT_ZOOM_LEVEL, REGION_ZOOM_LEVEL } from '../../helpers/map-constants';
 import { ViewportAndZoom } from '../../directives';
+
+export interface HighlightedStructure {
+  id: string;
+  type: MarkerHighLight;
+}
 
 const markerTypeToDisplayAtZoomLevel = (zoomLevel: number): MarkerKey => {
   if (zoomLevel > DEPARTMENT_ZOOM_LEVEL) return MarkerKey.CnfsPermanence;
@@ -53,24 +59,27 @@ export const isGuyaneBoundedMarker = (markerProperties: PointOfInterestMarkerPro
 };
 
 const highlightedPermanence = (
-  cnfsPermanence: Feature<Point, CnfsPermanenceMarkerProperties>
+  cnfsPermanence: Feature<Point, CnfsPermanenceMarkerProperties>,
+  highlight: MarkerHighLight
 ): Feature<Point, CnfsPermanenceMarkerProperties> => ({
   ...cnfsPermanence,
   ...{
     properties: {
       ...cnfsPermanence.properties,
-      highlight: true
+      highlight
     }
   }
 });
 
 const highlightPermanence = (
   listCnfsPermanencesInViewport: Feature<Point, CnfsPermanenceMarkerProperties>[],
-  highlightedStructureId: string | null
+  highlightedStructure: HighlightedStructure | null
 ): Feature<Point, CnfsPermanenceMarkerProperties>[] =>
   listCnfsPermanencesInViewport.map(
     (cnfsPermanence: Feature<Point, CnfsPermanenceMarkerProperties>): Feature<Point, CnfsPermanenceMarkerProperties> =>
-      cnfsPermanence.properties.id === highlightedStructureId ? highlightedPermanence(cnfsPermanence) : cnfsPermanence
+      cnfsPermanence.properties.id === highlightedStructure?.id
+        ? highlightedPermanence(cnfsPermanence, highlightedStructure.type)
+        : cnfsPermanence
   );
 
 // TODO Inject though configuration token
@@ -97,7 +106,8 @@ export class CartographyPresenter {
 
   private readonly _geocodeAddressError$: Subject<boolean> = new Subject<boolean>();
 
-  private readonly _highlightedStructureId$: Subject<string> = new Subject<string>();
+  private readonly _highlightedStructure$: BehaviorSubject<HighlightedStructure | null> =
+    new BehaviorSubject<HighlightedStructure | null>(null);
 
   private readonly _markersDepartmentCache: ObservableCache<Feature<Point, CnfsByDepartmentMarkerProperties>[], MarkerKey> =
     new ObservableCache<Feature<Point, CnfsByDepartmentMarkerProperties>[], MarkerKey>();
@@ -118,7 +128,12 @@ export class CartographyPresenter {
 
   public geocodeAddressError$: Observable<boolean> = this._geocodeAddressError$.asObservable();
 
-  public highlightedStructureId$: Observable<string> = this._highlightedStructureId$.asObservable();
+  public highlightedStructure$: Observable<HighlightedStructure> = this._highlightedStructure$.pipe(
+    filter(
+      (highlightedStructure: HighlightedStructure | null): highlightedStructure is HighlightedStructure =>
+        highlightedStructure !== null
+    )
+  );
 
   public constructor(
     @Inject(CnfsDetailsUseCase) private readonly cnfsDetailsUseCase: CnfsDetailsUseCase,
@@ -188,14 +203,14 @@ export class CartographyPresenter {
   private cnfsPermanencesWithHighlightThroughViewportAtZoomLevel$(
     markerTypeToDisplay: MarkerKey,
     viewportAndZoom: ViewportAndZoom,
-    highlightedStructureId: string | null
+    highlightedStructure: HighlightedStructure | null
   ): Observable<Feature<Point, CnfsPermanenceMarkerProperties>[]> {
     return this.cnfsPermanencesInViewportOrEmpty$(markerTypeToDisplay, viewportAndZoom).pipe(
       map(
         (
           listCnfsPermanencesInViewport: Feature<Point, CnfsPermanenceMarkerProperties>[]
         ): Feature<Point, CnfsPermanenceMarkerProperties>[] =>
-          highlightPermanence(listCnfsPermanencesInViewport, highlightedStructureId)
+          highlightPermanence(listCnfsPermanencesInViewport, highlightedStructure)
       )
     );
   }
@@ -230,12 +245,22 @@ export class CartographyPresenter {
       );
   }
 
+  public focusStructure(structureId: string): void {
+    this._highlightedStructure$.next({
+      id: structureId,
+      type: MarkerHighLight.Focus
+    });
+  }
+
   public geocodeAddress$(addressToGeocode: string): Observable<Coordinates> {
     return this.geocodeAddressUseCase.execute$(addressToGeocode);
   }
 
-  public highlightStructure(structureId: string): void {
-    this._highlightedStructureId$.next(structureId);
+  public hintStructure(structureId: string): void {
+    this._highlightedStructure$.next({
+      id: structureId,
+      type: MarkerHighLight.Hint
+    });
   }
 
   public searchAddress$(searchTerm: string): Observable<AddressFoundPresentation[]> {
@@ -303,21 +328,20 @@ export class CartographyPresenter {
 
   // eslint-disable-next-line max-lines-per-function
   public visibleMapCnfsPermanencesThroughViewportAtZoomLevel$(
-    forceCnfsPermanenceDisplay$: Observable<boolean> = of(false),
-    highlightedStructureId$: Observable<string | null> = of('')
+    forceCnfsPermanenceDisplay$: Observable<boolean> = of(false)
   ): Observable<FeatureCollection<Point, CnfsPermanenceMarkerProperties>> {
     return this._viewportAndZoom$.pipe(
-      combineLatestWith(forceCnfsPermanenceDisplay$, highlightedStructureId$),
+      combineLatestWith(forceCnfsPermanenceDisplay$, this._highlightedStructure$),
       mergeMap(
-        ([viewportWithZoomLevel, forceCnfsPermanenceDisplay, highlightedStructureId]: [
+        ([viewportWithZoomLevel, forceCnfsPermanenceDisplay, highlightedStructure]: [
           ViewportAndZoom,
           boolean,
-          string | null
+          HighlightedStructure | null
         ]): Observable<Feature<Point, CnfsPermanenceMarkerProperties>[]> =>
           this.cnfsPermanencesWithHighlightThroughViewportAtZoomLevel$(
             getMarkerToDisplay(forceCnfsPermanenceDisplay, viewportWithZoomLevel),
             viewportWithZoomLevel,
-            highlightedStructureId
+            highlightedStructure
           )
       ),
       map(

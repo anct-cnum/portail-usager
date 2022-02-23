@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChange, SimpleChanges } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChange,
+  SimpleChanges
+} from '@angular/core';
 import { StructurePresentation } from '../../models';
 
 const shouldHighlight = (featuredStructureIdChange: SimpleChange | undefined): boolean =>
@@ -34,6 +43,8 @@ const highlight = (structureId: string): string => {
 })
 export class CnfsListComponent implements OnChanges {
   @Input() public highlightedStructureId: string | null = null;
+
+  @Output() public readonly structureEnter: EventEmitter<string> = new EventEmitter<string>();
 
   @Input() public structuresList: StructurePresentation[] = [];
 
