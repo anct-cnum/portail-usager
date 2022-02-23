@@ -1,0 +1,43 @@
+////
+/// Cartography Tools : Global markers
+/// @group cartography
+////
+
+@mixin build-cnfs-marker-focus() {
+  &--focus {
+    #{ns(cnfs-marker)}__in {
+      fill: var(--red-marianne-main-472);
+    }
+
+    #{ns(cnfs-marker)}__out {
+      fill: var(--blue-france-sun-113-625);
+    }
+  }
+}
+
+@mixin build-cnfs-marker-hint() {
+  &--hint #{ns(cnfs-marker)}__in {
+    transform: scale(3.5);
+  }
+}
+
+@mixin build-cnfs-marker() {
+  #{ns(cnfs-marker)} {
+    path {
+      transition: 2s;
+    }
+
+    &__in {
+      fill: var(--blue-france-sun-113-625);
+      transform-origin: center 34.3%;
+    }
+
+    &__out {
+      fill: var(--red-marianne-main-472);
+    }
+
+    @include build-cnfs-marker-focus;
+
+    @include build-cnfs-marker-hint;
+  }
+}

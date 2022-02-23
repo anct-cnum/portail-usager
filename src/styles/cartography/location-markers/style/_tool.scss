@@ -37,7 +37,7 @@
   }
 }
 
-@mixin build-markers() {
+@mixin build-location-markers() {
   #{ns(marker)} {
     @include _marker;
     @include _marker-variations;
