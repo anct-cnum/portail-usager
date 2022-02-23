@@ -2,7 +2,7 @@
   <ul class="fr-list-group fr-list-group--flush">
     <li
       [attr.id]="structure.id"
-      *ngFor="let structure of structuresList; index as i; trackBy: trackByStructureId"
+      *ngFor="let structure of structuresList; trackBy: trackByStructureId"
       [attr.aria-current]="structure.id === highlightedStructureId ? true : null"
       [class.fr-list-group__item--active]="structure.id === highlightedStructureId"
       class="fr-list-group__item fr-list-group__item--active-out">
