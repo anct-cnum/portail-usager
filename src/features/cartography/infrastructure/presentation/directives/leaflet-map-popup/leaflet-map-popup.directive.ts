@@ -25,10 +25,6 @@ export class LeafletMapPopupDirective implements OnDestroy, OnChanges {
 
   @Input() public longitude?: number;
 
-  public get popup(): Popup | undefined {
-    return this._popup;
-  }
-
   public constructor(
     private readonly _mapComponent: LeafletMapComponent,
     @Optional() private readonly _canHavePopup: CanHavePopupDirective<Layer> | null

@@ -34,7 +34,8 @@ import { DropdownPaneComponent } from '../../../../../app/components';
 import {
   LeafletMapMarkerDirective,
   LeafletMapPopupDirective,
-  LeafletMapStateChangeDirective
+  LeafletMapStateChangeDirective,
+  LeafletMapTooltipDirective
 } from '../../presentation/directives';
 import { CollapseModule } from '../../../../../app/directives';
 
@@ -56,6 +57,7 @@ const METROPOLITAN_FRANCE_CENTER_LATITUDE: number = 46.28146057911664;
     LeafletMapMarkerDirective,
     LeafletMapPopupDirective,
     LeafletMapStateChangeDirective,
+    LeafletMapTooltipDirective,
     PermanenceAccessComponent,
     PermanenceAddressComponent,
     PermanenceCnfsInfoComponent,
