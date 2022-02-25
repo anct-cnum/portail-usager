@@ -3,30 +3,56 @@
 /// @group cartography
 ////
 
+@keyframes cnfs-marker-in-focus {
+  from {
+    fill: var(--blue-france-sun-113-625);
+  }
+
+  to {
+    fill: var(--red-marianne-main-472);
+  }
+}
+
+@keyframes cnfs-marker-out-focus {
+  from {
+    fill: var(--red-marianne-main-472);
+  }
+
+  to {
+    fill: var(--blue-france-sun-113-625);
+  }
+}
+
+@keyframes cnfs-marker-hint {
+  from {
+    transform: scale(1);
+  }
+
+  to {
+    transform: scale(3.5);
+  }
+}
+
 @mixin build-cnfs-marker-focus() {
   &--focus {
     #{ns(cnfs-marker)}__in {
-      fill: var(--red-marianne-main-472);
+      animation: cnfs-marker-in-focus 0.5s linear 0s 1 normal forwards;
     }
 
     #{ns(cnfs-marker)}__out {
-      fill: var(--blue-france-sun-113-625);
+      animation: cnfs-marker-out-focus 0.5s linear 0s 1 normal forwards;
     }
   }
 }
 
 @mixin build-cnfs-marker-hint() {
   &--hint #{ns(cnfs-marker)}__in {
-    transform: scale(3.5);
+    animation: cnfs-marker-hint 0.2s linear 0s 1 normal forwards;
   }
 }
 
 @mixin build-cnfs-marker() {
   #{ns(cnfs-marker)} {
-    path {
-      transition: 2s;
-    }
-
     &__in {
       fill: var(--blue-france-sun-113-625);
       transform-origin: center 34.3%;
