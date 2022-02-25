@@ -26,17 +26,22 @@ import { HighlightedStructure } from '../../pages';
 export class PermanenceMapComponent {
   @Input() public centerView!: CenterView;
 
-  @Output() public readonly cnfsDepartementMarkerChange: EventEmitter<MarkerEvent<CnfsByDepartmentMarkerProperties>> =
+  @Output() public readonly cnfsDepartementMarkerClick: EventEmitter<MarkerEvent<CnfsByDepartmentMarkerProperties>> =
     new EventEmitter<MarkerEvent<CnfsByDepartmentMarkerProperties>>();
 
   @Input() public cnfsDepartementMarkers: FeatureCollection<Point, CnfsByDepartmentMarkerProperties> | null = null;
 
-  @Output() public readonly cnfsPermanenceMarkerChange: EventEmitter<MarkerEvent<CnfsPermanenceMarkerProperties>> =
+  @Output() public readonly cnfsPermanenceMarkerClick: EventEmitter<MarkerEvent<CnfsPermanenceMarkerProperties>> =
     new EventEmitter<MarkerEvent<CnfsPermanenceMarkerProperties>>();
+
+  @Output() public readonly cnfsPermanenceMarkerEnter: EventEmitter<MarkerEvent<CnfsPermanenceMarkerProperties>> =
+    new EventEmitter<MarkerEvent<CnfsPermanenceMarkerProperties>>();
+
+  @Output() public readonly cnfsPermanenceMarkerLeave: EventEmitter<void> = new EventEmitter<void>();
 
   @Input() public cnfsPermanenceMarkers: FeatureCollection<Point, CnfsPermanenceMarkerProperties> | null = null;
 
-  @Output() public readonly cnfsRegionMarkerChange: EventEmitter<MarkerEvent<CnfsByRegionMarkerProperties>> = new EventEmitter<
+  @Output() public readonly cnfsRegionMarkerClick: EventEmitter<MarkerEvent<CnfsByRegionMarkerProperties>> = new EventEmitter<
     MarkerEvent<CnfsByRegionMarkerProperties>
   >();
 
@@ -51,23 +56,31 @@ export class PermanenceMapComponent {
   @Output() public readonly zoomOut: EventEmitter<void> = new EventEmitter<void>();
 
   public onDepartementClick(cnfsByDepartementMarkerEvent: MarkerEvent<CnfsByDepartmentMarkerProperties>): void {
-    this.cnfsDepartementMarkerChange.emit(cnfsByDepartementMarkerEvent);
+    this.cnfsDepartementMarkerClick.emit(cnfsByDepartementMarkerEvent);
   }
 
   public onPermanenceClick(cnfsPermanenceMarkerEvent: MarkerEvent<CnfsPermanenceMarkerProperties>): void {
-    this.cnfsPermanenceMarkerChange.emit(cnfsPermanenceMarkerEvent);
+    this.cnfsPermanenceMarkerClick.emit(cnfsPermanenceMarkerEvent);
+  }
+
+  public onPermanenceEnter(cnfsPermanenceMarkerEvent: MarkerEvent<CnfsPermanenceMarkerProperties>): void {
+    this.cnfsPermanenceMarkerEnter.emit(cnfsPermanenceMarkerEvent);
+  }
+
+  public onPermanenceLeave(): void {
+    this.cnfsPermanenceMarkerLeave.emit();
   }
 
   public onRegionClick(cnfsByRegionMarkerEvent: MarkerEvent<CnfsByRegionMarkerProperties>): void {
-    this.cnfsRegionMarkerChange.emit(cnfsByRegionMarkerEvent);
+    this.cnfsRegionMarkerClick.emit(cnfsByRegionMarkerEvent);
   }
 
   public onStateChanged(viewReset: ViewReset): void {
     this.stateChange.emit(viewReset);
   }
 
-  public trackByDepartementName(_: number, cnfsDepartemenFeature: Feature<Point, CnfsByDepartmentMarkerProperties>): string {
-    return cnfsDepartemenFeature.properties.code;
+  public trackByDepartementName(_: number, cnfsDepartementFeature: Feature<Point, CnfsByDepartmentMarkerProperties>): string {
+    return cnfsDepartementFeature.properties.code;
   }
 
   public trackByPermanenceId(_: number, cnfsPermanenceFeature: Feature<Point, CnfsPermanenceMarkerProperties>): string {

@@ -7,6 +7,7 @@ import { Observable, of } from 'rxjs';
 import { StructurePresentation } from '../../models';
 import { AddressGeolocationStubComponent, CnfsListStubComponent } from '../../test-doubles';
 import { CARTOGRAPHY_TOKEN } from '../../../configuration';
+import { CnfsListPresenter } from './cnfs-list.presenter';
 
 const CARTOGRAPHY_PRESENTER: CartographyPresenter = {
   structuresList$: (): Observable<StructurePresentation[]> =>
@@ -38,6 +39,10 @@ describe('cnfs-list page', (): void => {
             {
               provide: CartographyPresenter,
               useValue: CARTOGRAPHY_PRESENTER
+            },
+            {
+              provide: CnfsListPresenter,
+              useValue: {}
             },
             {
               provide: CARTOGRAPHY_TOKEN,

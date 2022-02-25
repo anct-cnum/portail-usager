@@ -13,7 +13,9 @@
     <cnfs-list
       class="fr-px-3w fr-overflow--auto"
       [structuresList]="structuresList"
-      [highlightedStructureId]="highlightedStructureId$ | async"
-      (structureEnter)="onHintAStructure($event)"></cnfs-list>
+      [focusStructureId]="highlightedStructureId$ | async"
+      [hintStructureId]="cnfsListPresenter.hint$ | async"
+      (structureEnter)="onHintAStructure($event)"
+      (structureLeave)="onClearStructureHint()"></cnfs-list>
   </ng-container>
 </div>

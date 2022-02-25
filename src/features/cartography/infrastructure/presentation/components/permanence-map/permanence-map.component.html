@@ -27,23 +27,16 @@
       [properties]="permanenceMarkersFeature.properties"
       [highlight]="highlightedStructure?.id === permanenceMarkersFeature.properties.id ? highlightedStructure?.type : undefined"
       markerFactoryKey="cnfsPermanence"
-      (markerClick)="onPermanenceClick($event)">
-      <leaflet-map-popup
-        [content]="popupContent"
-        [closeOnClick]="false"
-        [closeButton]="false"
-        [isOpen]="highlightedStructure?.id === permanenceMarkersFeature.properties.id">
+      (markerClick)="onPermanenceClick($event)"
+      (markerEnter)="onPermanenceEnter($event)"
+      (markerLeave)="onPermanenceLeave()">
+      <leaflet-map-tooltip [content]="popupContent">
         <div #popupContent class="fr-text-align--center">
           <div class="fr-mb-1v">
             <b>{{ permanenceMarkersFeature.properties.name }}</b>
           </div>
-          <a
-            class="fr-btn fr-btn--secondary fr-text-title--blue-france"
-            [routerLink]="['/', permanenceMarkersFeature.properties.id, 'details']">
-            Afficher les détails
-          </a>
         </div>
-      </leaflet-map-popup>
+      </leaflet-map-tooltip>
     </leaflet-map-marker>
   </ng-container>
   <ng-container *ngIf="usagerMarker">

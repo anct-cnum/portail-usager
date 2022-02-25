@@ -42,16 +42,20 @@ const highlight = (structureId: string): string => {
   templateUrl: './cnfs-list.component.html'
 })
 export class CnfsListComponent implements OnChanges {
-  @Input() public highlightedStructureId: string | null = null;
+  @Input() public focusStructureId: string | null = null;
+
+  @Input() public hintStructureId: string | null = null;
 
   @Output() public readonly structureEnter: EventEmitter<string> = new EventEmitter<string>();
+
+  @Output() public readonly structureLeave: EventEmitter<void> = new EventEmitter<void>();
 
   @Input() public structuresList: StructurePresentation[] = [];
 
   public ngOnChanges(changes: SimpleChanges): void {
     shouldHighlight(changes['highlightedStructureId']) && highlight(currentValue<string>(changes['highlightedStructureId']));
     shouldReplayHighlight(changes['highlightedStructureId']) &&
-      (this.highlightedStructureId = highlight(previousValue<string>(changes['highlightedStructureId'])));
+      (this.focusStructureId = highlight(previousValue<string>(changes['highlightedStructureId'])));
   }
 
   public trackByStructureId(_: number, structure: StructurePresentation): string {

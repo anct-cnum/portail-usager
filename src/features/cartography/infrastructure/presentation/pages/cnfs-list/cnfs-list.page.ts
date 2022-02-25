@@ -6,6 +6,7 @@ import { Coordinates } from '../../../../core';
 import { CartographyPresenter } from '../cartography';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { CARTOGRAPHY_TOKEN, CartographyConfiguration } from '../../../configuration';
+import { CnfsListPresenter } from './cnfs-list.presenter';
 
 const MIN_SEARCH_TERM_LENGTH: number = 3;
 
@@ -45,6 +46,7 @@ export class CnfsListPage implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly presenter: CartographyPresenter,
+    public readonly cnfsListPresenter: CnfsListPresenter,
     @Inject(CARTOGRAPHY_TOKEN) private readonly cartographyConfiguration: CartographyConfiguration
   ) {}
 
@@ -56,6 +58,10 @@ export class CnfsListPage implements OnInit {
     await this.router.navigate([], {
       queryParams: { latitude, longitude }
     });
+  }
+
+  public onClearStructureHint(): void {
+    this.presenter.clearStructureHighlight();
   }
 
   public async onGeocodeUsagerRequest(address: string): Promise<void> {
