@@ -18,6 +18,7 @@ import { Observable, of } from 'rxjs';
 import { FeatureCollection, Point } from 'geojson';
 import { CnfsByDepartmentMarkerProperties, CnfsByRegionMarkerProperties, CnfsPermanenceMarkerProperties } from '../../models';
 import { Provider } from '@angular/core';
+import { CnfsListPresenter } from '../../pages';
 
 const CARTOGRAPHY_PRESENTER: CartographyPresenter = {
   centerView$: of({}),
@@ -89,6 +90,10 @@ const PROVIDERS: Provider[] = [
   {
     provide: CartographyPresenter,
     useValue: CARTOGRAPHY_PRESENTER
+  },
+  {
+    provide: CnfsListPresenter,
+    useValue: {}
   },
   {
     provide: CARTOGRAPHY_TOKEN,

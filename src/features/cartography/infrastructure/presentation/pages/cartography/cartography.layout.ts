@@ -31,10 +31,11 @@ import { ViewportAndZoom } from '../../directives';
 import { usagerFeatureFromCoordinates } from '../../helpers';
 import { ActivatedRoute, Event as RouterEvent, NavigationEnd, ParamMap, Router } from '@angular/router';
 import { CARTOGRAPHY_TOKEN, CartographyConfiguration } from '../../../configuration';
+import { CnfsListPresenter } from '../cnfs-list';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [CartographyPresenter],
+  providers: [CartographyPresenter, CnfsListPresenter],
   templateUrl: './cartography.layout.html'
 })
 export class CartographyLayout {
@@ -109,22 +110,27 @@ export class CartographyLayout {
 
   public constructor(
     private readonly presenter: CartographyPresenter,
+    private readonly cnfsListPresenter: CnfsListPresenter,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
     @Inject(CARTOGRAPHY_TOKEN) public readonly cartographyConfiguration: CartographyConfiguration
   ) {}
 
-  private redirectToDetails(): string[] {
-    return this._displayStructureDetails ? ['details'] : [];
-  }
-
-  public onCnfsLocalityMarkerChange(markerEvent: MarkerEvent<CnfsLocalityMarkerProperties>): void {
+  public onCnfsLocalityMarkerClick(markerEvent: MarkerEvent<CnfsLocalityMarkerProperties>): void {
     this._forceCnfsPermanence$.next(isGuyaneBoundedMarker(markerEvent.markerProperties));
     this.presenter.setMapView(markerEvent.markerPosition, markerEvent.markerProperties.boundingZoom);
   }
 
-  public async onCnfsPermanenceMarkerChange(markerEvent: MarkerEvent<CnfsPermanenceMarkerProperties>): Promise<void> {
-    await this.router.navigate(['/', markerEvent.markerProperties.id, ...this.redirectToDetails()]);
+  public async onCnfsPermanenceMarkerClick(markerEvent: MarkerEvent<CnfsPermanenceMarkerProperties>): Promise<void> {
+    await this.router.navigate(['/', markerEvent.markerProperties.id, 'details']);
+  }
+
+  public onCnfsPermanenceMarkerEnter(markerEvent: MarkerEvent<CnfsPermanenceMarkerProperties>): void {
+    this.cnfsListPresenter.hint(markerEvent.markerProperties.id);
+  }
+
+  public onCnfsPermanenceMarkerLeave(): void {
+    this.cnfsListPresenter.hint('');
   }
 
   public onDisplayMap(displayMap: boolean): void {
