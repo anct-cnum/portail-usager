@@ -229,6 +229,13 @@ export class CartographyPresenter {
     );
   }
 
+  public clearStructureHighlight(): void {
+    this._highlightedStructure$.next({
+      id: '',
+      type: MarkerHighLight.Hint
+    });
+  }
+
   public cnfsByRegionOrEmpty$(markerTypeToDisplay: MarkerKey): Observable<Feature<Point, CnfsByRegionMarkerProperties>[]> {
     return iif(
       (): boolean => markerTypeToDisplay === MarkerKey.CnfsByRegion,
