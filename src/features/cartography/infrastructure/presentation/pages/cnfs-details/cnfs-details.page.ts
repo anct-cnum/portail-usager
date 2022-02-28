@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
-import { filter, Observable, of, startWith, switchMap, tap } from 'rxjs';
+import { filter, Observable, of, switchMap, tap } from 'rxjs';
 import { CnfsDetailsPresentation } from '../../models';
-import { combineLatestWith, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Coordinates } from '../../../../core';
 import { CartographyPresenter } from '../cartography';
 import { CARTOGRAPHY_TOKEN, CartographyConfiguration } from '../../../configuration';
@@ -13,15 +13,6 @@ import { CITY_ZOOM_LEVEL } from '../../helpers/map-constants';
   templateUrl: './cnfs-details.page.html'
 })
 export class CnfsDetailsPage implements OnInit {
-  private readonly _coordinatesFromQueryParams$: Observable<Coordinates> = this.route.queryParamMap.pipe(
-    map((params: ParamMap): [string | null, string | null] => [params.get('latitude'), params.get('longitude')]),
-    filter(
-      (coordinates: [string | null, string | null]): coordinates is [string, string] =>
-        coordinates[0] != null && coordinates[1] != null
-    ),
-    map(([latitude, longitude]: [string, string]): Coordinates => new Coordinates(Number(latitude), Number(longitude)))
-  );
-
   private readonly _structureId$: Observable<string> = this.route.paramMap.pipe(
     map((params: ParamMap): string | null => params.get('structureId')),
     filter((structureId: string | null): structureId is string => structureId !== null),
@@ -29,10 +20,9 @@ export class CnfsDetailsPage implements OnInit {
   );
 
   public cnfsDetails$: Observable<CnfsDetailsPresentation | null> = this._structureId$.pipe(
-    combineLatestWith(this._coordinatesFromQueryParams$.pipe(startWith(null))),
     switchMap(
-      ([id, coordinates]: [string | null, Coordinates | null]): Observable<CnfsDetailsPresentation | null> =>
-        id == null ? of(null) : this.cnfsDetailsWithUsagerMarker$(id, coordinates)
+      (id: string | null): Observable<CnfsDetailsPresentation | null> =>
+        id == null ? of(null) : this.cnfsDetailsWithUsagerMarker$(id)
     ),
     tap((cnfsDetailsPresentation: CnfsDetailsPresentation | null): void => {
       cnfsDetailsPresentation?.coordinates != null &&
@@ -49,7 +39,7 @@ export class CnfsDetailsPage implements OnInit {
     @Inject(CARTOGRAPHY_TOKEN) private readonly cartographyConfiguration: CartographyConfiguration
   ) {}
 
-  private cnfsDetailsWithUsagerMarker$(id: string, coordinates: Coordinates | null): Observable<CnfsDetailsPresentation> {
+  private cnfsDetailsWithUsagerMarker$(id: string, coordinates?: Coordinates): Observable<CnfsDetailsPresentation> {
     return coordinates == null ? this.presenter.cnfsDetails$(id) : this.presenter.cnfsDetails$(id, coordinates);
   }
 
