@@ -6,3 +6,4 @@ export * from './cnfs-by-region.transfer';
 export * from './cnfs-details.transfer';
 export * from './cnfs-details.transfer-mapper';
 export * from './cnfs-by-region.transfer-mapper';
+export * from './cnfs-location.transfer';

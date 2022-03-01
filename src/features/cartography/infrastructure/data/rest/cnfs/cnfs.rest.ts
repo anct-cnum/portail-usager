@@ -10,6 +10,7 @@ import {
   cnfsByRegionTransferToCore,
   CnfsDetailsTransfer,
   cnfsDetailsTransferToCore,
+  CnfsLocationTransfer,
   CnfsTransfer,
   cnfsTransferToCore
 } from '../../models';
@@ -25,6 +26,12 @@ export class CnfsRest extends CnfsRepository {
     return this.httpClient
       .get<CnfsDetailsTransfer>(`${Api.ConseillerNumerique}/conseillers/permanence/${id}`)
       .pipe(map(cnfsDetailsTransferToCore));
+  }
+
+  public cnfsLocation$(id: string): Observable<CnfsLocationTransfer> {
+    return this.httpClient.get<CnfsLocationTransfer>(
+      `${Api.ConseillerNumerique}/conseillers/geolocalisation/permanence/${id}/localisation`
+    );
   }
 
   public listCnfs$(): Observable<Cnfs[]> {

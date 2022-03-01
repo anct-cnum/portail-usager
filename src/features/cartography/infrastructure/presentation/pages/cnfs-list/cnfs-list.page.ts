@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
-import { debounceTime, distinctUntilChanged, filter, Observable, startWith, Subject, switchMap, tap } from 'rxjs';
-import { AddressFoundPresentation, StructurePresentation } from '../../models';
+import { debounceTime, distinctUntilChanged, filter, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
+import { AddressFoundPresentation, CnfsLocationPresentation, StructurePresentation } from '../../models';
 import { map } from 'rxjs/operators';
 import { Coordinates } from '../../../../core';
 import { CartographyPresenter } from '../cartography';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { CARTOGRAPHY_TOKEN, CartographyConfiguration } from '../../../configuration';
 import { CnfsListPresenter } from './cnfs-list.presenter';
+import { CITY_ZOOM_LEVEL } from '../../helpers/map-constants';
 
 const MIN_SEARCH_TERM_LENGTH: number = 3;
 
@@ -35,7 +36,17 @@ export class CnfsListPage implements OnInit {
 
   public geocodeAddressError$: Observable<boolean> = this.presenter.geocodeAddressError$;
 
-  public highlightedStructureId$: Observable<string | null> = this._structureId$;
+  public highlightedStructureId$: Observable<string | null> = this._structureId$.pipe(
+    switchMap(
+      (id: string | null): Observable<CnfsLocationPresentation | null> =>
+        id == null ? of(null) : this.presenter.cnfsPosition$(id)
+    ),
+    tap((cnfsLocationPresentation: CnfsLocationPresentation | null): void => {
+      cnfsLocationPresentation?.coordinates != null &&
+        this.presenter.setMapView(cnfsLocationPresentation.coordinates, CITY_ZOOM_LEVEL);
+    }),
+    map((cnfsLocationPresentation: CnfsLocationPresentation | null): string | null => cnfsLocationPresentation?.id ?? null)
+  );
 
   public structuresList$: Observable<StructurePresentation[]> = this._structureId$.pipe(
     startWith([]),

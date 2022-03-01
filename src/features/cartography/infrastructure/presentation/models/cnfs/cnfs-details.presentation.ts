@@ -21,6 +21,11 @@ export interface CnfsPresentation {
   phone?: string;
 }
 
+export interface CnfsLocationPresentation {
+  coordinates: Coordinates;
+  id: string;
+}
+
 export interface CnfsDetailsPresentation {
   address?: string;
   coordinates?: Coordinates;
