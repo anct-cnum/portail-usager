@@ -33,6 +33,8 @@ import { ActivatedRoute, Event as RouterEvent, NavigationEnd, ParamMap, Router }
 import { CARTOGRAPHY_TOKEN, CartographyConfiguration } from '../../../configuration';
 import { CnfsListPresenter } from '../cnfs-list';
 
+const SCROLL_ON_MAP_DELAY: number = 100;
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CartographyPresenter, CnfsListPresenter],
@@ -86,7 +88,7 @@ export class CartographyLayout {
     })
   );
 
-  public centerView$: Observable<CenterView> = this.presenter.centerView$.pipe(delay(0));
+  public centerView$: Observable<CenterView> = this.presenter.centerView$.pipe(delay(SCROLL_ON_MAP_DELAY));
 
   public readonly departementMarkers$: Observable<FeatureCollection<Point, CnfsByDepartmentMarkerProperties>> =
     this.presenter.visibleMapCnfsByDepartmentAtZoomLevel$(this._forceCnfsPermanence$.asObservable());
