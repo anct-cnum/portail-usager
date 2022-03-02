@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/cor
 import { filter, Observable, of, switchMap, tap } from 'rxjs';
 import { CnfsDetailsPresentation } from '../../models';
 import { map } from 'rxjs/operators';
-import { Coordinates } from '../../../../core';
 import { CartographyPresenter } from '../cartography';
 import { CARTOGRAPHY_TOKEN, CartographyConfiguration } from '../../../configuration';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
@@ -22,7 +21,7 @@ export class CnfsDetailsPage implements OnInit {
   public cnfsDetails$: Observable<CnfsDetailsPresentation | null> = this._structureId$.pipe(
     switchMap(
       (id: string | null): Observable<CnfsDetailsPresentation | null> =>
-        id == null ? of(null) : this.cnfsDetailsWithUsagerMarker$(id)
+        id == null ? of(null) : this.presenter.cnfsDetails$(id)
     ),
     tap((cnfsDetailsPresentation: CnfsDetailsPresentation | null): void => {
       cnfsDetailsPresentation?.coordinates != null &&
@@ -38,10 +37,6 @@ export class CnfsDetailsPage implements OnInit {
     private readonly presenter: CartographyPresenter,
     @Inject(CARTOGRAPHY_TOKEN) private readonly cartographyConfiguration: CartographyConfiguration
   ) {}
-
-  private cnfsDetailsWithUsagerMarker$(id: string, coordinates?: Coordinates): Observable<CnfsDetailsPresentation> {
-    return coordinates == null ? this.presenter.cnfsDetails$(id) : this.presenter.cnfsDetails$(id, coordinates);
-  }
 
   public ngOnInit(): void {
     this.presenter.setStructureDetailsDisplay(true);

@@ -80,6 +80,7 @@ export class CartographyLayout {
     this._coordinatesFromQueryParams$
   ).pipe(
     map((usagerCoordinates: Coordinates): Feature<Point, UsagerMarkerProperties> => {
+      this.presenter.setUsagerCoordinates(usagerCoordinates);
       this.presenter.setMapView(usagerCoordinates, CITY_ZOOM_LEVEL);
       return usagerFeatureFromCoordinates(usagerCoordinates);
     })

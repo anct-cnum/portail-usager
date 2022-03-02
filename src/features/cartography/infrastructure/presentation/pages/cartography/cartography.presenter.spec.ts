@@ -288,7 +288,6 @@ describe('cartography presenter', (): void => {
       };
 
       const id: string = '4c38ebc9a06fdd532bf9d7be';
-      const usagerCoordinates: Coordinates = new Coordinates(44.863, 6.075412);
 
       const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
         cnfsDetailsUseCase,
@@ -301,9 +300,9 @@ describe('cartography presenter', (): void => {
         {} as CnfsRest
       );
 
-      const cnfsDetails: CnfsDetailsPresentation = await firstValueFrom(
-        cartographyPresenter.cnfsDetails$(id, usagerCoordinates)
-      );
+      cartographyPresenter.setUsagerCoordinates(new Coordinates(44.863, 6.075412));
+
+      const cnfsDetails: CnfsDetailsPresentation = await firstValueFrom(cartographyPresenter.cnfsDetails$(id));
 
       expect(cnfsDetails).toStrictEqual(expectedCnfsDetails);
     });

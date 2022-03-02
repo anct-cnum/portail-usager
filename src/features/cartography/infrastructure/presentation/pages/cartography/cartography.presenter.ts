@@ -122,6 +122,8 @@ export class CartographyPresenter {
   private readonly _markersRegionCache: ObservableCache<Feature<Point, CnfsByRegionMarkerProperties>[], MarkerKey> =
     new ObservableCache<Feature<Point, CnfsByRegionMarkerProperties>[], MarkerKey>();
 
+  private _usagerCoordinates?: Coordinates;
+
   private readonly _viewportAndZoom$: BehaviorSubject<ViewportAndZoom> = new BehaviorSubject<ViewportAndZoom>(
     DEFAULT_MAP_VIEWPORT_AND_ZOOM
   );
@@ -249,11 +251,13 @@ export class CartographyPresenter {
     );
   }
 
-  public cnfsDetails$(id: string, usagerCoordinates?: Coordinates): Observable<CnfsDetailsPresentation> {
+  public cnfsDetails$(id: string): Observable<CnfsDetailsPresentation> {
     return this.cnfsDetailsUseCase
       .execute$(id)
       .pipe(
-        map((cnfsDetails: CnfsDetails): CnfsDetailsPresentation => cnfsDetailsToPresentation(cnfsDetails, usagerCoordinates))
+        map(
+          (cnfsDetails: CnfsDetails): CnfsDetailsPresentation => cnfsDetailsToPresentation(cnfsDetails, this._usagerCoordinates)
+        )
       );
   }
 
@@ -299,6 +303,10 @@ export class CartographyPresenter {
 
   public setStructureDetailsDisplay(display: boolean): void {
     this._displayStructureDetails$.next(display);
+  }
+
+  public setUsagerCoordinates(usagerCoordinates: Coordinates): void {
+    this._usagerCoordinates = usagerCoordinates;
   }
 
   public setViewportAndZoom(viewportAndZoom: ViewportAndZoom): void {
