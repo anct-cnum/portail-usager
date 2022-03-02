@@ -3,7 +3,7 @@
     <li
       [attr.id]="structure.id"
       *ngFor="let structure of structuresList; trackBy: trackByStructureId"
-      [attr.aria-current]="structure.id === focusStructureId ? true : null"
+      [attr.aria-current]="structure.id === focusStructureId"
       [class.fr-list-group__item--active]="structure.id === focusStructureId"
       [class.fr-background-contrast--grey]="structure.id === hintStructureId ? true : null"
       (mouseenter)="structureEnter.emit(structure.id)"

@@ -13,7 +13,7 @@
     <cnfs-list
       class="fr-px-3w fr-overflow--auto"
       [structuresList]="structuresList"
-      [focusStructureId]="highlightedStructureId$ | async"
+      [focusStructureId]="(highlightedStructureId$ | async) ?? ''"
       [hintStructureId]="cnfsListPresenter.hint$ | async"
       (structureEnter)="onHintAStructure($event)"
       (structureLeave)="onClearStructureHint()"></cnfs-list>
