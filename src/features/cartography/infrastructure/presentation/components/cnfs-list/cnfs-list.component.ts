@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  Output
-} from "@angular/core";
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { StructurePresentation } from '../../models';
 
 const SCROLL_DELAY_IN_MILLISECONDS: number = 400;
@@ -27,7 +21,7 @@ const highlight = (structureId: string): void => {
   templateUrl: './cnfs-list.component.html'
 })
 export class CnfsListComponent {
-  private _focusStructureId?: string
+  private _focusStructureId?: string;
 
   @Input() public hintStructureId: string | null = null;
 

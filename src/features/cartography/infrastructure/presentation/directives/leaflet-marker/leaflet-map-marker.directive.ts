@@ -1,10 +1,15 @@
 import { Directive, EventEmitter, Inject, Input, OnChanges, OnDestroy, Output } from '@angular/core';
-import { DivIcon, Icon, LeafletEvent, marker, Marker, MarkerOptions } from 'leaflet';
+import { DivIcon, Icon, LeafletEvent, marker, Marker, MarkerOptions, Popup, Tooltip } from 'leaflet';
 import { LeafletMapComponent } from '../../components';
 import { MarkerEvent, MarkerHighLight, MarkerProperties } from '../../models';
 import { Coordinates } from '../../../../core';
 import { MarkerKey, MARKERS_TOKEN, MarkersConfiguration } from '../../../configuration';
 import { CanHavePopup, CanHavePopupDirective, CanHaveTooltip, CanHaveTooltipDirective } from '../_abstract';
+
+interface MarkerOverlay {
+  popup: Popup | undefined;
+  tooltip: Tooltip | undefined;
+}
 
 @Directive({
   providers: [
@@ -47,8 +52,8 @@ export class LeafletMapMarkerDirective<TProperty, TIcon extends DivIcon | Icon>
     @Inject(MARKERS_TOKEN) private readonly markersConfigurations: MarkersConfiguration<TProperty, TIcon>
   ) {}
 
-  private bindClick(mapMarker: Marker): void {
-    mapMarker.on('click', (leafletEvent: LeafletEvent): void => {
+  private bindClick(): void {
+    this._marker?.on('click', (leafletEvent: LeafletEvent): void => {
       this.markerClick.emit({
         eventType: leafletEvent.type,
         markerPosition: new Coordinates(this.latitude, this.longitude),
@@ -57,8 +62,14 @@ export class LeafletMapMarkerDirective<TProperty, TIcon extends DivIcon | Icon>
     });
   }
 
-  private bindMouseout(mapMarker: Marker): void {
-    mapMarker.on('mouseout', (leafletEvent: LeafletEvent): void => {
+  private bindMarkerEvents(): void {
+    this.bindMouseover();
+    this.bindMouseout();
+    this.bindClick();
+  }
+
+  private bindMouseout(): void {
+    this._marker?.on('mouseout', (leafletEvent: LeafletEvent): void => {
       this.markerLeave.emit({
         eventType: leafletEvent.type,
         markerPosition: new Coordinates(this.latitude, this.longitude),
@@ -67,8 +78,8 @@ export class LeafletMapMarkerDirective<TProperty, TIcon extends DivIcon | Icon>
     });
   }
 
-  private bindMouseover(mapMarker: Marker): void {
-    mapMarker.on('mouseover', (leafletEvent: LeafletEvent): void => {
+  private bindMouseover(): void {
+    this._marker?.on('mouseover', (leafletEvent: LeafletEvent): void => {
       this.markerEnter.emit({
         eventType: leafletEvent.type,
         markerPosition: new Coordinates(this.latitude, this.longitude),
@@ -77,12 +88,24 @@ export class LeafletMapMarkerDirective<TProperty, TIcon extends DivIcon | Icon>
     });
   }
 
+  private getMarkerOverlay(): MarkerOverlay {
+    return {
+      popup: this._marker?.getPopup(),
+      tooltip: this._marker?.getTooltip()
+    };
+  }
+
   private markerOptions(): MarkerOptions {
     return this.markerFactoryKey == null
       ? {}
       : {
           icon: this.markersConfigurations[this.markerFactoryKey](this.toMarkerProperties())
         };
+  }
+
+  private setMarkerOverlay({ popup, tooltip }: MarkerOverlay): void {
+    tooltip != null && this._marker?.bindTooltip(tooltip);
+    popup != null && this._marker?.bindPopup(popup);
   }
 
   private toMarkerProperties(): MarkerProperties<TProperty> {
@@ -98,6 +121,12 @@ export class LeafletMapMarkerDirective<TProperty, TIcon extends DivIcon | Icon>
     this._marker?.off('click');
   }
 
+  private unbindMarkerEvents(): void {
+    this.unbindClick();
+    this.unbindMouseout();
+    this.unbindMouseover();
+  }
+
   private unbindMouseout(): void {
     this._marker?.off('mouseout');
   }
@@ -109,18 +138,15 @@ export class LeafletMapMarkerDirective<TProperty, TIcon extends DivIcon | Icon>
   public ngOnChanges(): void {
     if (this._mapComponent.map == null) return;
 
+    const previousMarkerOverlay: MarkerOverlay = this.getMarkerOverlay();
     this._marker?.removeFrom(this._mapComponent.map);
     this._marker = marker([this.latitude, this.longitude], this.markerOptions()).addTo(this._mapComponent.map);
-
-    this.bindMouseover(this._marker);
-    this.bindMouseout(this._marker);
-    this.bindClick(this._marker);
+    this.setMarkerOverlay(previousMarkerOverlay);
+    this.bindMarkerEvents();
   }
 
   public ngOnDestroy(): void {
     this._mapComponent.map != null && this._marker?.removeFrom(this._mapComponent.map);
-    this.unbindClick();
-    this.unbindMouseout();
-    this.unbindMouseover();
+    this.unbindMarkerEvents();
   }
 }

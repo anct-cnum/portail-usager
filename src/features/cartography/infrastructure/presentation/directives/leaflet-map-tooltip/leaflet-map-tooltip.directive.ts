@@ -33,5 +33,6 @@ export class LeafletMapTooltipDirective implements OnDestroy, OnChanges {
     this._mapComponent.map != null && this._tooltip?.removeFrom(this._mapComponent.map);
     this._mapComponent.map?.closeTooltip(this._tooltip);
     this._canHaveTooltip?.tooltipHolder?.closeTooltip();
+    this._canHaveTooltip?.tooltipHolder?.unbindTooltip();
   }
 }
