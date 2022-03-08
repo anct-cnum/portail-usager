@@ -1,10 +1,10 @@
 import { ListCnfsByRegionUseCase } from '../../../../use-cases';
 import { firstValueFrom, Observable, of } from 'rxjs';
 import { CnfsByRegion, Coordinates } from '../../../../core';
-import { FeatureCollection, Point } from 'geojson';
-import { CnfsByRegionMarkerProperties } from '../../models';
 import { MarkerKey } from '../../../configuration';
-import { RegionPermanenceMapPresenter } from './region-permanence-map.presenter';
+import { CnfsByRegionFeatureCollection, RegionPermanenceMapPresenter } from './region-permanence-map.presenter';
+import { DEPARTMENT_ZOOM_LEVEL, REGION_ZOOM_LEVEL } from '../../helpers/map-constants';
+import { MapChange } from './permanence-map.utils';
 
 const LIST_CNFS_BY_REGION_USE_CASE: ListCnfsByRegionUseCase = {
   execute$(): Observable<CnfsByRegion[]> {
@@ -24,8 +24,8 @@ const LIST_CNFS_BY_REGION_USE_CASE: ListCnfsByRegionUseCase = {
 } as ListCnfsByRegionUseCase;
 
 describe('department permanence map presenter', (): void => {
-  it('should display the cnfs grouped by region markers at the region zoom level', async (): Promise<void> => {
-    const expectedCnfsByRegionFeatures: FeatureCollection<Point, CnfsByRegionMarkerProperties> = {
+  it('should display cnfs grouped by region markers at the region zoom level', async (): Promise<void> => {
+    const expectedCnfsByRegionFeatures: CnfsByRegionFeatureCollection = {
       features: [
         {
           geometry: {
@@ -61,8 +61,66 @@ describe('department permanence map presenter', (): void => {
       LIST_CNFS_BY_REGION_USE_CASE
     );
 
-    const visibleMapPointsOfInterest: FeatureCollection<Point, CnfsByRegionMarkerProperties> = await firstValueFrom(
-      regionPermanenceMapPresenter.visibleMapCnfsByRegionAtZoomLevel$()
+    const mapChange: MapChange = [
+      {
+        viewport: [-55, 1, -49, 5],
+        zoomLevel: REGION_ZOOM_LEVEL
+      },
+      false
+    ];
+
+    const visibleMapPointsOfInterest: CnfsByRegionFeatureCollection = await firstValueFrom(
+      regionPermanenceMapPresenter.markers$(mapChange)
+    );
+
+    expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsByRegionFeatures);
+  });
+
+  it('should not display cnfs grouped by region markers at other zoom level than region', async (): Promise<void> => {
+    const expectedCnfsByRegionFeatures: CnfsByRegionFeatureCollection = {
+      features: [],
+      type: 'FeatureCollection'
+    };
+
+    const regionPermanenceMapPresenter: RegionPermanenceMapPresenter = new RegionPermanenceMapPresenter(
+      LIST_CNFS_BY_REGION_USE_CASE
+    );
+
+    const mapChange: MapChange = [
+      {
+        viewport: [-55, 1, -49, 5],
+        zoomLevel: DEPARTMENT_ZOOM_LEVEL
+      },
+      false
+    ];
+
+    const visibleMapPointsOfInterest: CnfsByRegionFeatureCollection = await firstValueFrom(
+      regionPermanenceMapPresenter.markers$(mapChange)
+    );
+
+    expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsByRegionFeatures);
+  });
+
+  it('should not display cnfs grouped by region markers when forced to display cnfs', async (): Promise<void> => {
+    const expectedCnfsByRegionFeatures: CnfsByRegionFeatureCollection = {
+      features: [],
+      type: 'FeatureCollection'
+    };
+
+    const regionPermanenceMapPresenter: RegionPermanenceMapPresenter = new RegionPermanenceMapPresenter(
+      LIST_CNFS_BY_REGION_USE_CASE
+    );
+
+    const mapChange: MapChange = [
+      {
+        viewport: [-55, 1, -49, 5],
+        zoomLevel: REGION_ZOOM_LEVEL
+      },
+      true
+    ];
+
+    const visibleMapPointsOfInterest: CnfsByRegionFeatureCollection = await firstValueFrom(
+      regionPermanenceMapPresenter.markers$(mapChange)
     );
 
     expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsByRegionFeatures);

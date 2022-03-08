@@ -7,19 +7,24 @@ import { MarkerKey } from '../../../configuration';
 import { DEPARTMENT_ZOOM_LEVEL } from '../../helpers/map-constants';
 import { CnfsPermanenceMapPresenter } from './cnfs-permanence-map.presenter';
 import { MapViewCullingService } from '../../services/map-view-culling.service';
+import { MapChange } from './permanence-map.utils';
 
 describe('cnfs permanence map presenter', (): void => {
-  it('should display cnfs permanences at department zoom level if marker display is forced', async (): Promise<void> => {
-    const forceCnfsPermanenceDisplay$: Observable<boolean> = of(true);
-
+  it('should display cnfs permanences markers at city zoom level', async (): Promise<void> => {
     const listCnfsUseCase: ListCnfsUseCase = {
       execute$(): Observable<Cnfs[]> {
         return of([
-          new Cnfs(new Coordinates(4.33889, -50.125782), {
-            address: '31 Avenue de la mer, 13003 Cayenne',
-            id: '4c38ebc9a06fdd532bf9d7be',
+          new Cnfs(new Coordinates(43.305645, 5.380007), {
+            address: '31 Avenue de la mer, 13003 Marseille',
+            id: '88bc36fb0db191928330b1e6',
             isLabeledFranceServices: true,
             name: 'Médiathèque de la mer'
+          }),
+          new Cnfs(new Coordinates(45.734377, 4.816864), {
+            address: '12 rue des Acacias, 69002 Lyon',
+            id: '4c38ebc9a06fdd532bf9d7be',
+            isLabeledFranceServices: false,
+            name: 'Association des centres sociaux et culturels de Lyon'
           })
         ]);
       }
@@ -29,66 +34,18 @@ describe('cnfs permanence map presenter', (): void => {
       features: [
         {
           geometry: {
-            coordinates: [-50.125782, 4.33889],
+            coordinates: [5.380007, 43.305645],
             type: 'Point'
           },
           properties: {
-            address: '31 Avenue de la mer, 13003 Cayenne',
-            id: '4c38ebc9a06fdd532bf9d7be',
+            address: '31 Avenue de la mer, 13003 Marseille',
+            id: '88bc36fb0db191928330b1e6',
             isLabeledFranceServices: true,
             markerType: MarkerKey.CnfsPermanence,
             name: 'Médiathèque de la mer'
           },
           type: 'Feature'
-        }
-      ],
-      type: 'FeatureCollection'
-    };
-
-    const cartographyPresenter: CnfsPermanenceMapPresenter = new CnfsPermanenceMapPresenter(
-      listCnfsUseCase,
-      new MapViewCullingService()
-    );
-
-    cartographyPresenter.setViewportAndZoom({
-      viewport: [-55, 1, -49, 5],
-      zoomLevel: DEPARTMENT_ZOOM_LEVEL
-    });
-
-    const visibleMapPointsOfInterest: FeatureCollection<Point, CnfsPermanenceMarkerProperties> = await firstValueFrom(
-      cartographyPresenter.visibleMapCnfsPermanencesThroughViewportAtZoomLevel$(forceCnfsPermanenceDisplay$)
-    );
-
-    expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsPermanenceMarkersFeatures);
-  });
-
-  it('should display all cnfs permanences if zoomed more than the department level', async (): Promise<void> => {
-    const listCnfsUseCase: ListCnfsUseCase = {
-      execute$(): Observable<Cnfs[]> {
-        return of([
-          new Cnfs(new Coordinates(45.734377, 4.816864), {
-            address: '12 rue des Acacias, 69002 Lyon',
-            id: '4c38ebc9a06fdd532bf9d7be',
-            isLabeledFranceServices: false,
-            name: 'Association des centres sociaux et culturels de Lyon'
-          }),
-          new Cnfs(new Coordinates(43.305645, 5.380007), {
-            address: '31 Avenue de la mer, 13003 Marseille',
-            id: '88bc36fb0db191928330b1e6',
-            isLabeledFranceServices: true,
-            name: 'Médiathèque de la mer'
-          })
-        ]);
-      }
-    } as ListCnfsUseCase;
-
-    const cartographyPresenter: CnfsPermanenceMapPresenter = new CnfsPermanenceMapPresenter(
-      listCnfsUseCase,
-      new MapViewCullingService()
-    );
-
-    const expectedCnfsPermanenceMarkersFeatures: FeatureCollection<Point, CnfsPermanenceMarkerProperties> = {
-      features: [
+        },
         {
           geometry: {
             coordinates: [4.816864, 45.734377],
@@ -102,7 +59,47 @@ describe('cnfs permanence map presenter', (): void => {
             name: 'Association des centres sociaux et culturels de Lyon'
           },
           type: 'Feature'
-        },
+        }
+      ],
+      type: 'FeatureCollection'
+    };
+
+    const cartographyPresenter: CnfsPermanenceMapPresenter = new CnfsPermanenceMapPresenter(
+      listCnfsUseCase,
+      new MapViewCullingService()
+    );
+
+    const mapChange: MapChange = [
+      {
+        viewport: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
+        zoomLevel: DEPARTMENT_ZOOM_LEVEL + 1
+      },
+      false
+    ];
+
+    const visibleMapPointsOfInterest: FeatureCollection<Point, CnfsPermanenceMarkerProperties> = await firstValueFrom(
+      cartographyPresenter.markers$(mapChange)
+    );
+
+    expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsPermanenceMarkersFeatures);
+  });
+
+  it('should display cnfs permanences markers at department zoom level when marker display is forced', async (): Promise<void> => {
+    const listCnfsUseCase: ListCnfsUseCase = {
+      execute$(): Observable<Cnfs[]> {
+        return of([
+          new Cnfs(new Coordinates(43.305645, 5.380007), {
+            address: '31 Avenue de la mer, 13003 Marseille',
+            id: '88bc36fb0db191928330b1e6',
+            isLabeledFranceServices: true,
+            name: 'Médiathèque de la mer'
+          })
+        ]);
+      }
+    } as ListCnfsUseCase;
+
+    const expectedCnfsPermanenceMarkersFeatures: FeatureCollection<Point, CnfsPermanenceMarkerProperties> = {
+      features: [
         {
           geometry: {
             coordinates: [5.380007, 43.305645],
@@ -121,13 +118,60 @@ describe('cnfs permanence map presenter', (): void => {
       type: 'FeatureCollection'
     };
 
-    cartographyPresenter.setViewportAndZoom({
-      viewport: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
-      zoomLevel: DEPARTMENT_ZOOM_LEVEL + 1
-    });
+    const cartographyPresenter: CnfsPermanenceMapPresenter = new CnfsPermanenceMapPresenter(
+      listCnfsUseCase,
+      new MapViewCullingService()
+    );
+
+    const mapChange: MapChange = [
+      {
+        viewport: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
+        zoomLevel: DEPARTMENT_ZOOM_LEVEL
+      },
+      true
+    ];
 
     const visibleMapPointsOfInterest: FeatureCollection<Point, CnfsPermanenceMarkerProperties> = await firstValueFrom(
-      cartographyPresenter.visibleMapCnfsPermanencesThroughViewportAtZoomLevel$()
+      cartographyPresenter.markers$(mapChange)
+    );
+
+    expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsPermanenceMarkersFeatures);
+  });
+
+  it('should not display cnfs permanences markers at other zoom level than city', async (): Promise<void> => {
+    const listCnfsUseCase: ListCnfsUseCase = {
+      execute$(): Observable<Cnfs[]> {
+        return of([
+          new Cnfs(new Coordinates(43.305645, 5.380007), {
+            address: '31 Avenue de la mer, 13003 Marseille',
+            id: '88bc36fb0db191928330b1e6',
+            isLabeledFranceServices: true,
+            name: 'Médiathèque de la mer'
+          })
+        ]);
+      }
+    } as ListCnfsUseCase;
+
+    const expectedCnfsPermanenceMarkersFeatures: FeatureCollection<Point, CnfsPermanenceMarkerProperties> = {
+      features: [],
+      type: 'FeatureCollection'
+    };
+
+    const cartographyPresenter: CnfsPermanenceMapPresenter = new CnfsPermanenceMapPresenter(
+      listCnfsUseCase,
+      new MapViewCullingService()
+    );
+
+    const mapChange: MapChange = [
+      {
+        viewport: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
+        zoomLevel: DEPARTMENT_ZOOM_LEVEL
+      },
+      false
+    ];
+
+    const visibleMapPointsOfInterest: FeatureCollection<Point, CnfsPermanenceMarkerProperties> = await firstValueFrom(
+      cartographyPresenter.markers$(mapChange)
     );
 
     expect(visibleMapPointsOfInterest).toStrictEqual(expectedCnfsPermanenceMarkersFeatures);

@@ -5,13 +5,11 @@ import { MarkerKey } from '../../configuration';
 import { ViewportAndZoom } from '../directives';
 
 const FRANCE_VIEW_BOX: ViewportAndZoom = {
-  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   viewport: [-3.8891601562500004, 39.30029918615029, 13.557128906250002, 51.56341232867588],
   zoomLevel: 6
 };
 
 const OUTSIDE_FRANCE_VIEW_BOX: ViewportAndZoom = {
-  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   viewport: [0, 0, 0, 0],
   zoomLevel: 6
 };

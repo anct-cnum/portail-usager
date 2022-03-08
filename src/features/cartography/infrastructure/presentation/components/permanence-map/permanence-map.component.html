@@ -8,7 +8,7 @@
       [longitude]="regionMarkerFeature.geometry.coordinates[0]"
       [properties]="regionMarkerFeature.properties"
       markerFactoryKey="cnfsByRegion"
-      (markerClick)="onRegionClick($event)"></leaflet-map-marker>
+      (markerClick)="onLocationClick($event)"></leaflet-map-marker>
   </ng-container>
   <ng-container *ngIf="departementMarkers$ | async as cnfsDepartementMarkers">
     <leaflet-map-marker
@@ -17,7 +17,7 @@
       [longitude]="departementMarkersFeature.geometry.coordinates[0]"
       [properties]="departementMarkersFeature.properties"
       markerFactoryKey="cnfsByDepartment"
-      (markerClick)="onDepartementClick($event)"></leaflet-map-marker>
+      (markerClick)="onLocationClick($event)"></leaflet-map-marker>
   </ng-container>
   <ng-container *ngIf="permanenceMarkers$ | async as cnfsPermanenceMarkers">
     <leaflet-map-marker
