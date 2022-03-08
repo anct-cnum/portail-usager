@@ -5,16 +5,36 @@ import {
   CnfsByRegionMarkerProperties,
   CnfsPermanenceMarkerProperties,
   MarkerEvent,
+  PointOfInterestMarkerProperties,
   UsagerMarkerProperties
 } from '../../models';
 import { Feature, FeatureCollection, Point } from 'geojson';
-import { ViewReset } from '../../directives';
+import { ViewportAndZoom, ViewReset } from '../../directives';
 import { MARKERS, MARKERS_TOKEN } from '../../../configuration';
-import { HighlightedStructure } from '../../pages';
+import { CartographyPresenter, HighlightedStructure } from '../../pages';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { DepartmentPermanenceMapPresenter } from './department-permanence-map.presenter';
+import { RegionPermanenceMapPresenter } from './region-permanence-map.presenter';
+import { CnfsPermanenceMapPresenter } from './cnfs-permanence-map.presenter';
+import { CnfsByDepartmentProperties, CnfsByRegionProperties } from '../../../../core';
+
+const isGuyaneBoundedMarker = (markerProperties: PointOfInterestMarkerProperties): boolean => {
+  const departementProperties: CnfsByDepartmentProperties = markerProperties as CnfsByDepartmentProperties;
+  const regionProperties: CnfsByRegionProperties = markerProperties as CnfsByRegionProperties;
+
+  return departementProperties.department === 'Guyane' || regionProperties.region === 'Guyane';
+};
+
+const toCnfsPermanenceProperties = (
+  cnfsPermanence: Feature<Point, CnfsPermanenceMarkerProperties>
+): CnfsPermanenceMarkerProperties => cnfsPermanence.properties;
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
+    DepartmentPermanenceMapPresenter,
+    RegionPermanenceMapPresenter,
+    CnfsPermanenceMapPresenter,
     {
       provide: MARKERS_TOKEN,
       useValue: MARKERS
@@ -24,12 +44,24 @@ import { HighlightedStructure } from '../../pages';
   templateUrl: './permanence-map.component.html'
 })
 export class PermanenceMapComponent {
+  private readonly _forceCnfsPermanence$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  public readonly departementMarkers$: Observable<FeatureCollection<Point, CnfsByDepartmentMarkerProperties>> =
+    this.departmentPermanenceMapPresenter.visibleMapCnfsByDepartmentAtZoomLevel$(this._forceCnfsPermanence$.asObservable());
+
+  public readonly permanenceMarkers$: Observable<FeatureCollection<Point, CnfsPermanenceMarkerProperties>> =
+    this.cnfsPermanenceMapPresenter
+      .visibleMapCnfsPermanencesThroughViewportAtZoomLevel$(this._forceCnfsPermanence$.asObservable())
+      .pipe(
+        tap((cnfsPermanences: FeatureCollection<Point, CnfsPermanenceMarkerProperties>): void =>
+          this.cartographyPresenter.setCnfsPermanences(cnfsPermanences.features.map(toCnfsPermanenceProperties))
+        )
+      );
+
+  public readonly regionMarkers$: Observable<FeatureCollection<Point, CnfsByRegionMarkerProperties>> =
+    this.regionPermanenceMapPresenter.visibleMapCnfsByRegionAtZoomLevel$(this._forceCnfsPermanence$.asObservable());
+
   @Input() public centerView!: CenterView;
-
-  @Output() public readonly cnfsDepartementMarkerClick: EventEmitter<MarkerEvent<CnfsByDepartmentMarkerProperties>> =
-    new EventEmitter<MarkerEvent<CnfsByDepartmentMarkerProperties>>();
-
-  @Input() public cnfsDepartementMarkers: FeatureCollection<Point, CnfsByDepartmentMarkerProperties> | null = null;
 
   @Output() public readonly cnfsPermanenceMarkerClick: EventEmitter<MarkerEvent<CnfsPermanenceMarkerProperties>> =
     new EventEmitter<MarkerEvent<CnfsPermanenceMarkerProperties>>();
@@ -39,24 +71,23 @@ export class PermanenceMapComponent {
 
   @Output() public readonly cnfsPermanenceMarkerLeave: EventEmitter<void> = new EventEmitter<void>();
 
-  @Input() public cnfsPermanenceMarkers: FeatureCollection<Point, CnfsPermanenceMarkerProperties> | null = null;
-
-  @Output() public readonly cnfsRegionMarkerClick: EventEmitter<MarkerEvent<CnfsByRegionMarkerProperties>> = new EventEmitter<
-    MarkerEvent<CnfsByRegionMarkerProperties>
-  >();
-
-  @Input() public cnfsRegionMarkers: FeatureCollection<Point, CnfsByRegionMarkerProperties> | null = null;
-
   @Input() public highlightedStructure?: HighlightedStructure;
-
-  @Output() public readonly stateChange: EventEmitter<ViewReset> = new EventEmitter<ViewReset>();
 
   @Input() public usagerMarker: Feature<Point, UsagerMarkerProperties> | null = null;
 
-  @Output() public readonly zoomOut: EventEmitter<void> = new EventEmitter<void>();
+  public constructor(
+    private readonly cartographyPresenter: CartographyPresenter,
+    private readonly cnfsPermanenceMapPresenter: CnfsPermanenceMapPresenter,
+    private readonly departmentPermanenceMapPresenter: DepartmentPermanenceMapPresenter,
+    private readonly regionPermanenceMapPresenter: RegionPermanenceMapPresenter
+  ) {}
 
   public onDepartementClick(cnfsByDepartementMarkerEvent: MarkerEvent<CnfsByDepartmentMarkerProperties>): void {
-    this.cnfsDepartementMarkerClick.emit(cnfsByDepartementMarkerEvent);
+    this._forceCnfsPermanence$.next(isGuyaneBoundedMarker(cnfsByDepartementMarkerEvent.markerProperties));
+    this.cartographyPresenter.setMapView(
+      cnfsByDepartementMarkerEvent.markerPosition,
+      cnfsByDepartementMarkerEvent.markerProperties.boundingZoom
+    );
   }
 
   public onPermanenceClick(cnfsPermanenceMarkerEvent: MarkerEvent<CnfsPermanenceMarkerProperties>): void {
@@ -72,11 +103,26 @@ export class PermanenceMapComponent {
   }
 
   public onRegionClick(cnfsByRegionMarkerEvent: MarkerEvent<CnfsByRegionMarkerProperties>): void {
-    this.cnfsRegionMarkerClick.emit(cnfsByRegionMarkerEvent);
+    this._forceCnfsPermanence$.next(isGuyaneBoundedMarker(cnfsByRegionMarkerEvent.markerProperties));
+    this.cartographyPresenter.setMapView(
+      cnfsByRegionMarkerEvent.markerPosition,
+      cnfsByRegionMarkerEvent.markerProperties.boundingZoom
+    );
   }
 
   public onStateChanged(viewReset: ViewReset): void {
-    this.stateChange.emit(viewReset);
+    const viewportAndZoom: ViewportAndZoom = {
+      viewport: viewReset.viewport,
+      zoomLevel: viewReset.zoomLevel
+    };
+
+    this.departmentPermanenceMapPresenter.setViewportAndZoom(viewportAndZoom);
+    this.regionPermanenceMapPresenter.setViewportAndZoom(viewportAndZoom);
+    this.cnfsPermanenceMapPresenter.setViewportAndZoom(viewportAndZoom);
+  }
+
+  public onZoomOut(): void {
+    this._forceCnfsPermanence$.next(false);
   }
 
   public trackByDepartementName(_: number, cnfsDepartementFeature: Feature<Point, CnfsByDepartmentMarkerProperties>): string {

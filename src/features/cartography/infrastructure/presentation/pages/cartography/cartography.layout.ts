@@ -1,33 +1,11 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import {
-  CenterView,
-  MarkerEvent,
-  CnfsLocalityMarkerProperties,
-  CnfsPermanenceMarkerProperties,
-  CnfsByRegionMarkerProperties,
-  CnfsByDepartmentMarkerProperties,
-  UsagerMarkerProperties
-} from '../../models';
-import { CartographyPresenter, HighlightedStructure, isGuyaneBoundedMarker } from './cartography.presenter';
-import {
-  BehaviorSubject,
-  catchError,
-  delay,
-  EMPTY,
-  filter,
-  merge,
-  mergeWith,
-  Observable,
-  startWith,
-  Subject,
-  switchMap,
-  tap
-} from 'rxjs';
+import { CenterView, MarkerEvent, CnfsPermanenceMarkerProperties, UsagerMarkerProperties } from '../../models';
+import { CartographyPresenter, HighlightedStructure } from './cartography.presenter';
+import { catchError, delay, EMPTY, filter, merge, mergeWith, Observable, startWith, Subject, switchMap, tap } from 'rxjs';
 import { Coordinates } from '../../../../core';
-import { Feature, FeatureCollection, Point } from 'geojson';
+import { Feature, Point } from 'geojson';
 import { map } from 'rxjs/operators';
 import { CITY_ZOOM_LEVEL } from '../../helpers/map-constants';
-import { ViewportAndZoom } from '../../directives';
 import { usagerFeatureFromCoordinates } from '../../helpers';
 import { ActivatedRoute, Event as RouterEvent, NavigationEnd, ParamMap, Router } from '@angular/router';
 import { CARTOGRAPHY_TOKEN, CartographyConfiguration } from '../../../configuration';
@@ -69,8 +47,6 @@ export class CartographyLayout {
 
   private _displayStructureDetails: boolean = false;
 
-  private readonly _forceCnfsPermanence$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-
   private readonly _hideMapOnUrlChange$: Observable<boolean> = this.router.events.pipe(
     filter((routerEvent: RouterEvent): boolean => routerEvent instanceof NavigationEnd),
     map((): boolean => false),
@@ -90,9 +66,6 @@ export class CartographyLayout {
 
   public centerView$: Observable<CenterView> = this.presenter.centerView$.pipe(delay(SCROLL_ON_MAP_DELAY));
 
-  public readonly departementMarkers$: Observable<FeatureCollection<Point, CnfsByDepartmentMarkerProperties>> =
-    this.presenter.visibleMapCnfsByDepartmentAtZoomLevel$(this._forceCnfsPermanence$.asObservable());
-
   public displayMap$: Observable<boolean> = this._displayMap$.pipe(mergeWith(this._hideMapOnUrlChange$));
 
   public displayStructureDetails$: Observable<boolean> = this.presenter.displayStructureDetails$.pipe(
@@ -103,12 +76,6 @@ export class CartographyLayout {
 
   public highlightedStructure$: Observable<HighlightedStructure> = this.presenter.highlightedStructure$;
 
-  public readonly permanenceMarkers$: Observable<FeatureCollection<Point, CnfsPermanenceMarkerProperties>> =
-    this.presenter.visibleMapCnfsPermanencesThroughViewportAtZoomLevel$(this._forceCnfsPermanence$.asObservable());
-
-  public readonly regionMarkers$: Observable<FeatureCollection<Point, CnfsByRegionMarkerProperties>> =
-    this.presenter.visibleMapCnfsByRegionAtZoomLevel$(this._forceCnfsPermanence$.asObservable());
-
   public readonly usagerMarker$: Observable<Feature<Point, UsagerMarkerProperties>> = this._usagerMarker$;
 
   public constructor(
@@ -118,11 +85,6 @@ export class CartographyLayout {
     private readonly route: ActivatedRoute,
     @Inject(CARTOGRAPHY_TOKEN) public readonly cartographyConfiguration: CartographyConfiguration
   ) {}
-
-  public onCnfsLocalityMarkerClick(markerEvent: MarkerEvent<CnfsLocalityMarkerProperties>): void {
-    this._forceCnfsPermanence$.next(isGuyaneBoundedMarker(markerEvent.markerProperties));
-    this.presenter.setMapView(markerEvent.markerPosition, markerEvent.markerProperties.boundingZoom);
-  }
 
   public async onCnfsPermanenceMarkerClick(markerEvent: MarkerEvent<CnfsPermanenceMarkerProperties>): Promise<void> {
     await this.router.navigate(['/', markerEvent.markerProperties.id, 'details']);
@@ -138,13 +100,5 @@ export class CartographyLayout {
 
   public onDisplayMap(displayMap: boolean): void {
     this._displayMap$.next(displayMap);
-  }
-
-  public onMapViewChanged(viewportAndZoom: ViewportAndZoom): void {
-    this.presenter.setViewportAndZoom(viewportAndZoom);
-  }
-
-  public onZoomOut(): void {
-    this._forceCnfsPermanence$.next(false);
   }
 }

@@ -2,8 +2,6 @@ import { CnfsByDepartmentProperties, CnfsByRegionProperties, Coordinates } from 
 import { MarkerKey } from '../../../configuration';
 import { CnfsPermanenceProperties } from '../cnfs-permanence';
 
-export type BoundedMarkers = CnfsByDepartmentProperties | CnfsByRegionProperties;
-
 export type CnfsByDepartmentMarkerProperties = MarkerProperties<CnfsByDepartmentProperties>;
 
 export type CnfsPermanenceMarkerProperties = MarkerProperties<CnfsPermanenceProperties>;

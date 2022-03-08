@@ -1,7 +1,7 @@
 <!--eslint-disable @angular-eslint/template/cyclomatic-complexity-->
 
-<leaflet-map [centerView]="centerView" (stateChange)="onStateChanged($event)" (zoomOut)="zoomOut.emit()">
-  <ng-container *ngIf="cnfsRegionMarkers">
+<leaflet-map [centerView]="centerView" (stateChange)="onStateChanged($event)" (zoomOut)="onZoomOut()">
+  <ng-container *ngIf="regionMarkers$ | async as cnfsRegionMarkers">
     <leaflet-map-marker
       *ngFor="let regionMarkerFeature of cnfsRegionMarkers.features; trackBy: trackByRegionName"
       [latitude]="regionMarkerFeature.geometry.coordinates[1]"
@@ -10,7 +10,7 @@
       markerFactoryKey="cnfsByRegion"
       (markerClick)="onRegionClick($event)"></leaflet-map-marker>
   </ng-container>
-  <ng-container *ngIf="cnfsDepartementMarkers">
+  <ng-container *ngIf="departementMarkers$ | async as cnfsDepartementMarkers">
     <leaflet-map-marker
       *ngFor="let departementMarkersFeature of cnfsDepartementMarkers.features; trackBy: trackByDepartementName"
       [latitude]="departementMarkersFeature.geometry.coordinates[1]"
@@ -19,7 +19,7 @@
       markerFactoryKey="cnfsByDepartment"
       (markerClick)="onDepartementClick($event)"></leaflet-map-marker>
   </ng-container>
-  <ng-container *ngIf="cnfsPermanenceMarkers">
+  <ng-container *ngIf="permanenceMarkers$ | async as cnfsPermanenceMarkers">
     <leaflet-map-marker
       *ngFor="let permanenceMarkersFeature of cnfsPermanenceMarkers.features; trackBy: trackByPermanenceId"
       [latitude]="permanenceMarkersFeature.geometry.coordinates[1]"

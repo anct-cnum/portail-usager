@@ -13,17 +13,10 @@
       <permanence-map
         [highlightedStructure]="(highlightedStructure$ | async) ?? undefined"
         [centerView]="(centerView$ | async) ?? cartographyConfiguration"
-        [cnfsRegionMarkers]="regionMarkers$ | async"
-        [cnfsDepartementMarkers]="departementMarkers$ | async"
-        [cnfsPermanenceMarkers]="permanenceMarkers$ | async"
         [usagerMarker]="usagerMarker$ | async"
-        (cnfsRegionMarkerClick)="onCnfsLocalityMarkerClick($event)"
-        (cnfsDepartementMarkerClick)="onCnfsLocalityMarkerClick($event)"
         (cnfsPermanenceMarkerClick)="onCnfsPermanenceMarkerClick($event)"
         (cnfsPermanenceMarkerEnter)="onCnfsPermanenceMarkerEnter($event)"
-        (cnfsPermanenceMarkerLeave)="onCnfsPermanenceMarkerLeave()"
-        (stateChange)="onMapViewChanged($event)"
-        (zoomOut)="onZoomOut()"></permanence-map>
+        (cnfsPermanenceMarkerLeave)="onCnfsPermanenceMarkerLeave()"></permanence-map>
     </div>
   </div>
   <switch-map-list
