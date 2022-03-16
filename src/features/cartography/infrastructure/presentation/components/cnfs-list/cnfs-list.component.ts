@@ -3,16 +3,11 @@ import { StructurePresentation } from '../../models';
 
 const SCROLL_DELAY_IN_MILLISECONDS: number = 400;
 
-const highlight = (structureId: string): void => {
-  const elem: HTMLElement | null = document.getElementById(structureId);
-  if (elem == null) return;
-
-  setTimeout((): void => {
-    elem.scrollIntoView({
-      behavior: 'smooth',
-      block: 'nearest'
-    });
-  }, SCROLL_DELAY_IN_MILLISECONDS);
+const highlight = (structureId: string = ''): void => {
+  document.getElementById(structureId)?.scrollIntoView({
+    behavior: 'smooth',
+    block: 'nearest'
+  });
 };
 
 @Component({
@@ -21,7 +16,9 @@ const highlight = (structureId: string): void => {
   templateUrl: './cnfs-list.component.html'
 })
 export class CnfsListComponent {
-  private _focusStructureId?: string;
+  public _structuresList: StructurePresentation[] = [];
+
+  @Input() public focusStructureId?: string;
 
   @Input() public hintStructureId: string | null = null;
 
@@ -29,15 +26,16 @@ export class CnfsListComponent {
 
   @Output() public readonly structureLeave: EventEmitter<void> = new EventEmitter<void>();
 
-  @Input() public structuresList: StructurePresentation[] = [];
-
-  public get focusStructureId(): string {
-    return this._focusStructureId ?? '';
+  public get structuresList(): StructurePresentation[] {
+    return this._structuresList;
   }
 
-  @Input() public set focusStructureId(focusStructureId: string) {
-    this._focusStructureId = focusStructureId;
-    highlight(focusStructureId);
+  @Input() public set structuresList(structuresList: StructurePresentation[]) {
+    this._structuresList = structuresList;
+
+    setTimeout((): void => {
+      highlight(this.focusStructureId);
+    }, SCROLL_DELAY_IN_MILLISECONDS);
   }
 
   public trackByStructureId(_: number, structure: StructurePresentation): string {
