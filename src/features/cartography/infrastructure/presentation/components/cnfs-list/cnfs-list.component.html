@@ -13,7 +13,12 @@
         <h4 class="fr-list-group__item__title">{{ structure.name }}</h4>
       </div>
       <div class="fr-display--flex fr-justify-content--space-between fr-column-gap-3v">
-        <p class="fr-text-mention--grey fr-text--sm fr-mb-0">{{ structure.address }}</p>
+        <p class="fr-text-mention--grey fr-text--sm fr-mb-0">
+          {{ structure.address }}
+          <span class="fr-mb-0 fr-display--block" *ngIf="structure.distanceFromUsager">
+            {{ structure.distanceFromUsager }}
+          </span>
+        </p>
         <div>
           <a class="fr-btn fr-btn--secondary fr-white-space--nowrap" [routerLink]="['/', structure.id, 'details']">
             Afficher les détails
