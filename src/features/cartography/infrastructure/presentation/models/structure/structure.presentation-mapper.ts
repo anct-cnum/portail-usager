@@ -1,17 +1,18 @@
 import { StructurePresentation } from './structure.presentation';
-import { Feature, Point } from 'geojson';
-import { CnfsPermanenceMarkerProperties } from '../markers';
 import { Coordinates } from '../../../../core';
+import { CnfsPermanenceProperties } from '../cnfs-permanence';
+import { getDistanceFromLocation } from '../utils/geographic';
 
-export const cnfsPermanencesToStructurePresentations = (
-  cnfsPermanences: Feature<Point, CnfsPermanenceMarkerProperties>[]
+export const toStructurePresentation = (
+  cnfsPermanenceProperties: CnfsPermanenceProperties[],
+  usagerCoordinates?: Coordinates
 ): StructurePresentation[] =>
-  cnfsPermanences.map(
-    (feature: Feature<Point, CnfsPermanenceMarkerProperties>): StructurePresentation => ({
-      address: feature.properties.address,
-      id: feature.properties.id,
-      isLabeledFranceServices: feature.properties.isLabeledFranceServices,
-      location: Coordinates.fromGeoJsonFeature(feature),
-      name: feature.properties.name
+  cnfsPermanenceProperties.map(
+    (cnfsPermanenceProperty: CnfsPermanenceProperties): StructurePresentation => ({
+      address: cnfsPermanenceProperty.address,
+      id: cnfsPermanenceProperty.id,
+      isLabeledFranceServices: cnfsPermanenceProperty.isLabeledFranceServices,
+      name: cnfsPermanenceProperty.name,
+      ...getDistanceFromLocation(cnfsPermanenceProperty.position, usagerCoordinates)
     })
   );

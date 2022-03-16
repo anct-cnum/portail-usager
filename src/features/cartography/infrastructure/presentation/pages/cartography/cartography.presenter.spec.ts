@@ -268,19 +268,36 @@ describe('cartography presenter', (): void => {
     });
 
     it('should be the structures of the visible Cnfs permanences', async (): Promise<void> => {
-      const expectedStructureList: CnfsPermanenceMarkerProperties[] = [
+      const cnfsPermanences: CnfsPermanenceMarkerProperties[] = [
         {
           address: '12 rue des Acacias, 69002 Lyon',
           id: '4c38ebc9a06fdd532bf9d7be',
           isLabeledFranceServices: false,
           markerType: MarkerKey.CnfsPermanence,
-          name: 'Association des centres sociaux et culturels de Lyon'
+          name: 'Association des centres sociaux et culturels de Lyon',
+          position: new Coordinates(43.955, 6.053333)
         },
         {
           address: '31 Avenue de la mer, 13003 Marseille',
           id: '88bc36fb0db191928330b1e6',
           isLabeledFranceServices: true,
           markerType: MarkerKey.CnfsPermanence,
+          name: 'Médiathèque de la mer',
+          position: new Coordinates(46.869512, -1.012996)
+        }
+      ];
+
+      const expectedStructureList: StructurePresentation[] = [
+        {
+          address: '12 rue des Acacias, 69002 Lyon',
+          id: '4c38ebc9a06fdd532bf9d7be',
+          isLabeledFranceServices: false,
+          name: 'Association des centres sociaux et culturels de Lyon'
+        },
+        {
+          address: '31 Avenue de la mer, 13003 Marseille',
+          id: '88bc36fb0db191928330b1e6',
+          isLabeledFranceServices: true,
           name: 'Médiathèque de la mer'
         }
       ];
@@ -292,7 +309,60 @@ describe('cartography presenter', (): void => {
         {} as CnfsRest
       );
 
-      cartographyPresenter.setCnfsPermanences(expectedStructureList);
+      cartographyPresenter.setCnfsPermanences(cnfsPermanences);
+
+      const structuresList: StructurePresentation[] = await firstValueFrom(cartographyPresenter.structuresList$());
+
+      expect(structuresList).toStrictEqual(expectedStructureList);
+    });
+
+    it('should get structure liste with distance from usager when usager location is set', async (): Promise<void> => {
+      const cnfsPermanences: CnfsPermanenceMarkerProperties[] = [
+        {
+          address: '12 rue des Acacias, 69002 Lyon',
+          id: '4c38ebc9a06fdd532bf9d7be',
+          isLabeledFranceServices: false,
+          markerType: MarkerKey.CnfsPermanence,
+          name: 'Association des centres sociaux et culturels de Lyon',
+          position: new Coordinates(43.955, 6.053333)
+        },
+        {
+          address: '31 Avenue de la mer, 13003 Marseille',
+          id: '88bc36fb0db191928330b1e6',
+          isLabeledFranceServices: true,
+          markerType: MarkerKey.CnfsPermanence,
+          name: 'Médiathèque de la mer',
+          position: new Coordinates(46.869512, -1.012996)
+        }
+      ];
+
+      const expectedStructureList: StructurePresentation[] = [
+        {
+          address: '12 rue des Acacias, 69002 Lyon',
+          distanceFromUsager: '100.98 km',
+          id: '4c38ebc9a06fdd532bf9d7be',
+          isLabeledFranceServices: false,
+          name: 'Association des centres sociaux et culturels de Lyon'
+        },
+        {
+          address: '31 Avenue de la mer, 13003 Marseille',
+          distanceFromUsager: '592.19 km',
+          id: '88bc36fb0db191928330b1e6',
+          isLabeledFranceServices: true,
+          name: 'Médiathèque de la mer'
+        }
+      ];
+
+      const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+        {} as CnfsDetailsUseCase,
+        {} as GeocodeAddressUseCase,
+        {} as SearchAddressUseCase,
+        {} as CnfsRest
+      );
+
+      cartographyPresenter.setUsagerCoordinates(new Coordinates(44.863, 6.075412));
+
+      cartographyPresenter.setCnfsPermanences(cnfsPermanences);
 
       const structuresList: StructurePresentation[] = await firstValueFrom(cartographyPresenter.structuresList$());
 

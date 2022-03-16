@@ -8,14 +8,15 @@ import {
   MarkerHighLight,
   CnfsLocationPresentation,
   CnfsPermanenceProperties,
-  CnfsPermanenceMarkerProperties
+  CnfsPermanenceMarkerProperties,
+  cnfsPositionTransferToPresentation,
+  toStructurePresentation
 } from '../../models';
 import { CnfsDetails, Coordinates } from '../../../../core';
 import { BehaviorSubject, filter, map, Observable, Subject } from 'rxjs';
 import { CnfsDetailsUseCase, GeocodeAddressUseCase, SearchAddressUseCase } from '../../../../use-cases';
 import { CnfsRest } from '../../../data/rest';
 import { CnfsLocationTransfer } from '../../../data/models';
-import { cnfsPositionTransferToPresentation } from '../../models/cnfs/cnfs-postition.presentation-mapper';
 
 export interface HighlightedStructure {
   id: string;
@@ -129,6 +130,12 @@ export class CartographyPresenter {
   }
 
   public structuresList$(): Observable<StructurePresentation[]> {
-    return this._cnfsPermanenceMarkerProperties$.asObservable();
+    return this._cnfsPermanenceMarkerProperties$
+      .asObservable()
+      .pipe(
+        map((cnfsPermanenceProperties: CnfsPermanenceProperties[]): StructurePresentation[] =>
+          toStructurePresentation(cnfsPermanenceProperties, this._usagerCoordinates)
+        )
+      );
   }
 }

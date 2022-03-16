@@ -7,11 +7,12 @@ const hasValidCoordinates = (feature: Feature<Point>): boolean => {
   return Coordinates.isValidLatitudeAngle(latitude) && Coordinates.isValidLongitudeAngle(longitude);
 };
 
-const transferToCoreProperties = (featureProperties: CnfsTransferProperties): CnfsPermanence => ({
-  address: featureProperties.address ?? '',
-  id: featureProperties.id,
-  isLabeledFranceServices: featureProperties.isLabeledFranceServices ?? false,
-  name: featureProperties.name
+const transferToCoreProperties = (feature: Feature<Point, CnfsTransferProperties>): CnfsPermanence => ({
+  address: feature.properties.address ?? '',
+  id: feature.properties.id,
+  isLabeledFranceServices: feature.properties.isLabeledFranceServices ?? false,
+  name: feature.properties.name,
+  position: Coordinates.fromGeoJsonFeature(feature)
 });
 
 export const cnfsTransferToCore = (cnfsTransfer: CnfsTransfer): Cnfs[] =>
@@ -19,5 +20,5 @@ export const cnfsTransferToCore = (cnfsTransfer: CnfsTransfer): Cnfs[] =>
     .filter((feature: Feature<Point, CnfsTransferProperties>): boolean => hasValidCoordinates(feature))
     .map(
       (feature: Feature<Point, CnfsTransferProperties>): Cnfs =>
-        new Cnfs(Coordinates.fromGeoJsonFeature(feature), transferToCoreProperties(feature.properties))
+        new Cnfs(Coordinates.fromGeoJsonFeature(feature), transferToCoreProperties(feature))
     );
