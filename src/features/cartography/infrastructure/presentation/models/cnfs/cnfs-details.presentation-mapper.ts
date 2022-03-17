@@ -1,6 +1,6 @@
 import { CnfsDetails, CnfsInStructure, CnfsType, Coordinates } from '../../../../core';
 import { CnfsPresentation, CnfsDetailsPresentation, DayPresentation, Opening } from './cnfs-details.presentation';
-import { getDistanceFromLocation } from '../utils/geographic';
+import { getUsagerDistanceFromLocation } from '../utils/geographic';
 
 const OPENING_DAYS: DayPresentation[] = Object.values(DayPresentation);
 
@@ -32,7 +32,7 @@ export const cnfsDetailsToPresentation = (
   address: cnfsDetails.structureAddress,
   cnfsList: cnfsDetails.cnfs.map(toCnfsPresentation),
   coordinates: cnfsDetails.position,
-  ...getDistanceFromLocation(cnfsDetails.position, usagerCoordinates),
+  ...getUsagerDistanceFromLocation(cnfsDetails.position, usagerCoordinates),
   email: cnfsDetails.contact?.email,
   ...getCnfsTypeNote(cnfsDetails.type),
   opening: openingHoursToPresentation(cnfsDetails.openingHours),

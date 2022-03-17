@@ -1,7 +1,7 @@
 import { StructurePresentation } from './structure.presentation';
 import { Coordinates } from '../../../../core';
 import { CnfsPermanenceProperties } from '../cnfs-permanence';
-import { getDistanceFromLocation } from '../utils/geographic';
+import { getUsagerDistanceFromLocation } from '../utils/geographic';
 
 export const toStructurePresentation = (
   cnfsPermanenceProperties: CnfsPermanenceProperties[],
@@ -13,6 +13,6 @@ export const toStructurePresentation = (
       id: cnfsPermanenceProperty.id,
       isLabeledFranceServices: cnfsPermanenceProperty.isLabeledFranceServices,
       name: cnfsPermanenceProperty.name,
-      ...getDistanceFromLocation(cnfsPermanenceProperty.position, usagerCoordinates)
+      ...getUsagerDistanceFromLocation(cnfsPermanenceProperty.position, usagerCoordinates)
     })
   );

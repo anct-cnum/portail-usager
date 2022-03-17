@@ -41,7 +41,7 @@ const geographicDistance = (coordinatesA: Coordinates, coordinatesB: Coordinates
 
 const TWO_DIGITS_AFTER_COMMA: number = 2;
 
-export const getDistanceFromLocation = (
+export const getUsagerDistanceFromLocation = (
   locationCoordinated?: Coordinates,
   usagerCoordinates?: Coordinates
 ): Pick<CnfsDetailsPresentation, 'distanceFromUsager'> =>
