@@ -5,6 +5,7 @@ export interface CnfsPermanence {
   name: string;
   address: string;
   isLabeledFranceServices: boolean;
+  openingHours?: string[];
   position?: Coordinates;
 }
 
