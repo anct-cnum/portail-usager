@@ -37,20 +37,21 @@ const AVAILABLE_DAYS: DayPresentation[] = [
 
 const getDayWithMondayAsFirstWeekDay = (day: number): number => (day === 0 ? SUNDAY_INDEX : day - 1);
 
-const isFirstAvailableDayOnNextWeek = (openingDayIndex: number, nextOpeningDayIndex: number, today: number): boolean =>
-  openingDayIndex <= today && openingDayIndex <= nextOpeningDayIndex;
+const isFirstAvailableDayOnNextWeek = (nextOpeningDayIndex: number, openingDayIndex: number, today: number): boolean =>
+  openingDayIndex > nextOpeningDayIndex && openingDayIndex < today;
 
-const isFirstAvailableDayOnThisWeek = (openingDayIndex: number, nextOpeningDayIndex: number, today: number): boolean =>
-  openingDayIndex > today && openingDayIndex > nextOpeningDayIndex;
+const isFirstAvailableDayOnThisWeek = (nextOpeningDayIndex: number, openingDayIndex: number, today: number): boolean =>
+  (openingDayIndex < nextOpeningDayIndex && nextOpeningDayIndex > today) ||
+  (openingDayIndex > nextOpeningDayIndex && nextOpeningDayIndex <= today);
 
-const isFirstAvailableDay = (openingDayIndex: number, nextOpeningDayIndex: number, today: number): boolean =>
-  isFirstAvailableDayOnNextWeek(openingDayIndex, nextOpeningDayIndex, today) ||
-  isFirstAvailableDayOnThisWeek(openingDayIndex, nextOpeningDayIndex, today);
+const isFirstAvailableDay = (nextOpeningDayIndex: number, openingDayIndex: number, today: number): boolean =>
+  isFirstAvailableDayOnNextWeek(nextOpeningDayIndex, openingDayIndex, today) ||
+  isFirstAvailableDayOnThisWeek(nextOpeningDayIndex, openingDayIndex, today);
 
 const selectNearestOpeningDay = (openingDays: DayPresentation[], today: number): DayPresentation =>
   openingDays.reduce(
     (nextOpeningDay: DayPresentation, openingDay: DayPresentation): DayPresentation =>
-      isFirstAvailableDay(AVAILABLE_DAYS.indexOf(openingDay), AVAILABLE_DAYS.indexOf(nextOpeningDay), today)
+      isFirstAvailableDay(AVAILABLE_DAYS.indexOf(nextOpeningDay), AVAILABLE_DAYS.indexOf(openingDay), today)
         ? openingDay
         : nextOpeningDay,
     openingDays[0]
