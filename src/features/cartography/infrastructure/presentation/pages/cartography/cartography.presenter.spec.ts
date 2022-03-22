@@ -97,8 +97,7 @@ describe('cartography presenter', (): void => {
         CNFS_DETAILS_USE_CASE,
         {} as GeocodeAddressUseCase,
         {} as SearchAddressUseCase,
-        {} as CnfsRest,
-        {} as Date
+        {} as CnfsRest
       );
 
       const cnfsDetails: CnfsDetailsPresentation = await firstValueFrom(cartographyPresenter.cnfsDetails$(id));
@@ -166,8 +165,7 @@ describe('cartography presenter', (): void => {
         cnfsDetailsUseCase,
         {} as GeocodeAddressUseCase,
         {} as SearchAddressUseCase,
-        {} as CnfsRest,
-        {} as Date
+        {} as CnfsRest
       );
 
       const cnfsDetails: CnfsDetailsPresentation = await firstValueFrom(cartographyPresenter.cnfsDetails$(id));
@@ -209,8 +207,7 @@ describe('cartography presenter', (): void => {
         cnfsDetailsUseCase,
         {} as GeocodeAddressUseCase,
         {} as SearchAddressUseCase,
-        {} as CnfsRest,
-        {} as Date
+        {} as CnfsRest
       );
 
       cartographyPresenter.setUsagerCoordinates(new Coordinates(44.863, 6.075412));
@@ -239,8 +236,7 @@ describe('cartography presenter', (): void => {
         {} as CnfsDetailsUseCase,
         {} as GeocodeAddressUseCase,
         {} as SearchAddressUseCase,
-        cnfsRest,
-        {} as Date
+        cnfsRest
       );
 
       const structureId: string = '88bc36fb0db191928330b1e6';
@@ -262,11 +258,10 @@ describe('cartography presenter', (): void => {
         {} as CnfsDetailsUseCase,
         {} as GeocodeAddressUseCase,
         {} as SearchAddressUseCase,
-        {} as CnfsRest,
-        {} as Date
+        {} as CnfsRest
       );
 
-      const structuresList: StructurePresentation[] = await firstValueFrom(cartographyPresenter.structuresList$());
+      const structuresList: StructurePresentation[] = await firstValueFrom(cartographyPresenter.structuresList$(new Date()));
 
       expect(structuresList).toStrictEqual([]);
     });
@@ -312,13 +307,14 @@ describe('cartography presenter', (): void => {
         {} as CnfsDetailsUseCase,
         {} as GeocodeAddressUseCase,
         {} as SearchAddressUseCase,
-        {} as CnfsRest,
-        new Date('2022-03-20')
+        {} as CnfsRest
       );
 
       cartographyPresenter.setCnfsPermanences(cnfsPermanences);
 
-      const structuresList: StructurePresentation[] = await firstValueFrom(cartographyPresenter.structuresList$());
+      const structuresList: StructurePresentation[] = await firstValueFrom(
+        cartographyPresenter.structuresList$(new Date('2022-03-20'))
+      );
 
       expect(structuresList).toStrictEqual(expectedStructureList);
     });
@@ -366,15 +362,16 @@ describe('cartography presenter', (): void => {
         {} as CnfsDetailsUseCase,
         {} as GeocodeAddressUseCase,
         {} as SearchAddressUseCase,
-        {} as CnfsRest,
-        new Date('2022-03-20')
+        {} as CnfsRest
       );
 
       cartographyPresenter.setUsagerCoordinates(new Coordinates(44.863, 6.075412));
 
       cartographyPresenter.setCnfsPermanences(cnfsPermanences);
 
-      const structuresList: StructurePresentation[] = await firstValueFrom(cartographyPresenter.structuresList$());
+      const structuresList: StructurePresentation[] = await firstValueFrom(
+        cartographyPresenter.structuresList$(new Date('2022-03-20'))
+      );
 
       expect(structuresList).toStrictEqual(expectedStructureList);
     });
@@ -525,15 +522,16 @@ describe('cartography presenter', (): void => {
           {} as CnfsDetailsUseCase,
           {} as GeocodeAddressUseCase,
           {} as SearchAddressUseCase,
-          {} as CnfsRest,
-          new Date(date)
+          {} as CnfsRest
         );
 
         cartographyPresenter.setUsagerCoordinates(new Coordinates(44.863, 6.075412));
 
         cartographyPresenter.setCnfsPermanences(cnfsPermanences);
 
-        const structuresList: StructurePresentation[] = await firstValueFrom(cartographyPresenter.structuresList$());
+        const structuresList: StructurePresentation[] = await firstValueFrom(
+          cartographyPresenter.structuresList$(new Date(date))
+        );
 
         expect(structuresList).toStrictEqual(expectedStructureList);
       }
@@ -558,8 +556,7 @@ describe('cartography presenter', (): void => {
         {} as CnfsDetailsUseCase,
         {} as GeocodeAddressUseCase,
         searchAddressUseCase,
-        {} as CnfsRest,
-        {} as Date
+        {} as CnfsRest
       );
 
       const addressesFound: AddressFoundPresentation[] = await firstValueFrom(cartographyPresenter.searchAddress$(searchTerm));

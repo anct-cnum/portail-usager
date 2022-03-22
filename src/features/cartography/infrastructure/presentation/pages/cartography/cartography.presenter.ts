@@ -57,8 +57,7 @@ export class CartographyPresenter {
     @Inject(CnfsDetailsUseCase) private readonly cnfsDetailsUseCase: CnfsDetailsUseCase,
     @Inject(GeocodeAddressUseCase) private readonly geocodeAddressUseCase: GeocodeAddressUseCase,
     @Inject(SearchAddressUseCase) private readonly searchAddressUseCase: SearchAddressUseCase,
-    @Inject(CnfsRest) private readonly cnfsRest: CnfsRest,
-    @Inject(Date) private readonly date: Date
+    @Inject(CnfsRest) private readonly cnfsRest: CnfsRest
   ) {}
 
   public clearStructureHighlight(): void {
@@ -130,12 +129,12 @@ export class CartographyPresenter {
     this._usagerCoordinates = usagerCoordinates;
   }
 
-  public structuresList$(): Observable<StructurePresentation[]> {
+  public structuresList$(date: Date): Observable<StructurePresentation[]> {
     return this._cnfsPermanenceMarkerProperties$
       .asObservable()
       .pipe(
         map((cnfsPermanenceProperties: CnfsPermanenceProperties[]): StructurePresentation[] =>
-          toStructurePresentation(cnfsPermanenceProperties, this.date, this._usagerCoordinates)
+          toStructurePresentation(cnfsPermanenceProperties, date, this._usagerCoordinates)
         )
       );
   }

@@ -50,7 +50,7 @@ export class CnfsListPage implements OnInit {
 
   public structuresList$: Observable<StructurePresentation[]> = this._structureId$.pipe(
     startWith([]),
-    switchMap((): Observable<StructurePresentation[]> => this.presenter.structuresList$())
+    switchMap((): Observable<StructurePresentation[]> => this.presenter.structuresList$(new Date()))
   );
 
   public constructor(

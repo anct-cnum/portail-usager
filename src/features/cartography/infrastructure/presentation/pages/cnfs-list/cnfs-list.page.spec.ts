@@ -27,7 +27,7 @@ const CARTOGRAPHY_PRESENTER: CartographyPresenter = {
         name: 'Médiathèque de la mer'
       }
     ])
-} as CartographyPresenter;
+} as unknown as CartographyPresenter;
 
 describe('cnfs-list page', (): void => {
   beforeEach(async (): Promise<void> => {
