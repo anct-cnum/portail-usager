@@ -16,12 +16,14 @@ const CARTOGRAPHY_PRESENTER: CartographyPresenter = {
         address: '12 rue des Acacias, 69002 Lyon',
         id: '4c38ebc9a06fdd532bf9d7be',
         isLabeledFranceServices: false,
+        isOpen: true,
         name: 'Association des centres sociaux et culturels de Lyon'
       },
       {
         address: '31 Avenue de la mer, 13003 Marseille',
         id: '88bc36fb0db191928330b1e6',
         isLabeledFranceServices: true,
+        isOpen: true,
         name: 'Médiathèque de la mer'
       }
     ])

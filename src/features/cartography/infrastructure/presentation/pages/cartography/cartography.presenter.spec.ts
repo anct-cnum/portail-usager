@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+
 import { CartographyPresenter } from './cartography.presenter';
 import { CnfsDetailsUseCase, GeocodeAddressUseCase, SearchAddressUseCase } from '../../../../use-cases';
 import { firstValueFrom, Observable, of } from 'rxjs';
@@ -15,7 +17,6 @@ import { CnfsLocationTransfer } from '../../../data/models';
 import { MarkerKey } from '../../../configuration';
 
 const CNFS_DETAILS_USE_CASE: CnfsDetailsUseCase = {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   execute$(_: string): Observable<CnfsDetails> {
     return of({
       cnfs: [
@@ -96,7 +97,8 @@ describe('cartography presenter', (): void => {
         CNFS_DETAILS_USE_CASE,
         {} as GeocodeAddressUseCase,
         {} as SearchAddressUseCase,
-        {} as CnfsRest
+        {} as CnfsRest,
+        {} as Date
       );
 
       const cnfsDetails: CnfsDetailsPresentation = await firstValueFrom(cartographyPresenter.cnfsDetails$(id));
@@ -106,7 +108,6 @@ describe('cartography presenter', (): void => {
 
     it('should get cnfs details with a Conseiller numérique France Service en Chambre d’Agriculture', async (): Promise<void> => {
       const cnfsDetailsUseCase: CnfsDetailsUseCase = {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
         execute$(_: string): Observable<CnfsDetails> {
           return of({
             cnfs: [
@@ -165,7 +166,8 @@ describe('cartography presenter', (): void => {
         cnfsDetailsUseCase,
         {} as GeocodeAddressUseCase,
         {} as SearchAddressUseCase,
-        {} as CnfsRest
+        {} as CnfsRest,
+        {} as Date
       );
 
       const cnfsDetails: CnfsDetailsPresentation = await firstValueFrom(cartographyPresenter.cnfsDetails$(id));
@@ -175,7 +177,6 @@ describe('cartography presenter', (): void => {
 
     it('should get cnfs details with distance from usager', async (): Promise<void> => {
       const cnfsDetailsUseCase: CnfsDetailsUseCase = {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
         execute$(_: string): Observable<CnfsDetails> {
           return of({
             cnfs: [],
@@ -208,7 +209,8 @@ describe('cartography presenter', (): void => {
         cnfsDetailsUseCase,
         {} as GeocodeAddressUseCase,
         {} as SearchAddressUseCase,
-        {} as CnfsRest
+        {} as CnfsRest,
+        {} as Date
       );
 
       cartographyPresenter.setUsagerCoordinates(new Coordinates(44.863, 6.075412));
@@ -237,7 +239,8 @@ describe('cartography presenter', (): void => {
         {} as CnfsDetailsUseCase,
         {} as GeocodeAddressUseCase,
         {} as SearchAddressUseCase,
-        cnfsRest
+        cnfsRest,
+        {} as Date
       );
 
       const structureId: string = '88bc36fb0db191928330b1e6';
@@ -259,7 +262,8 @@ describe('cartography presenter', (): void => {
         {} as CnfsDetailsUseCase,
         {} as GeocodeAddressUseCase,
         {} as SearchAddressUseCase,
-        {} as CnfsRest
+        {} as CnfsRest,
+        {} as Date
       );
 
       const structuresList: StructurePresentation[] = await firstValueFrom(cartographyPresenter.structuresList$());
@@ -292,12 +296,14 @@ describe('cartography presenter', (): void => {
           address: '12 rue des Acacias, 69002 Lyon',
           id: '4c38ebc9a06fdd532bf9d7be',
           isLabeledFranceServices: false,
+          isOpen: false,
           name: 'Association des centres sociaux et culturels de Lyon'
         },
         {
           address: '31 Avenue de la mer, 13003 Marseille',
           id: '88bc36fb0db191928330b1e6',
           isLabeledFranceServices: true,
+          isOpen: false,
           name: 'Médiathèque de la mer'
         }
       ];
@@ -306,7 +312,8 @@ describe('cartography presenter', (): void => {
         {} as CnfsDetailsUseCase,
         {} as GeocodeAddressUseCase,
         {} as SearchAddressUseCase,
-        {} as CnfsRest
+        {} as CnfsRest,
+        new Date('2022-03-20')
       );
 
       cartographyPresenter.setCnfsPermanences(cnfsPermanences);
@@ -342,6 +349,7 @@ describe('cartography presenter', (): void => {
           distanceFromUsager: '100.98 km',
           id: '4c38ebc9a06fdd532bf9d7be',
           isLabeledFranceServices: false,
+          isOpen: false,
           name: 'Association des centres sociaux et culturels de Lyon'
         },
         {
@@ -349,6 +357,7 @@ describe('cartography presenter', (): void => {
           distanceFromUsager: '592.19 km',
           id: '88bc36fb0db191928330b1e6',
           isLabeledFranceServices: true,
+          isOpen: false,
           name: 'Médiathèque de la mer'
         }
       ];
@@ -357,7 +366,8 @@ describe('cartography presenter', (): void => {
         {} as CnfsDetailsUseCase,
         {} as GeocodeAddressUseCase,
         {} as SearchAddressUseCase,
-        {} as CnfsRest
+        {} as CnfsRest,
+        new Date('2022-03-20')
       );
 
       cartographyPresenter.setUsagerCoordinates(new Coordinates(44.863, 6.075412));
@@ -368,6 +378,159 @@ describe('cartography presenter', (): void => {
 
       expect(structuresList).toStrictEqual(expectedStructureList);
     });
+
+    it.each([
+      {
+        _desc: 'closed structure on 2022-03-15 at 10:00 (Tuesday), no opening hours',
+        date: '2022-03-15T10:00:00',
+        expectedIsOpen: false,
+        expectedNextOpeningDay: null,
+        openingHours: []
+      },
+      {
+        _desc: 'closed structure on 2022-03-20 (Sunday), open on Monday',
+        date: '2022-03-20',
+        expectedIsOpen: false,
+        expectedNextOpeningDay: DayPresentation.Monday,
+        openingHours: ['9h30 - 17h30']
+      },
+      {
+        _desc: 'closed structure on 2022-03-20 (Sunday), open on Tuesday',
+        date: '2022-03-20',
+        expectedIsOpen: false,
+        expectedNextOpeningDay: DayPresentation.Tuesday,
+        openingHours: ['', '9h30 - 17h30']
+      },
+      {
+        _desc: 'opened structure on 2022-03-15 at 12:00 (Tuesday)',
+        date: '2022-03-15T12:00:00',
+        expectedIsOpen: true,
+        expectedNextOpeningDay: null,
+        openingHours: ['', '9h30 - 17h30', '9h30 - 17h30']
+      },
+      {
+        _desc: 'closed structure on 2022-03-15 at 09:25 (Tuesday), open today',
+        date: '2022-03-15T09:25:00',
+        expectedIsOpen: false,
+        expectedNextOpeningDay: DayPresentation.Tuesday,
+        openingHours: ['', '9h30 - 17h30', '9h30 - 17h30']
+      },
+      {
+        _desc: 'closed structure on 2022-03-15 at 17:35 (Tuesday), open on Wednesday',
+        date: '2022-03-15T17:35:00',
+        expectedIsOpen: false,
+        expectedNextOpeningDay: DayPresentation.Wednesday,
+        openingHours: ['', '9h30 - 17h30', '9h30 - 17h30']
+      },
+      {
+        _desc: 'closed structure on 2022-03-15 at 17:35 (Tuesday), open on next Tuesday',
+        date: '2022-03-15T17:35:00',
+        expectedIsOpen: false,
+        expectedNextOpeningDay: DayPresentation.Tuesday,
+        openingHours: ['', '9h30 - 17h30']
+      },
+      {
+        _desc: 'closed structure on 2022-03-15 at 09:00 (Tuesday) before it opens in the morning, open later today',
+        date: '2022-03-15T09:00:00',
+        expectedIsOpen: false,
+        expectedNextOpeningDay: DayPresentation.Tuesday,
+        openingHours: ['', '9h30 - 12h30 | 14h30 - 17h30', '', '', '9h30 - 17h30']
+      },
+      {
+        _desc: 'opened structure on 2022-03-15 at 10:00 (Tuesday) during morning opening hours',
+        date: '2022-03-15T10:00:00',
+        expectedIsOpen: true,
+        expectedNextOpeningDay: null,
+        openingHours: ['', '9h30 - 12h30 | 14h30 - 17h30', '', '', '9h30 - 17h30']
+      },
+      {
+        _desc: 'closed structure on 2022-03-15 at 13:00 (Tuesday) during lunch time, open later today',
+        date: '2022-03-15T13:00:00',
+        expectedIsOpen: false,
+        expectedNextOpeningDay: DayPresentation.Tuesday,
+        openingHours: ['', '9h30 - 12h30 | 14h30 - 17h30', '', '', '9h30 - 17h30']
+      },
+      {
+        _desc: 'opened structure on 2022-03-15 at 15:00 (Tuesday) during afternoon opening hours',
+        date: '2022-03-15T15:00:00',
+        expectedIsOpen: true,
+        expectedNextOpeningDay: null,
+        openingHours: ['', '9h30 - 12h30 | 14h30 - 17h30', '', '', '9h30 - 17h30']
+      },
+      {
+        _desc: 'closed structure on 2022-03-15 at 18:00 (Tuesday) after it closes in the afternoon, open on Friday',
+        date: '2022-03-15T18:00:00',
+        expectedIsOpen: false,
+        expectedNextOpeningDay: DayPresentation.Friday,
+        openingHours: ['', '9h30 - 12h30 | 14h30 - 17h30', '', '', '9h30 - 17h30']
+      },
+      {
+        _desc: 'closed structure on 2022-03-15 at 18:00 (Tuesday) after it closes in the afternoon, open on next Tuesday',
+        date: '2022-03-15T18:00:00',
+        expectedIsOpen: false,
+        expectedNextOpeningDay: DayPresentation.Tuesday,
+        openingHours: ['', '9h30 - 12h30 | 14h30 - 17h30']
+      }
+    ])(
+      'should get structure liste containing a $_desc',
+      async ({
+        _desc,
+        date,
+        expectedIsOpen,
+        expectedNextOpeningDay,
+        openingHours
+      }: {
+        _desc: string;
+        date: string;
+        expectedIsOpen: boolean;
+        expectedNextOpeningDay: DayPresentation | null;
+        openingHours: string[];
+      }): Promise<void> => {
+        const cnfsPermanences: CnfsPermanenceMarkerProperties[] = [
+          {
+            address: '12 rue des Acacias, 69002 Lyon',
+            id: '4c38ebc9a06fdd532bf9d7be',
+            isLabeledFranceServices: false,
+            markerType: MarkerKey.CnfsPermanence,
+            name: 'Association des centres sociaux et culturels de Lyon',
+            openingHours,
+            position: new Coordinates(43.955, 6.053333)
+          }
+        ];
+
+        const expectedStructureList: StructurePresentation[] = [
+          {
+            address: '12 rue des Acacias, 69002 Lyon',
+            distanceFromUsager: '100.98 km',
+            id: '4c38ebc9a06fdd532bf9d7be',
+            isLabeledFranceServices: false,
+            isOpen: expectedIsOpen,
+            name: 'Association des centres sociaux et culturels de Lyon',
+            ...(expectedNextOpeningDay == null
+              ? {}
+              : {
+                  nextOpeningDay: expectedNextOpeningDay
+                })
+          }
+        ];
+
+        const cartographyPresenter: CartographyPresenter = new CartographyPresenter(
+          {} as CnfsDetailsUseCase,
+          {} as GeocodeAddressUseCase,
+          {} as SearchAddressUseCase,
+          {} as CnfsRest,
+          new Date(date)
+        );
+
+        cartographyPresenter.setUsagerCoordinates(new Coordinates(44.863, 6.075412));
+
+        cartographyPresenter.setCnfsPermanences(cnfsPermanences);
+
+        const structuresList: StructurePresentation[] = await firstValueFrom(cartographyPresenter.structuresList$());
+
+        expect(structuresList).toStrictEqual(expectedStructureList);
+      }
+    );
   });
 
   describe('search address', (): void => {
@@ -388,7 +551,8 @@ describe('cartography presenter', (): void => {
         {} as CnfsDetailsUseCase,
         {} as GeocodeAddressUseCase,
         searchAddressUseCase,
-        {} as CnfsRest
+        {} as CnfsRest,
+        {} as Date
       );
 
       const addressesFound: AddressFoundPresentation[] = await firstValueFrom(cartographyPresenter.searchAddress$(searchTerm));
