@@ -11,13 +11,23 @@
       class="fr-list-group__item fr-list-group__item--active-out">
       <div class="fr-display--flex fr-justify-content--space-between fr-column-gap-3v">
         <h4 class="fr-list-group__item__title">{{ structure.name }}</h4>
+        <span class="fr-white-space--nowrap">
+          <span *ngIf="structure.isOpen; else closed" class="fr-text-default--success">Ouvert</span>
+          <ng-template #closed>
+            <span class="fr-text-mention--grey" *ngIf="structure.nextOpeningDay">
+              Ouvre {{ structure.nextOpeningDay }} |
+              <span class="fr-text-default--warning">Fermé</span>
+            </span>
+          </ng-template>
+        </span>
       </div>
       <div class="fr-display--flex fr-justify-content--space-between fr-column-gap-3v">
-        <p class="fr-text-mention--grey fr-text--sm fr-mb-0">
-          {{ structure.address }}
-          <span class="fr-mb-0 fr-display--block" *ngIf="structure.distanceFromUsager">
-            {{ structure.distanceFromUsager }}
-          </span>
+        <p class="fr-text-mention--grey fr-mb-0">
+          <span class="fr-text--sm">{{ structure.address }}</span>
+          <ng-container *ngIf="structure.distanceFromUsager">
+            <br />
+            <i class="fr-text--xs">distance : {{ structure.distanceFromUsager }}</i>
+          </ng-container>
         </p>
         <div>
           <a class="fr-btn fr-btn--secondary fr-white-space--nowrap" [routerLink]="['/', structure.id, 'details']">
