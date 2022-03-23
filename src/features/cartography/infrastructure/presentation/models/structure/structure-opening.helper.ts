@@ -37,25 +37,14 @@ const AVAILABLE_DAYS: DayPresentation[] = [
 
 const getDayWithMondayAsFirstWeekDay = (day: number): number => (day === 0 ? SUNDAY_INDEX : day - 1);
 
-const isFirstAvailableDayOnNextWeek = (nextOpeningDayIndex: number, openingDayIndex: number, today: number): boolean =>
-  openingDayIndex > nextOpeningDayIndex && openingDayIndex < today;
+const selectAvailableDaysOnNextWeek = (openingDays: DayPresentation[], today: number): DayPresentation[] =>
+  openingDays.filter((openingDay: DayPresentation): boolean => AVAILABLE_DAYS.indexOf(openingDay) <= today);
 
-const isFirstAvailableDayOnThisWeek = (nextOpeningDayIndex: number, openingDayIndex: number, today: number): boolean =>
-  (openingDayIndex < nextOpeningDayIndex && nextOpeningDayIndex > today) ||
-  (openingDayIndex > nextOpeningDayIndex && nextOpeningDayIndex <= today);
-
-const isFirstAvailableDay = (nextOpeningDayIndex: number, openingDayIndex: number, today: number): boolean =>
-  isFirstAvailableDayOnNextWeek(nextOpeningDayIndex, openingDayIndex, today) ||
-  isFirstAvailableDayOnThisWeek(nextOpeningDayIndex, openingDayIndex, today);
+const selectAvailableDaysOnThisWeek = (openingDays: DayPresentation[], today: number): DayPresentation[] =>
+  openingDays.filter((openingDay: DayPresentation): boolean => AVAILABLE_DAYS.indexOf(openingDay) > today);
 
 const selectNearestOpeningDay = (openingDays: DayPresentation[], today: number): DayPresentation =>
-  openingDays.reduce(
-    (nextOpeningDay: DayPresentation, openingDay: DayPresentation): DayPresentation =>
-      isFirstAvailableDay(AVAILABLE_DAYS.indexOf(nextOpeningDay), AVAILABLE_DAYS.indexOf(openingDay), today)
-        ? openingDay
-        : nextOpeningDay,
-    openingDays[0]
-  );
+  [...selectAvailableDaysOnThisWeek(openingDays, today), ...selectAvailableDaysOnNextWeek(openingDays, today)][0];
 
 const getNextOpeningDay = (openStatus: OpenStatus, todayIndex: number, openingHours: OpeningHours): DayPresentation =>
   openStatus === OpenStatus.Today ? AVAILABLE_DAYS[todayIndex] : selectNearestOpeningDay([...openingHours.keys()], todayIndex);

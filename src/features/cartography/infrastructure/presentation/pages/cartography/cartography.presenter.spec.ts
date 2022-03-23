@@ -32,7 +32,7 @@ const CNFS_DETAILS_USE_CASE: CnfsDetailsUseCase = {
         }
       ],
       contact: new StructureContact('email@example.com', '03 86 55 26 40', 'https://www.test.com'),
-      openingHours: ['9h30 - 17h30', '9h30 - 17h30', '9h30 - 17h30', '9h30 - 17h30', '9h30 - 17h30', '9h30 - 12h00'],
+      openingHours: ['11h30 - 17h30', '11h30 - 17h30', '11h30 - 17h30', '11h30 - 17h30', '11h30 - 17h30', '11h30 - 12h00'],
       position: new Coordinates(43.955, 6.053333),
       structureAddress: 'Place José Moron 3200 RIOM',
       structureName: 'Association Des Centres Sociaux Et Culturels Du Bassin De Riom',
@@ -63,27 +63,27 @@ describe('cartography presenter', (): void => {
         opening: [
           {
             day: DayPresentation.Monday,
-            hours: '9h30 - 17h30'
+            hours: '11h30 - 17h30'
           },
           {
             day: DayPresentation.Tuesday,
-            hours: '9h30 - 17h30'
+            hours: '11h30 - 17h30'
           },
           {
             day: DayPresentation.Wednesday,
-            hours: '9h30 - 17h30'
+            hours: '11h30 - 17h30'
           },
           {
             day: DayPresentation.Thursday,
-            hours: '9h30 - 17h30'
+            hours: '11h30 - 17h30'
           },
           {
             day: DayPresentation.Friday,
-            hours: '9h30 - 17h30'
+            hours: '11h30 - 17h30'
           },
           {
             day: DayPresentation.Saturday,
-            hours: '9h30 - 12h00'
+            hours: '11h30 - 12h00'
           }
         ],
         phone: '03 86 55 26 40',
@@ -122,7 +122,7 @@ describe('cartography presenter', (): void => {
               }
             ],
             contact: new StructureContact('email@example.com', '03 86 55 26 40', 'https://www.test.com'),
-            openingHours: ['9h30 - 17h30'],
+            openingHours: ['11h30 - 17h30'],
             position: new Coordinates(43.955, 6.053333),
             structureAddress: 'Place José Moron 3200 RIOM',
             structureName: 'Association Des Centres Sociaux Et Culturels Du Bassin De Riom',
@@ -151,7 +151,7 @@ describe('cartography presenter', (): void => {
         opening: [
           {
             day: DayPresentation.Monday,
-            hours: '9h30 - 17h30'
+            hours: '11h30 - 17h30'
           }
         ],
         phone: '03 86 55 26 40',
@@ -379,108 +379,108 @@ describe('cartography presenter', (): void => {
     it.each([
       {
         _desc: 'closed structure on 2022-03-15 at 10:00 (Tuesday), no opening hours',
-        date: '2022-03-15T10:00:00',
+        date: '2022-03-15T10:00:00.000',
         expectedIsOpen: false,
         expectedNextOpeningDay: null,
         openingHours: []
       },
       {
-        _desc: 'closed structure on 2022-03-20 (Sunday), open on Monday',
-        date: '2022-03-20',
+        _desc: 'closed structure on 2022-03-20 at 12:00 (Sunday), open on Monday',
+        date: '2022-03-20T12:00:00.000',
         expectedIsOpen: false,
         expectedNextOpeningDay: DayPresentation.Monday,
-        openingHours: ['9h30 - 17h30']
+        openingHours: ['11h30 - 17h30']
       },
       {
-        _desc: 'closed structure on 2022-03-20 (Sunday), open on Tuesday',
-        date: '2022-03-20',
+        _desc: 'closed structure on 2022-03-20 at 12:00 (Sunday), open on Tuesday',
+        date: '2022-03-20T12:00:00.000',
         expectedIsOpen: false,
         expectedNextOpeningDay: DayPresentation.Tuesday,
-        openingHours: ['', '9h30 - 17h30']
+        openingHours: ['', '11h30 - 17h30']
       },
       {
         _desc: 'opened structure on 2022-03-15 at 12:00 (Tuesday)',
-        date: '2022-03-15T12:00:00',
+        date: '2022-03-15T12:00:00.000',
         expectedIsOpen: true,
         expectedNextOpeningDay: null,
-        openingHours: ['', '9h30 - 17h30', '9h30 - 17h30']
+        openingHours: ['', '11h30 - 17h30', '11h30 - 17h30']
       },
       {
-        _desc: 'closed structure on 2022-03-15 at 09:25 (Tuesday), open today',
-        date: '2022-03-15T09:25:00',
+        _desc: 'closed structure on 2022-03-15 at 11:25 (Tuesday), open today',
+        date: '2022-03-15T11:25:00.000',
         expectedIsOpen: false,
         expectedNextOpeningDay: DayPresentation.Tuesday,
-        openingHours: ['', '9h30 - 17h30', '9h30 - 17h30']
+        openingHours: ['', '11h30 - 17h30', '11h30 - 17h30']
       },
       {
         _desc: 'closed structure on 2022-03-15 at 17:35 (Tuesday), open on Wednesday',
-        date: '2022-03-15T17:35:00',
+        date: '2022-03-15T17:35:00.000',
         expectedIsOpen: false,
         expectedNextOpeningDay: DayPresentation.Wednesday,
-        openingHours: ['', '9h30 - 17h30', '9h30 - 17h30']
+        openingHours: ['', '11h30 - 17h30', '11h30 - 17h30']
       },
       {
         _desc: 'closed structure on 2022-03-15 at 17:35 (Tuesday), open on next Tuesday',
-        date: '2022-03-15T17:35:00',
+        date: '2022-03-15T17:35:00.000',
         expectedIsOpen: false,
         expectedNextOpeningDay: DayPresentation.Tuesday,
-        openingHours: ['', '9h30 - 17h30']
+        openingHours: ['', '11h30 - 17h30']
       },
       {
-        _desc: 'closed structure on 2022-03-15 at 09:00 (Tuesday) before it opens in the morning, open later today',
-        date: '2022-03-15T09:00:00',
+        _desc: 'closed structure on 2022-03-15 at 11:00 (Tuesday) before it opens in the morning, open later today',
+        date: '2022-03-15T11:00:00.000',
         expectedIsOpen: false,
         expectedNextOpeningDay: DayPresentation.Tuesday,
-        openingHours: ['', '9h30 - 12h30 | 14h30 - 17h30', '', '', '9h30 - 17h30']
+        openingHours: ['', '11h30 - 12h30 | 14h30 - 17h30', '', '', '11h30 - 17h30']
       },
       {
-        _desc: 'opened structure on 2022-03-15 at 10:00 (Tuesday) during morning opening hours',
-        date: '2022-03-15T10:00:00',
+        _desc: 'opened structure on 2022-03-15 at 12:00 (Tuesday) during morning opening hours',
+        date: '2022-03-15T12:00:00.000',
         expectedIsOpen: true,
         expectedNextOpeningDay: null,
-        openingHours: ['', '9h30 - 12h30 | 14h30 - 17h30', '', '', '9h30 - 17h30']
+        openingHours: ['', '11h30 - 12h30 | 14h30 - 17h30', '', '', '11h30 - 17h30']
       },
       {
         _desc: 'closed structure on 2022-03-15 at 13:00 (Tuesday) during lunch time, open later today',
-        date: '2022-03-15T13:00:00',
+        date: '2022-03-15T13:00:00.000',
         expectedIsOpen: false,
         expectedNextOpeningDay: DayPresentation.Tuesday,
-        openingHours: ['', '9h30 - 12h30 | 14h30 - 17h30', '', '', '9h30 - 17h30']
+        openingHours: ['', '11h30 - 12h30 | 14h30 - 17h30', '', '', '11h30 - 17h30']
       },
       {
         _desc: 'opened structure on 2022-03-15 at 15:00 (Tuesday) during afternoon opening hours',
-        date: '2022-03-15T15:00:00',
+        date: '2022-03-15T15:00:00.000',
         expectedIsOpen: true,
         expectedNextOpeningDay: null,
-        openingHours: ['', '9h30 - 12h30 | 14h30 - 17h30', '', '', '9h30 - 17h30']
+        openingHours: ['', '11h30 - 12h30 | 14h30 - 17h30', '', '', '11h30 - 17h30']
       },
       {
         _desc: 'closed structure on 2022-03-15 at 18:00 (Tuesday) after it closes in the afternoon, open on Friday',
-        date: '2022-03-15T18:00:00',
+        date: '2022-03-15T18:00:00.000',
         expectedIsOpen: false,
         expectedNextOpeningDay: DayPresentation.Friday,
-        openingHours: ['', '9h30 - 12h30 | 14h30 - 17h30', '', '', '9h30 - 17h30']
+        openingHours: ['', '11h30 - 12h30 | 14h30 - 17h30', '', '', '11h30 - 17h30']
       },
       {
         _desc: 'closed structure on 2022-03-15 at 18:00 (Tuesday) after it closes in the afternoon, open on next Tuesday',
-        date: '2022-03-15T18:00:00',
+        date: '2022-03-15T18:00:00.000',
         expectedIsOpen: false,
         expectedNextOpeningDay: DayPresentation.Tuesday,
-        openingHours: ['', '9h30 - 12h30 | 14h30 - 17h30']
+        openingHours: ['', '11h30 - 12h30 | 14h30 - 17h30']
       },
       {
         _desc: 'closed structure on 2022-03-22 at 14:25 (Tuesday), open on Wednesday',
-        date: '2022-03-22T14:25:00',
+        date: '2022-03-22T14:25:00.000',
         expectedIsOpen: false,
         expectedNextOpeningDay: DayPresentation.Wednesday,
-        openingHours: ['', '', '4h00 - 6h00', '8h00 - 17h30']
+        openingHours: ['', '', '4h00 - 6h00', '10h00 - 17h30']
       },
       {
         _desc: 'closed structure on 2022-03-23 at 8:30 (Wednesday), open on Monday',
-        date: '2022-03-23T8:30:00',
+        date: '2022-03-23T10:30:00.000',
         expectedIsOpen: false,
         expectedNextOpeningDay: DayPresentation.Monday,
-        openingHours: ['8h00 - 17h30', '', '4h00 - 6h00']
+        openingHours: ['10h00 - 17h30', '', '4h00 - 6h00']
       }
     ])(
       'should get structure liste containing a $_desc',
