@@ -470,10 +470,17 @@ describe('cartography presenter', (): void => {
       },
       {
         _desc: 'closed structure on 2022-03-22 at 14:25 (Tuesday), open on Wednesday',
-        date: '2022-03-15T18:00:00',
+        date: '2022-03-22T14:25:00',
         expectedIsOpen: false,
         expectedNextOpeningDay: DayPresentation.Wednesday,
         openingHours: ['', '', '4h00 - 6h00', '8h00 - 17h30']
+      },
+      {
+        _desc: 'closed structure on 2022-03-23 at 8:30 (Wednesday), open on Monday',
+        date: '2022-03-23T8:30:00',
+        expectedIsOpen: false,
+        expectedNextOpeningDay: DayPresentation.Monday,
+        openingHours: ['8h00 - 17h30', '', '4h00 - 6h00']
       }
     ])(
       'should get structure liste containing a $_desc',
