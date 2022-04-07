@@ -4,6 +4,7 @@ export interface CnfsTransferProperties {
   id: string;
   name: string;
   isLabeledFranceServices?: boolean;
+  openingHours?: string[];
   address?: string;
 }
 

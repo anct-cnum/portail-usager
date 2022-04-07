@@ -7,24 +7,30 @@
     </div>
     <div>
       <h2 class="fr-text--md fr-text--regular fr-mb-1w">Contacter la structure</h2>
-      <cnfs-details-contact size="sm" emailLabel="Courriel" [email]="email" [phone]="phone" [website]="website">
+      <cnfs-details-contact
+        size="sm"
+        emailLabel="Courriel"
+        websiteLabel="Site internet"
+        [email]="email"
+        [phone]="phone"
+        [website]="website">
         Les informations de contact
         <br />
         de cette structure ne sont
         <br />
         pas disponibles
       </cnfs-details-contact>
-      <button (click)="print.emit()" class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-printer-fill fr-btn--icon-left">
+      <button (click)="print.emit()" class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-printer-fill fr-btn--icon-left fr-mt-1w">
         Imprimer
       </button>
     </div>
   </div>
   <div class="fr-printable fr-printable__only">
     <h1 class="fr-h3 fr-text-default--grey">{{ structureName }}</h1>
-    <cnfs-details-contact size="sm" emailLabel="Courriel" [email]="email" [phone]="phone" [website]="website">
+    <cnfs-details-contact size="sm" [email]="email" [phone]="phone" [website]="website">
       Les informations de contact de cette structure ne sont pas disponibles
     </cnfs-details-contact>
-    <div class="fr-grid-row">
+    <div class="fr-grid-row fr-mt-2w">
       <div class="fr-col-6">
         <permanence-access [access]="access"></permanence-access>
         <permanence-address [address]="address" [distance]="distance"></permanence-address>
@@ -44,7 +50,13 @@
       </a>
       <h1 class="fr-h3 fr-text-default--grey">{{ structureName }}</h1>
       <div class="fr-mb-3w fr-hidden-xl fr-display--block-lg fr-display--none-md">
-        <cnfs-details-contact size="sm" emailLabel="Courriel" [email]="email" [phone]="phone" [website]="website">
+        <cnfs-details-contact
+          size="sm"
+          emailLabel="Courriel"
+          websiteLabel="Site internet"
+          [email]="email"
+          [phone]="phone"
+          [website]="website">
           Les informations de contact de cette structure ne sont pas disponibles
         </cnfs-details-contact>
         <button (click)="print.emit()" class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-printer-fill fr-btn--icon-left">

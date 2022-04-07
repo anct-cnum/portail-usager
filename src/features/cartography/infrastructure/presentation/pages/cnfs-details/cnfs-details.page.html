@@ -3,6 +3,7 @@
     class="fr-full-container--height"
     *ngIf="cnfsDetails$ | async as cnfsDetails; else: loading"
     [structureId]="structureId"
+    [access]="cnfsDetails.access"
     [address]="cnfsDetails.address"
     [cnfsList]="cnfsDetails.cnfsList"
     [distance]="cnfsDetails.distanceFromUsager"

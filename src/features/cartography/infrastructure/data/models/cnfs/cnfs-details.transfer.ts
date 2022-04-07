@@ -18,9 +18,12 @@ export interface CnfsDetailsTransfer {
   adresse: string;
   cnfs: CnfsInStructureTransfer[];
   coordinates?: Position;
-  email: string;
+  email?: string;
   nom: string;
-  telephone: string;
+  openingHours?: string[];
+  siteWeb?: string;
+  telephone?: string;
+  typeAcces?: string;
   nombreCnfs: number;
   type?: CnfsTypeTransfer;
 }

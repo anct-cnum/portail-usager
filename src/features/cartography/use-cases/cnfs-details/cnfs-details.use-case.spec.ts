@@ -7,17 +7,17 @@ const CNFS_DETAILS: CnfsDetails = {
     {
       email: 'christelle.bateau@conseiller-numerique.fr',
       fullName: 'Christelle Bateau',
-      phone: '08 86 66 87 72'
+      phone: '+33 8 86 66 87 72'
     },
     {
       email: 'charles.desmoulins@conseiller-numerique.fr',
       fullName: 'Charles Desmoulins',
-      phone: '03 86 55 24 40'
+      phone: '+33 3 86 55 24 40'
     },
     {
       email: 'amélie.dupont@conseiller-numerique.fr',
       fullName: 'Amélie Dupont',
-      phone: '03 44 89 62 14'
+      phone: '+33 3 44 89 62 14'
     }
   ],
   contact: new StructureContact('john.doe@email.com', '0123456789', 'https://www.john-doe.com'),

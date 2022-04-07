@@ -17,4 +17,6 @@ export class CnfsDetailsContactComponent {
   @Input() public size: 'md' | 'sm' = 'md';
 
   @Input() public website?: string;
+
+  @Input() public websiteLabel?: string;
 }

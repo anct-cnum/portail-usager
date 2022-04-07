@@ -4,7 +4,7 @@
 </h2>
 <table class="fr-full-container--width fr-mb-2w" *ngIf="opening.length > 0; else noOpeningHours">
   <tr *ngFor="let opening of opening; index as i; trackBy: trackByOpeningDay">
-    <td>{{ opening.day }}</td>
+    <td>{{ opening.day | slice: 0:3 }}.</td>
     <td class="fr-text-label--grey">{{ opening.hours }}</td>
   </tr>
 </table>

@@ -15,6 +15,7 @@ export interface CnfsInStructure {
 }
 
 export interface CnfsDetails {
+  access?: string;
   cnfs: CnfsInStructure[];
   contact?: StructureContact;
   openingHours?: string[];

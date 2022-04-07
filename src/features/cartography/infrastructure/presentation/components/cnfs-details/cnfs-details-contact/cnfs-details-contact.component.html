@@ -24,7 +24,7 @@
     [href]="website"
     target="_blank"
     rel="noopener noreferrer">
-    Site internet
+    {{ websiteLabel ?? website }}
   </a>
 </div>
 <div class="fr-text--sm" *ngIf="!email && !phone && !website">

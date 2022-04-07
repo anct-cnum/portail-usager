@@ -29,6 +29,7 @@ export const cnfsDetailsToPresentation = (
   cnfsDetails: CnfsDetails,
   usagerCoordinates?: Coordinates
 ): CnfsDetailsPresentation => ({
+  access: cnfsDetails.access,
   address: cnfsDetails.structureAddress,
   cnfsList: cnfsDetails.cnfs.map(toCnfsPresentation),
   coordinates: cnfsDetails.position,

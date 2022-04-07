@@ -28,6 +28,7 @@ export interface CnfsLocationPresentation {
 
 export interface CnfsDetailsPresentation {
   address?: string;
+  access?: string;
   coordinates?: Coordinates;
   cnfsList: CnfsPresentation[];
   distanceFromUsager?: string;

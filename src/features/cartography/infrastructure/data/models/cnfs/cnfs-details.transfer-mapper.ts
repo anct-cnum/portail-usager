@@ -25,9 +25,10 @@ const getPosition = (position?: Position): Pick<CnfsDetails, 'position'> =>
       };
 
 export const cnfsDetailsTransferToCore = (cnfsDetailsTransfer: CnfsDetailsTransfer): CnfsDetails => ({
+  access: cnfsDetailsTransfer.typeAcces,
   cnfs: cnfsDetailsTransfer.cnfs.map(toCnfsCore),
-  contact: new StructureContact(cnfsDetailsTransfer.email, cnfsDetailsTransfer.telephone),
-  openingHours: [],
+  contact: new StructureContact(cnfsDetailsTransfer.email, cnfsDetailsTransfer.telephone, cnfsDetailsTransfer.siteWeb),
+  openingHours: cnfsDetailsTransfer.openingHours ?? [],
   ...getPosition(cnfsDetailsTransfer.coordinates),
   structureAddress: cnfsDetailsTransfer.adresse,
   structureName: cnfsDetailsTransfer.nom,
