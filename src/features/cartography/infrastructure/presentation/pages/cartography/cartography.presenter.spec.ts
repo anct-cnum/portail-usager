@@ -24,15 +24,15 @@ const CNFS_DETAILS_USE_CASE: CnfsDetailsUseCase = {
         {
           email: 'christelle.bateau@conseiller-numerique.fr',
           fullName: 'Christelle Bateau',
-          phone: '08 86 66 87 72'
+          phone: '+33 8 86 66 87 72'
         },
         {
           email: 'charles.desmoulins@conseiller-numerique.fr',
           fullName: 'Charles Desmoulins',
-          phone: '03 86 55 24 40'
+          phone: '+33 3 86 55 24 40'
         }
       ],
-      contact: new StructureContact('email@example.com', '03 86 55 26 40', 'https://www.test.com'),
+      contact: new StructureContact('email@example.com', '+33 3 86 55 26 40', 'https://www.test.com'),
       openingHours: ['11h30 - 17h30', '11h30 - 17h30', '11h30 - 17h30', '11h30 - 17h30', '11h30 - 17h30', '11h30 - 12h00'],
       position: new Coordinates(43.955, 6.053333),
       structureAddress: 'Place José Moron 3200 RIOM',
@@ -52,12 +52,12 @@ describe('cartography presenter', (): void => {
           {
             email: 'christelle.bateau@conseiller-numerique.fr',
             fullName: 'Christelle Bateau',
-            phone: '08 86 66 87 72'
+            phone: '+33 8 86 66 87 72'
           },
           {
             email: 'charles.desmoulins@conseiller-numerique.fr',
             fullName: 'Charles Desmoulins',
-            phone: '03 86 55 24 40'
+            phone: '+33 3 86 55 24 40'
           }
         ],
         coordinates: new Coordinates(43.955, 6.053333),
@@ -88,7 +88,7 @@ describe('cartography presenter', (): void => {
             hours: '11h30 - 12h00'
           }
         ],
-        phone: '03 86 55 26 40',
+        phone: '+33 3 86 55 26 40',
         structureName: 'Association Des Centres Sociaux Et Culturels Du Bassin De Riom',
         website: 'https://www.test.com'
       };
@@ -116,15 +116,15 @@ describe('cartography presenter', (): void => {
               {
                 email: 'christelle.bateau@conseiller-numerique.fr',
                 fullName: 'Christelle Bateau',
-                phone: '08 86 66 87 72'
+                phone: '+33 8 86 66 87 72'
               },
               {
                 email: 'charles.desmoulins@conseiller-numerique.fr',
                 fullName: 'Charles Desmoulins',
-                phone: '03 86 55 24 40'
+                phone: '+33 3 86 55 24 40'
               }
             ],
-            contact: new StructureContact('email@example.com', '03 86 55 26 40', 'https://www.test.com'),
+            contact: new StructureContact('email@example.com', '+33 3 86 55 26 40', 'https://www.test.com'),
             openingHours: ['11h30 - 17h30'],
             position: new Coordinates(43.955, 6.053333),
             structureAddress: 'Place José Moron 3200 RIOM',
@@ -141,12 +141,12 @@ describe('cartography presenter', (): void => {
           {
             email: 'christelle.bateau@conseiller-numerique.fr',
             fullName: 'Christelle Bateau',
-            phone: '08 86 66 87 72'
+            phone: '+33 8 86 66 87 72'
           },
           {
             email: 'charles.desmoulins@conseiller-numerique.fr',
             fullName: 'Charles Desmoulins',
-            phone: '03 86 55 24 40'
+            phone: '+33 3 86 55 24 40'
           }
         ],
         cnfsTypeNote: "Un conseiller de cette structure est spécialisé dans l'accueil des professions agricoles",
@@ -158,7 +158,7 @@ describe('cartography presenter', (): void => {
             hours: '11h30 - 17h30'
           }
         ],
-        phone: '03 86 55 26 40',
+        phone: '+33 3 86 55 26 40',
         structureName: 'Association Des Centres Sociaux Et Culturels Du Bassin De Riom',
         website: 'https://www.test.com'
       };
@@ -183,7 +183,7 @@ describe('cartography presenter', (): void => {
           return of({
             access: 'sur rendez-vous',
             cnfs: [],
-            contact: new StructureContact('email@example.com', '03 86 55 26 40', 'https://www.test.com'),
+            contact: new StructureContact('email@example.com', '+33 3 86 55 26 40', 'https://www.test.com'),
             openingHours: [],
             position: new Coordinates(43.955, 6.053333),
             structureAddress: 'Place José Moron 3200 RIOM',
@@ -202,7 +202,7 @@ describe('cartography presenter', (): void => {
         distanceFromUsager: '100.98 km',
         email: 'email@example.com',
         opening: [],
-        phone: '03 86 55 26 40',
+        phone: '+33 3 86 55 26 40',
         structureName: 'Association Des Centres Sociaux Et Culturels Du Bassin De Riom',
         website: 'https://www.test.com'
       };

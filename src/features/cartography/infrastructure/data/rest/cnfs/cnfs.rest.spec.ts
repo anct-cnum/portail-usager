@@ -128,13 +128,13 @@ describe('cnfs rest repository', (): void => {
         {
           email: 'christelle.bateau@conseiller-numerique.fr',
           nom: 'Bateau',
-          phone: '08 86 66 87 72',
+          phone: '+33 8 86 66 87 72',
           prenom: 'Christelle'
         },
         {
           email: 'charles.desmoulins@conseiller-numerique.fr',
           nom: 'Desmoulins',
-          phone: '03 86 55 24 40',
+          phone: '+33 3 86 55 24 40',
           prenom: 'Charles'
         }
       ],
@@ -142,7 +142,7 @@ describe('cnfs rest repository', (): void => {
       email: 'john.doe@aide-rurale.net',
       nom: 'Aide rurale',
       nombreCnfs: 2,
-      telephone: '04 23 45 68 97',
+      telephone: '+33 4 23 45 68 97',
       typeAcces: 'sur rendez-vous'
     };
 
@@ -158,15 +158,15 @@ describe('cnfs rest repository', (): void => {
         {
           email: 'christelle.bateau@conseiller-numerique.fr',
           fullName: 'Christelle Bateau',
-          phone: '08 86 66 87 72'
+          phone: '+33 8 86 66 87 72'
         },
         {
           email: 'charles.desmoulins@conseiller-numerique.fr',
           fullName: 'Charles Desmoulins',
-          phone: '03 86 55 24 40'
+          phone: '+33 3 86 55 24 40'
         }
       ],
-      contact: new StructureContact('john.doe@aide-rurale.net', '04 23 45 68 97'),
+      contact: new StructureContact('john.doe@aide-rurale.net', '+33 4 23 45 68 97'),
       openingHours: [],
       position: new Coordinates(43.955, 6.053333),
       structureAddress: '12 RUE DE LA PLACE, 87100 LIMOGES',
@@ -189,13 +189,13 @@ describe('cnfs rest repository', (): void => {
         {
           email: 'christelle.bateau@conseiller-numerique.fr',
           nom: 'Bateau',
-          phone: '08 86 66 87 72',
+          phone: '+33 8 86 66 87 72',
           prenom: 'Christelle'
         },
         {
           email: 'charles.desmoulins@conseiller-numerique.fr',
           nom: 'Desmoulins',
-          phone: '03 86 55 24 40',
+          phone: '+33 3 86 55 24 40',
           prenom: 'Charles'
         }
       ],
@@ -203,7 +203,7 @@ describe('cnfs rest repository', (): void => {
       email: 'john.doe@aide-rurale.net',
       nom: 'Aide rurale',
       nombreCnfs: 2,
-      telephone: '04 23 45 68 97',
+      telephone: '+33 4 23 45 68 97',
       type: CnfsTypeTransfer.MonEspaceSante,
       typeAcces: 'sur rendez-vous'
     };
@@ -220,15 +220,15 @@ describe('cnfs rest repository', (): void => {
         {
           email: 'christelle.bateau@conseiller-numerique.fr',
           fullName: 'Christelle Bateau',
-          phone: '08 86 66 87 72'
+          phone: '+33 8 86 66 87 72'
         },
         {
           email: 'charles.desmoulins@conseiller-numerique.fr',
           fullName: 'Charles Desmoulins',
-          phone: '03 86 55 24 40'
+          phone: '+33 3 86 55 24 40'
         }
       ],
-      contact: new StructureContact('john.doe@aide-rurale.net', '04 23 45 68 97'),
+      contact: new StructureContact('john.doe@aide-rurale.net', '+33 4 23 45 68 97'),
       openingHours: [],
       position: new Coordinates(43.955, 6.053333),
       structureAddress: '12 RUE DE LA PLACE, 87100 LIMOGES',
