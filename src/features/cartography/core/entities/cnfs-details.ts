@@ -18,6 +18,7 @@ export interface CnfsDetails {
   access?: string;
   cnfs: CnfsInStructure[];
   contact?: StructureContact;
+  isLabeledAidantsConnect: boolean;
   openingHours?: string[];
   position?: Coordinates;
   structureAddress?: string;

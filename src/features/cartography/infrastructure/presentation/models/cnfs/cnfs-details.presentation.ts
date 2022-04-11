@@ -32,6 +32,7 @@ export interface CnfsDetailsPresentation {
   coordinates?: Coordinates;
   cnfsList: CnfsPresentation[];
   distanceFromUsager?: string;
+  isLabeledAidantsConnect: boolean;
   email?: string;
   cnfsTypeNote?: string;
   opening: Opening[];

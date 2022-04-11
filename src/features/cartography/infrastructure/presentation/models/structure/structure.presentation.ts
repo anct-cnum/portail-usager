@@ -10,7 +10,8 @@ export type StructurePresentation = StructureOpeningPresentation & {
   address: string;
   distanceFromUsager?: string;
   id: string;
-  isLabeledFranceServices?: boolean;
+  isLabeledFranceServices: boolean;
+  isLabeledAidantsConnect: boolean;
   location?: Coordinates;
   name: string;
 };

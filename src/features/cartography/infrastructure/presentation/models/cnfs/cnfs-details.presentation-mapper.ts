@@ -25,6 +25,7 @@ const getCnfsTypeNote = (type: CnfsType): Pick<CnfsDetailsPresentation, 'cnfsTyp
 
 const toCnfsPresentation = (cnfsInStructure: CnfsInStructure): CnfsPresentation => cnfsInStructure;
 
+// eslint-disable-next-line max-lines-per-function
 export const cnfsDetailsToPresentation = (
   cnfsDetails: CnfsDetails,
   usagerCoordinates?: Coordinates
@@ -36,6 +37,7 @@ export const cnfsDetailsToPresentation = (
   ...getUsagerDistanceFromLocation(cnfsDetails.position, usagerCoordinates),
   email: cnfsDetails.contact?.email,
   ...getCnfsTypeNote(cnfsDetails.type),
+  isLabeledAidantsConnect: cnfsDetails.isLabeledAidantsConnect,
   opening: openingHoursToPresentation(cnfsDetails.openingHours),
   phone: cnfsDetails.contact?.phone,
   structureName: cnfsDetails.structureName,

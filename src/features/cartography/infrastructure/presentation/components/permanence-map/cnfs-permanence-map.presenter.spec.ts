@@ -17,12 +17,14 @@ describe('cnfs permanence map presenter', (): void => {
           new Cnfs(new Coordinates(43.305645, 5.380007), {
             address: '31 Avenue de la mer, 13003 Marseille',
             id: '88bc36fb0db191928330b1e6',
+            isLabeledAidantsConnect: true,
             isLabeledFranceServices: true,
             name: 'Médiathèque de la mer'
           }),
           new Cnfs(new Coordinates(45.734377, 4.816864), {
             address: '12 rue des Acacias, 69002 Lyon',
             id: '4c38ebc9a06fdd532bf9d7be',
+            isLabeledAidantsConnect: true,
             isLabeledFranceServices: false,
             name: 'Association des centres sociaux et culturels de Lyon'
           })
@@ -40,6 +42,7 @@ describe('cnfs permanence map presenter', (): void => {
           properties: {
             address: '31 Avenue de la mer, 13003 Marseille',
             id: '88bc36fb0db191928330b1e6',
+            isLabeledAidantsConnect: true,
             isLabeledFranceServices: true,
             markerType: MarkerKey.CnfsPermanence,
             name: 'Médiathèque de la mer'
@@ -54,6 +57,7 @@ describe('cnfs permanence map presenter', (): void => {
           properties: {
             address: '12 rue des Acacias, 69002 Lyon',
             id: '4c38ebc9a06fdd532bf9d7be',
+            isLabeledAidantsConnect: true,
             isLabeledFranceServices: false,
             markerType: MarkerKey.CnfsPermanence,
             name: 'Association des centres sociaux et culturels de Lyon'
@@ -91,6 +95,7 @@ describe('cnfs permanence map presenter', (): void => {
           new Cnfs(new Coordinates(43.305645, 5.380007), {
             address: '31 Avenue de la mer, 13003 Marseille',
             id: '88bc36fb0db191928330b1e6',
+            isLabeledAidantsConnect: true,
             isLabeledFranceServices: true,
             name: 'Médiathèque de la mer'
           })
@@ -108,6 +113,7 @@ describe('cnfs permanence map presenter', (): void => {
           properties: {
             address: '31 Avenue de la mer, 13003 Marseille',
             id: '88bc36fb0db191928330b1e6',
+            isLabeledAidantsConnect: true,
             isLabeledFranceServices: true,
             markerType: MarkerKey.CnfsPermanence,
             name: 'Médiathèque de la mer'
@@ -145,6 +151,7 @@ describe('cnfs permanence map presenter', (): void => {
           new Cnfs(new Coordinates(43.305645, 5.380007), {
             address: '31 Avenue de la mer, 13003 Marseille',
             id: '88bc36fb0db191928330b1e6',
+            isLabeledAidantsConnect: true,
             isLabeledFranceServices: true,
             name: 'Médiathèque de la mer'
           })

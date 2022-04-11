@@ -17,6 +17,7 @@ const getOpeningHours = (openingHours?: string[]): Pick<CnfsPermanence, 'opening
 const transferToCoreProperties = (feature: Feature<Point, CnfsTransferProperties>): CnfsPermanence => ({
   address: feature.properties.address ?? '',
   id: feature.properties.id,
+  isLabeledAidantsConnect: feature.properties.isLabeledAidantsConnect ?? false,
   isLabeledFranceServices: feature.properties.isLabeledFranceServices ?? false,
   name: feature.properties.name,
   position: Coordinates.fromGeoJsonFeature(feature),

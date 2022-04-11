@@ -21,6 +21,8 @@ export class CnfsDetailsComponent {
 
   @Input() public email?: string;
 
+  @Input() public isLabeledAidantsConnect?: boolean;
+
   @Input() public opening: Opening[] = [];
 
   @Input() public phone?: string;
