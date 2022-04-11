@@ -25,6 +25,7 @@ const IN_FRANCE_CNFS_FEATURE: Feature<Point, MarkerProperties<CnfsPermanenceProp
   properties: {
     address: 'RUE DES PYRENEES, 31330 GRENADE',
     id: '4c38ebc9a06fdd532bf9d7be',
+    isLabeledAidantsConnect: false,
     isLabeledFranceServices: false,
     markerType: MarkerKey.CnfsPermanence,
     name: 'COMMUNAUTE DE COMMUNES DES HAUTS-TOLOSANS'
@@ -40,6 +41,7 @@ const IN_AFRICA_CNFS_FEATURE: Feature<Point, MarkerProperties<CnfsPermanenceProp
   properties: {
     address: 'RUE DES PYRENEES, 31330 GRENADE',
     id: '4c38ebc9a06fdd532bf9d7be',
+    isLabeledAidantsConnect: false,
     isLabeledFranceServices: false,
     markerType: MarkerKey.CnfsPermanence,
     name: 'COMMUNAUTE DE COMMUNES DES HAUTS-TOLOSANS'
@@ -56,6 +58,7 @@ const SUPERPOSED_CNFS_PERMANENCE_FEATURES: Feature<Point, MarkerProperties<CnfsP
     properties: {
       address: 'RUE DES PYRENEES, 31330 GRENADE',
       id: '4c38ebc9a06fdd532bf9d7be',
+      isLabeledAidantsConnect: false,
       isLabeledFranceServices: false,
       markerType: MarkerKey.CnfsPermanence,
       name: 'COMMUNAUTE DE COMMUNES DES HAUTS-TOLOSANS'
@@ -70,6 +73,7 @@ const SUPERPOSED_CNFS_PERMANENCE_FEATURES: Feature<Point, MarkerProperties<CnfsP
     properties: {
       address: 'RUE DES PYRENEES, 31330 GRENADE',
       id: '4c38ebc9a06fdd532bf9d7be',
+      isLabeledAidantsConnect: false,
       isLabeledFranceServices: false,
       markerType: MarkerKey.CnfsPermanence,
       name: 'COMMUNAUTE DE COMMUNES DES HAUTS-TOLOSANS'
@@ -84,6 +88,7 @@ const SUPERPOSED_CNFS_PERMANENCE_FEATURES: Feature<Point, MarkerProperties<CnfsP
     properties: {
       address: 'RUE DES PYRENEES, 31330 GRENADE',
       id: '4c38ebc9a06fdd532bf9d7be',
+      isLabeledAidantsConnect: false,
       isLabeledFranceServices: false,
       markerType: MarkerKey.CnfsPermanence,
       name: 'COMMUNAUTE DE COMMUNES DES HAUTS-TOLOSANS'
@@ -130,6 +135,7 @@ describe('map view culling service', (): void => {
         properties: {
           address: 'RUE DES PYRENEES, 31330 GRENADE',
           id: '4c38ebc9a06fdd532bf9d7be',
+          isLabeledAidantsConnect: false,
           isLabeledFranceServices: false,
           markerType: MarkerKey.CnfsPermanence,
           name: 'COMMUNAUTE DE COMMUNES DES HAUTS-TOLOSANS'

@@ -13,6 +13,7 @@ export const toStructurePresentation = (
     (cnfsPermanenceProperty: CnfsPermanenceProperties): StructurePresentation => ({
       address: cnfsPermanenceProperty.address,
       id: cnfsPermanenceProperty.id,
+      isLabeledAidantsConnect: cnfsPermanenceProperty.isLabeledAidantsConnect,
       isLabeledFranceServices: cnfsPermanenceProperty.isLabeledFranceServices,
       name: cnfsPermanenceProperty.name,
       ...getUsagerDistanceFromLocation(cnfsPermanenceProperty.position, usagerCoordinates),

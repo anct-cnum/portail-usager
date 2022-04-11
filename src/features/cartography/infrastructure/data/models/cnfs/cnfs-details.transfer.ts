@@ -20,6 +20,7 @@ export interface CnfsDetailsTransfer {
   coordinates?: Position;
   email?: string;
   nom: string;
+  isLabeledAidantsConnect?: boolean;
   openingHours?: string[];
   siteWeb?: string;
   telephone?: string;

@@ -4,6 +4,7 @@ export interface CnfsPermanence {
   id: string;
   name: string;
   address: string;
+  isLabeledAidantsConnect: boolean;
   isLabeledFranceServices: boolean;
   openingHours?: string[];
   position?: Coordinates;

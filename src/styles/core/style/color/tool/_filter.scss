@@ -1,0 +1,18 @@
+////
+/// Core Tool : Color filter
+/// @group core
+////
+
+@use 'sass:map';
+
+@mixin build-filter() {
+  $filter-vars: map.get($color-vars, filter);
+
+  @if $filter-vars != false and map.get($filter-vars, active) != false {
+    @each $filter in $filter-settings {
+      #{ns(filter)}--#{$filter} {
+        filter: #{$filter }(#{'1'});
+      }
+    }
+  }
+}

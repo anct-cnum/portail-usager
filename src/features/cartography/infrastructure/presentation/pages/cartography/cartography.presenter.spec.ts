@@ -33,6 +33,7 @@ const CNFS_DETAILS_USE_CASE: CnfsDetailsUseCase = {
         }
       ],
       contact: new StructureContact('email@example.com', '+33 3 86 55 26 40', 'https://www.test.com'),
+      isLabeledAidantsConnect: false,
       openingHours: ['11h30 - 17h30', '11h30 - 17h30', '11h30 - 17h30', '11h30 - 17h30', '11h30 - 17h30', '11h30 - 12h00'],
       position: new Coordinates(43.955, 6.053333),
       structureAddress: 'Place José Moron 3200 RIOM',
@@ -62,6 +63,7 @@ describe('cartography presenter', (): void => {
         ],
         coordinates: new Coordinates(43.955, 6.053333),
         email: 'email@example.com',
+        isLabeledAidantsConnect: false,
         opening: [
           {
             day: DayPresentation.Monday,
@@ -125,6 +127,7 @@ describe('cartography presenter', (): void => {
               }
             ],
             contact: new StructureContact('email@example.com', '+33 3 86 55 26 40', 'https://www.test.com'),
+            isLabeledAidantsConnect: false,
             openingHours: ['11h30 - 17h30'],
             position: new Coordinates(43.955, 6.053333),
             structureAddress: 'Place José Moron 3200 RIOM',
@@ -152,6 +155,7 @@ describe('cartography presenter', (): void => {
         cnfsTypeNote: "Un conseiller de cette structure est spécialisé dans l'accueil des professions agricoles",
         coordinates: new Coordinates(43.955, 6.053333),
         email: 'email@example.com',
+        isLabeledAidantsConnect: false,
         opening: [
           {
             day: DayPresentation.Monday,
@@ -184,6 +188,7 @@ describe('cartography presenter', (): void => {
             access: 'sur rendez-vous',
             cnfs: [],
             contact: new StructureContact('email@example.com', '+33 3 86 55 26 40', 'https://www.test.com'),
+            isLabeledAidantsConnect: false,
             openingHours: [],
             position: new Coordinates(43.955, 6.053333),
             structureAddress: 'Place José Moron 3200 RIOM',
@@ -201,6 +206,7 @@ describe('cartography presenter', (): void => {
         coordinates: new Coordinates(43.955, 6.053333),
         distanceFromUsager: '100.98 km',
         email: 'email@example.com',
+        isLabeledAidantsConnect: false,
         opening: [],
         phone: '+33 3 86 55 26 40',
         structureName: 'Association Des Centres Sociaux Et Culturels Du Bassin De Riom',
@@ -277,6 +283,7 @@ describe('cartography presenter', (): void => {
         {
           address: '12 rue des Acacias, 69002 Lyon',
           id: '4c38ebc9a06fdd532bf9d7be',
+          isLabeledAidantsConnect: false,
           isLabeledFranceServices: false,
           markerType: MarkerKey.CnfsPermanence,
           name: 'Association des centres sociaux et culturels de Lyon',
@@ -285,6 +292,7 @@ describe('cartography presenter', (): void => {
         {
           address: '31 Avenue de la mer, 13003 Marseille',
           id: '88bc36fb0db191928330b1e6',
+          isLabeledAidantsConnect: false,
           isLabeledFranceServices: true,
           markerType: MarkerKey.CnfsPermanence,
           name: 'Médiathèque de la mer',
@@ -296,6 +304,7 @@ describe('cartography presenter', (): void => {
         {
           address: '12 rue des Acacias, 69002 Lyon',
           id: '4c38ebc9a06fdd532bf9d7be',
+          isLabeledAidantsConnect: false,
           isLabeledFranceServices: false,
           isOpen: false,
           name: 'Association des centres sociaux et culturels de Lyon'
@@ -303,6 +312,7 @@ describe('cartography presenter', (): void => {
         {
           address: '31 Avenue de la mer, 13003 Marseille',
           id: '88bc36fb0db191928330b1e6',
+          isLabeledAidantsConnect: false,
           isLabeledFranceServices: true,
           isOpen: false,
           name: 'Médiathèque de la mer'
@@ -330,6 +340,7 @@ describe('cartography presenter', (): void => {
         {
           address: '12 rue des Acacias, 69002 Lyon',
           id: '4c38ebc9a06fdd532bf9d7be',
+          isLabeledAidantsConnect: false,
           isLabeledFranceServices: false,
           markerType: MarkerKey.CnfsPermanence,
           name: 'Association des centres sociaux et culturels de Lyon',
@@ -338,6 +349,7 @@ describe('cartography presenter', (): void => {
         {
           address: '31 Avenue de la mer, 13003 Marseille',
           id: '88bc36fb0db191928330b1e6',
+          isLabeledAidantsConnect: false,
           isLabeledFranceServices: true,
           markerType: MarkerKey.CnfsPermanence,
           name: 'Médiathèque de la mer',
@@ -350,6 +362,7 @@ describe('cartography presenter', (): void => {
           address: '12 rue des Acacias, 69002 Lyon',
           distanceFromUsager: '100.98 km',
           id: '4c38ebc9a06fdd532bf9d7be',
+          isLabeledAidantsConnect: false,
           isLabeledFranceServices: false,
           isOpen: false,
           name: 'Association des centres sociaux et culturels de Lyon'
@@ -358,6 +371,7 @@ describe('cartography presenter', (): void => {
           address: '31 Avenue de la mer, 13003 Marseille',
           distanceFromUsager: '592.19 km',
           id: '88bc36fb0db191928330b1e6',
+          isLabeledAidantsConnect: false,
           isLabeledFranceServices: true,
           isOpen: false,
           name: 'Médiathèque de la mer'
@@ -507,6 +521,7 @@ describe('cartography presenter', (): void => {
           {
             address: '12 rue des Acacias, 69002 Lyon',
             id: '4c38ebc9a06fdd532bf9d7be',
+            isLabeledAidantsConnect: false,
             isLabeledFranceServices: false,
             markerType: MarkerKey.CnfsPermanence,
             name: 'Association des centres sociaux et culturels de Lyon',
@@ -520,6 +535,7 @@ describe('cartography presenter', (): void => {
             address: '12 rue des Acacias, 69002 Lyon',
             distanceFromUsager: '100.98 km',
             id: '4c38ebc9a06fdd532bf9d7be',
+            isLabeledAidantsConnect: false,
             isLabeledFranceServices: false,
             isOpen: expectedIsOpen,
             name: 'Association des centres sociaux et culturels de Lyon',

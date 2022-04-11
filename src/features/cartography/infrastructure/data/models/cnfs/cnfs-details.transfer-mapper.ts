@@ -28,6 +28,7 @@ export const cnfsDetailsTransferToCore = (cnfsDetailsTransfer: CnfsDetailsTransf
   access: cnfsDetailsTransfer.typeAcces,
   cnfs: cnfsDetailsTransfer.cnfs.map(toCnfsCore),
   contact: new StructureContact(cnfsDetailsTransfer.email, cnfsDetailsTransfer.telephone, cnfsDetailsTransfer.siteWeb),
+  isLabeledAidantsConnect: cnfsDetailsTransfer.isLabeledAidantsConnect ?? false,
   openingHours: cnfsDetailsTransfer.openingHours ?? [],
   ...getPosition(cnfsDetailsTransfer.coordinates),
   structureAddress: cnfsDetailsTransfer.adresse,

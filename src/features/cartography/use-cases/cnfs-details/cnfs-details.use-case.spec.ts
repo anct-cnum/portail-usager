@@ -21,6 +21,7 @@ const CNFS_DETAILS: CnfsDetails = {
     }
   ],
   contact: new StructureContact('john.doe@email.com', '0123456789', 'https://www.john-doe.com'),
+  isLabeledAidantsConnect: false,
   openingHours: ['9h00 - 18h00', '9h00 - 18h00', '9h00 - 18h00', '9h00 - 18h00', '9h00 - 18h00'],
   position: new Coordinates(43.955, 6.053333),
   structureAddress: '3 rue des lilas, 13000 Marseille',

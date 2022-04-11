@@ -1,3 +1,5 @@
+<!--eslint-disable @angular-eslint/template/cyclomatic-complexity-->
+
 <ng-container *ngIf="structuresList.length > 0; else emptyStructureList">
   <ul class="fr-list-group fr-list-group--flush">
     <li
@@ -30,7 +32,13 @@
           </ng-container>
         </p>
         <div>
-          <a class="fr-btn fr-btn--secondary fr-white-space--nowrap" [routerLink]="['/', structure.id, 'details']">
+          <img
+            *ngIf="structure.isLabeledAidantsConnect === true"
+            class="fr-filter--grayscale"
+            height="24px"
+            src="/assets/labels/aidants-connect.png"
+            alt="Label aidants connect" />
+          <a class="fr-btn fr-btn--secondary fr-white-space--nowrap fr-mt-1w" [routerLink]="['/', structure.id, 'details']">
             Afficher les détails
           </a>
         </div>

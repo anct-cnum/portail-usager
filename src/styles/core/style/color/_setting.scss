@@ -7,5 +7,6 @@
 
 $color-vars: map.get($variables, color);
 
+@import 'setting/filter';
 @import 'setting/gradient';
 @import 'setting/shadow';

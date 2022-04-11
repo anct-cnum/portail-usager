@@ -167,6 +167,7 @@ describe('cnfs rest repository', (): void => {
         }
       ],
       contact: new StructureContact('john.doe@aide-rurale.net', '+33 4 23 45 68 97'),
+      isLabeledAidantsConnect: false,
       openingHours: [],
       position: new Coordinates(43.955, 6.053333),
       structureAddress: '12 RUE DE LA PLACE, 87100 LIMOGES',
@@ -229,6 +230,7 @@ describe('cnfs rest repository', (): void => {
         }
       ],
       contact: new StructureContact('john.doe@aide-rurale.net', '+33 4 23 45 68 97'),
+      isLabeledAidantsConnect: false,
       openingHours: [],
       position: new Coordinates(43.955, 6.053333),
       structureAddress: '12 RUE DE LA PLACE, 87100 LIMOGES',

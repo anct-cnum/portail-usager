@@ -4,6 +4,14 @@
       <a [routerLink]="['/', structureId]" class="fr-link fr-fi-arrow-left-line fr-link--icon-left fr-my-2w">
         Revenir à la liste
       </a>
+      <div>
+        <img
+          *ngIf="isLabeledAidantsConnect === true"
+          class="fr-filter--grayscale"
+          height="20px"
+          src="/assets/labels/aidants-connect.png"
+          alt="Label aidants connect" />
+      </div>
     </div>
     <div>
       <h2 class="fr-text--md fr-text--regular fr-mb-1w">Contacter la structure</h2>
