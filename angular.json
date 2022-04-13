@@ -97,6 +97,37 @@
               "serviceWorker": true,
               "ngswConfigPath": "./ngsw-config.json"
             },
+            "branch": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.branch.ts"
+                }
+              ],
+              "optimization": {
+                "fonts": {
+                  "inline": true
+                },
+                "styles": {
+                  "inlineCritical": true
+                }
+              },
+              "outputHashing": "all",
+              "serviceWorker": true,
+              "ngswConfigPath": "./ngsw-config.json"
+            },
             "local": {
               "fileReplacements": [
                 {
