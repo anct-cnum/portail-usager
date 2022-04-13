@@ -32,12 +32,14 @@
           </ng-container>
         </p>
         <div>
-          <img
-            *ngIf="structure.isLabeledAidantsConnect === true"
-            class="fr-filter--grayscale"
-            height="24px"
-            src="/assets/labels/aidants-connect.png"
-            alt="Label aidants connect" />
+          <div>
+            <img
+              *ngIf="structure.isLabeledAidantsConnect === true"
+              class="fr-filter--grayscale"
+              height="24px"
+              src="/assets/labels/aidants-connect.png"
+              alt="Label aidants connect" />
+          </div>
           <a class="fr-btn fr-btn--secondary fr-white-space--nowrap fr-mt-1w" [routerLink]="['/', structure.id, 'details']">
             Afficher les détails
           </a>
