@@ -2,8 +2,6 @@ name: Production continuous integration / deployment on clevercloud
 
 on:
   workflow_dispatch:
-    branches:
-      - main
 
 jobs:
   dependencies:
