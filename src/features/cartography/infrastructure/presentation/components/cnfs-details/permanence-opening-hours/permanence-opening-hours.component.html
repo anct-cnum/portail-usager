@@ -3,10 +3,13 @@
   Horaires
 </h2>
 <table class="fr-full-container--width fr-mb-2w" *ngIf="opening.length > 0; else noOpeningHours">
-  <tr *ngFor="let opening of opening; index as i; trackBy: trackByOpeningDay">
-    <td>{{ opening.day | slice: 0:3 }}.</td>
-    <td class="fr-text-label--grey">{{ opening.hours }}</td>
-  </tr>
+  <ng-container *ngFor="let opening of opening; index as i; trackBy: trackByOpeningDay">
+    <tr *ngIf="opening.hours !== ''">
+      <td>{{ opening.day | slice: 0:3 }}.</td>
+      <td class="fr-text-label--grey">{{ opening.hours }}</td>
+    </tr>
+  </ng-container>
+
 </table>
 <ng-template #noOpeningHours>
   <p>Aucun horaire disponible pour cette structure</p>
