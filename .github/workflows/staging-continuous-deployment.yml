@@ -1,12 +1,10 @@
 name: Staging continuous integration / deployment on clevercloud
 
 on:
-  workflow_dispatch:
-    branches:
-      - main
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   dependencies:
