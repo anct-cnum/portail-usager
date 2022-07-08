@@ -4,7 +4,7 @@
 
 Cartographie qui permet de localiser les permanences des conseillers numériques France Service sur le territoire.
 
-L'application est disponible ici : https://cartographie.conseiller-numerique.gouv.fr/
+L'application est disponible ici : https://carte.conseiller-numerique.gouv.fr/
 
 ## Table des matières
 
