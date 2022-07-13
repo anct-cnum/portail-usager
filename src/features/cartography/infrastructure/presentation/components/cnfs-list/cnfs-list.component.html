@@ -41,7 +41,16 @@
               src="/assets/labels/aidants-connect.png"
               alt="Label aidants connect" />
           </div>
-          <a class="fr-btn fr-btn--secondary fr-white-space--nowrap fr-mt-1w" [routerLink]="['/', structure.id, 'details']">
+          <a [routerLink]="['/liste/rendez-vous']" [state]="{ structureId: structure.id }" style="padding-left: 0.5rem; padding-right: 0.4rem; margin-left: 1.13rem;"
+            class="fr-btn fr-btn--sm fr-mt-2w fr-mb-1w fr-btn--icon-left">
+            <div style="display: contents">
+              <img src="/assets/rendez-vous/icon-calendrier.svg" alt="icone prise de rendez-vous"
+                style="margin-right: 8px" />
+              <span>Prendre rendez-vous</span>
+            </div>
+          </a>
+          <a class="fr-btn fr-btn--secondary fr-white-space--nowrap fr-mt-1w"
+            [routerLink]="['/', structure.id, 'details']">
             Afficher les détails
           </a>
         </div>
