@@ -66,6 +66,13 @@
       </a>
       <h1 class="fr-h3 fr-text-default--grey">{{ structureName }}</h1>
       <div class="fr-mb-3w fr-hidden-xl fr-display--block-lg fr-display--none-md">
+        <a [routerLink]="['/details/rendez-vous']" [state]="{ suffixPreviousUrl: '/details', structureId: structureId }" style="padding-left: 0.5rem; padding-right: 0.4rem;" class="fr-btn fr-btn--sm fr-mt-2w fr-mb-2w fr-btn--icon-left">
+          <div style="display: contents">
+            <img src="/assets/rendez-vous/icon-calendrier.svg" alt="icone prise de rendez-vous"
+              style="margin-right: 8px" />
+            <span>Prendre rendez-vous</span>
+          </div>
+        </a>
         <cnfs-details-contact
           size="sm"
           emailLabel="Courriel"
