@@ -11,7 +11,7 @@ import {
 } from '../../../use-cases';
 import { CnfsRepository, Coordinates, AddressRepository } from '../../../core';
 import { CARTOGRAPHY_TOKEN } from '../tokens';
-import { CartographyLayout, CnfsDetailsPage, CnfsListPage } from '../../presentation/pages';
+import { CartographyLayout, CnfsDetailsPage, CnfsListPage, CnfsRendezVousPage } from '../../presentation/pages';
 import {
   AddressGeolocationComponent,
   CnfsDetailsComponent,
@@ -51,6 +51,7 @@ const METROPOLITAN_FRANCE_CENTER_LATITUDE: number = 46.28146057911664;
     CnfsDetailsPage,
     CnfsListComponent,
     CnfsListPage,
+    CnfsRendezVousPage,
     DropdownPaneComponent,
     IncompleteDataNoticeComponent,
     LeafletMapComponent,
