@@ -41,7 +41,7 @@
               src="/assets/labels/aidants-connect.png"
               alt="Label aidants connect" />
           </div>
-          <a [routerLink]="['/liste/rendez-vous']" [state]="{ structureId: structure.id }" style="padding-left: 0.5rem; padding-right: 0.4rem; margin-left: 1.13rem;"
+          <a onclick="_paq.push(['trackEvent', 'rdv', 'Click button', 'Click button rdv']);" [routerLink]="['/liste/rendez-vous']" [state]="{ structureId: structure.id }" style="padding-left: 0.5rem; padding-right: 0.4rem; margin-left: 1.13rem;"
             class="fr-btn fr-btn--sm fr-mt-2w fr-mb-1w fr-btn--icon-left">
             <div style="display: contents">
               <img src="/assets/rendez-vous/icon-calendrier.svg" alt="icone prise de rendez-vous"
