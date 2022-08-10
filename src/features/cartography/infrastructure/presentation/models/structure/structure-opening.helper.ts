@@ -54,11 +54,12 @@ const makeTime = (hours: number = 0, minutes: number = 0): Time => ({
   minutes
 });
 
+const getOpeningHourAtTimeIndex = (openingHours: string, timeIndex: number): string =>
+  openingHours.includes('-') ? openingHours.split("-")[timeIndex].trim() : '';
+
 const timeFromOpeningHour = (openingHours: string, timeIndex: number): Time =>
-  openingHours
-    .split('-')
-    [timeIndex].trim()
-    .split('h')
+  getOpeningHourAtTimeIndex(openingHours, timeIndex)
+    .split("h")
     .reduce(
       (accumulator: Time, timeString: string, index: number): Time =>
         index === 0 ? makeTime(Number(timeString)) : makeTime(accumulator.hours, Number(timeString)),
